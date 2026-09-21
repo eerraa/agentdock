@@ -14,11 +14,35 @@ public static class ExecutionJson
     public static string Pretty(this JsonElement value) => value.ValueKind == JsonValueKind.Undefined ? "" : JsonSerializer.Serialize(value, new JsonSerializerOptions { WriteIndented = true });
     public static string State(string state) => state switch
     {
-        "created" => "等待执行", "running" or "in_progress" => "运行中", "pending_approval" => "待审批", "succeeded" or "completed" => "已完成",
-        "failed" => "失败", "partial" => "部分完成", "cancelled" => "已取消", "unknown" => "结果待核对", "blocked" => "受阻", "pending" => "未开始", _ => state
+        "created" => ExecutionText.Get("StateWaiting"),
+        "running" or "in_progress" => ExecutionText.Get("StateRunning"),
+        "pending_approval" => ExecutionText.Get("StatePendingApproval"),
+        "succeeded" or "completed" => ExecutionText.Get("StateCompleted"),
+        "failed" => ExecutionText.Get("StateFailed"),
+        "partial" => ExecutionText.Get("StatePartial"),
+        "cancelled" => ExecutionText.Get("StateCancelled"),
+        "unknown" => ExecutionText.Get("StateUnknown"),
+        "blocked" => ExecutionText.Get("StateBlocked"),
+        "pending" => ExecutionText.Get("StateNotStarted"),
+        _ => state
     };
-    public static string Mode(string mode) => mode switch { "full" => "完全权限", "readonly" or "read_only" => "只读", "rules" or "ask" or "guarded" or "default" => "需要审批", _ => mode };
+    public static string Mode(string mode) => mode switch
+    {
+        "full" => ExecutionText.Get("ModeFull"),
+        "readonly" or "read_only" => ExecutionText.Get("ModeReadOnly"),
+        "rules" or "ask" or "guarded" or "default" => ExecutionText.Get("ModeApproval"),
+        _ => mode
+    };
     public static bool HasDate(this JsonElement value, string name) => value.Field(name).ValueKind == JsonValueKind.String;
+
+    // Exact historical host sentinel. Titles whose title_source is manual, host, task, or operation are never rewritten.
+    internal const string LegacyPlaceholderTitle = "新对话";
+
+    internal static bool IsLegacyPlaceholderTitle(string title, string titleSource)
+    {
+        if (titleSource is "manual" or "host" or "task" or "operation") return false;
+        return string.IsNullOrWhiteSpace(title) || title == LegacyPlaceholderTitle;
+    }
 }
 
 public sealed record WorkspaceGroupKey(string Id, string Title);
@@ -32,7 +56,7 @@ public sealed class ExecutionObject
     public string Detail { get; init; } = "";
     public string Tags { get; init; } = "";
     public string WorkspaceId { get; init; } = "";
-    public WorkspaceGroupKey WorkspaceKey { get; set; } = new("", "未归属工作区");
+    public WorkspaceGroupKey WorkspaceKey { get; set; } = new("", ExecutionText.Get("UnassignedWorkspace"));
     public string ManagementDates { get; init; } = "";
     public bool Pinned { get; init; }
     public bool Archived { get; init; }
@@ -47,8 +71,9 @@ public sealed class ExecutionObject
     public static ExecutionObject From(JsonElement value, string kind)
     {
         var title = value.Text("title");
-        var created = DateTimeOffset.TryParse(value.Text("created_at"), out var date) ? date.ToLocalTime().ToString("MM-dd HH:mm") : "历史记录";
-        if (string.IsNullOrWhiteSpace(title) || title == "新对话") title = "对话 · " + created;
+        var titleSource = value.Text("title_source");
+        var created = DateTimeOffset.TryParse(value.Text("created_at"), out var date) ? date.ToLocalTime().ToString("MM-dd HH:mm") : ExecutionText.Get("HistoricalRecord");
+        if (ExecutionJson.IsLegacyPlaceholderTitle(title, titleSource)) title = ExecutionText.Format("ConversationFallbackTitle", created);
         var workspace = value.Field("state").Text("workspace_id", value.Text("workspace_id"));
         var workspaces = value.Array("workspace_ids");
         if (workspace.Length == 0 && workspaces.Length > 0 && workspaces[0].ValueKind == JsonValueKind.String) workspace = workspaces[0].GetString() ?? "";
@@ -56,7 +81,7 @@ public sealed class ExecutionObject
         return new ExecutionObject
         {
             Id = value.Text(kind == "task" ? "task_id" : "conversation_id", value.Text("id")), Kind = kind, Title = title,
-            WorkspaceId = workspace, Tags = string.Join("、", value.Array("tags").Select(tag => tag.GetString())),
+            WorkspaceId = workspace, Tags = string.Join(ExecutionText.Get("TagSeparator"), value.Array("tags").Select(tag => tag.GetString())),
             Detail = kind == "task" ? ExecutionJson.State(value.Text("status")) : value.Text("source"),
             Pinned = value.Flag("pinned"), Archived = value.HasDate("archived_at"), Trashed = value.HasDate("trashed_at"), Terminated = value.HasDate("terminated_at"),
             ManagementDates = created, IsUnknown = value.Flag("is_unattributed"), IsOrphan = value.Flag("is_orphan"),
@@ -79,7 +104,15 @@ public sealed class ExecutionCallRow : INotifyPropertyChanged
     public long UpdatedSeq => _value.Number("updated_seq");
     public string Status => _value.Text("status");
     public string State => ExecutionJson.State(Status);
-    public string StatusGlyph => Status switch { "succeeded" => "✓", "failed" => "×", "partial" or "unknown" => "!", "pending_approval" => "审", "cancelled" => "–", _ => "…" };
+    public string StatusGlyph => Status switch
+    {
+        "succeeded" => "✓",
+        "failed" => "×",
+        "partial" or "unknown" => "!",
+        "pending_approval" => ExecutionText.Get("GlyphPendingApproval"),
+        "cancelled" => "–",
+        _ => "…"
+    };
     public string Tool => _value.Text("tool_name");
     public string ApprovalId => _value.Text("approval_id");
     public string ConversationId => _value.Text("conversation_id");
@@ -90,13 +123,17 @@ public sealed class ExecutionCallRow : INotifyPropertyChanged
     public bool ReadOnlyLegacy => _value.Flag("read_only_legacy");
     public string Summary => _value.Text("summary");
     public string Title => _value.Text("activity_label", _value.Text("display_title", _value.Text("title", Tool))).Replace('\r', ' ').Replace('\n', ' ');
-    public string Duration => (_value.Number("elapsed_ms") / 1000.0).ToString("0.000") + " s";
+    public string Duration => ExecutionText.Format("DurationSeconds", _value.Number("elapsed_ms") / 1000.0);
     public string When => DateTimeOffset.TryParse(_value.Text("created_at"), out var date) ? date.ToLocalTime().ToString("HH:mm:ss") : "";
     public string Rule => string.Join(" · ", new[] { _value.Text("rule_id"), ExecutionJson.Mode(_value.Text("permission_mode")) }.Where(value => value.Length > 0));
     public string SourceState => _sourceState;
-    public string Origin => ConversationId.Length == 0 ? "未归属" : _sourceState switch
+    public string Origin => ConversationId.Length == 0 ? ExecutionText.Get("OriginUnattributed") : _sourceState switch
     {
-        "resolved" => _sourceTitle, "loading" => "正在读取来源", "deleted" => "来源已删除", "error" => "来源读取失败", _ => "来源暂不可用"
+        "resolved" => _sourceTitle,
+        "loading" => ExecutionText.Get("OriginLoading"),
+        "deleted" => ExecutionText.Get("OriginDeleted"),
+        "error" => ExecutionText.Get("OriginError"),
+        _ => ExecutionText.Get("OriginUnavailable")
     };
     public string SourceTitle { get => _sourceTitle; set => SetSource(value, "resolved"); }
     public void SetSource(string title, string state) { _sourceTitle = title; _sourceState = state; Notify(); }
@@ -111,7 +148,7 @@ public sealed class ExecutionCallRow : INotifyPropertyChanged
     public bool FollowOutput { get; set; } = true;
     public bool DetailLoaded { get; private set; }
     public string Output => _output;
-    public string HistoryWarning => _value.Flag("history_incomplete") ? "该记录的部分历史已不可用。" : "";
+    public string HistoryWarning => _value.Flag("history_incomplete") ? ExecutionText.Get("HistoryIncomplete") : "";
     public ExecutionCallRow(JsonElement value) { _value = value.Clone(); }
     public bool VisibleIn(string view)
     {
@@ -131,9 +168,9 @@ public sealed class ExecutionCallRow : INotifyPropertyChanged
         if (value.Number("updated_seq") < UpdatedSeq) return;
         Apply(value); DetailLoaded = true;
         var output = value.Text("output_preview"); var error = value.Text("stderr_preview");
-        if (error.Length > 0) output += (output.Length > 0 ? "\n\n" : "") + "标准错误\n" + error;
-        if (output.Length == 0) output = value.Text("summary", "没有输出。");
-        if (value.Flag("stdout_truncated") || value.Flag("stderr_truncated")) output = "输出已截断，仅显示保留部分。\n\n" + output;
+        if (error.Length > 0) output += (output.Length > 0 ? "\n\n" : "") + ExecutionText.Get("StderrHeading") + "\n" + error;
+        if (output.Length == 0) output = value.Text("summary", ExecutionText.Get("NoOutput"));
+        if (value.Flag("stdout_truncated") || value.Flag("stderr_truncated")) output = ExecutionText.Get("OutputTruncatedNotice") + "\n\n" + output;
         _output = output; Notify();
     }
     private void Notify() => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(null));

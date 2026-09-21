@@ -66,7 +66,7 @@ MCP 服务创建时，把全局规则和默认工作区规则加入初始化 ins
 
 默认启用自动发现。设置 `AGENTDOCK_AGENTS_AUTOLOAD=false` 可禁用自动全局和工作区发现，但不会禁用显式 `AGENTDOCK_INSTRUCTIONS_FILE`。开关与全局路径属于启动配置，修改它们仍需按部署方式重启 Core；仅规则正文改变不需要重启。
 
-旧的空参数 `agentdock_context` 调用继续有效。新增 `workdir` 和 `instruction_files` 仅扩展本地工具契约，既有字段及必需字段保持不变。Nexus 私有 `context.local` 不增加字段，使用原有 `rules` 数组携带带来源和作用域的规则正文；不改变共享 protocol 依赖。Nexus 统一入口对任意工作区选择的支持仍由其自身契约决定，不能假定旧版 Nexus 接受本地新增参数。
+旧的空参数 `agentdock_context` 调用继续有效。新增 `workdir` 和 `instruction_files` 仅扩展本地工具契约，既有字段及必需字段保持不变。本地 Runtime 对象另外提供 `execution_epoch` 和 `command_recovery`。`command_recovery` 的 version 为 1，`request_id_field` 为 `execution_request_id`，`deduplication_scope` 为 `runtime_epoch`，`peek` 为 true，`durable` 为 false。它表示丢失响应后可以用同一个 ID 查询，不表示跨重启的持久化 exactly-once，也不自动恢复模型或重放未知副作用。共享 protocol 的 context 契约不包含这两个字段。Nexus 私有 `context.local` 不增加字段，使用原有 `rules` 数组携带带来源和作用域的规则正文；不改变共享 protocol 依赖。Nexus 统一入口对任意工作区选择的支持仍由其自身契约决定，不能假定旧版 Nexus 接受本地新增参数。
 
 升级 Core 后，缓存工具定义的客户端需要刷新工具定义并重新连接或新建会话。单纯修改源码不会使已运行的旧版本获得此功能。
 

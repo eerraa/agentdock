@@ -39,6 +39,7 @@ func TestCanonicalToolDefinitionsMatchSharedContract(t *testing.T) {
 			// Standalone AgentDock adds only optional local context fields. Compare
 			// every remaining field against the unchanged shared protocol contract.
 			actualInput = withoutLocalContextProperty(t, actualInput, "workdir")
+			actualOutput = withoutLocalRuntimeRecovery(t, actualOutput)
 			actualOutput = withoutLocalContextProperty(t, actualOutput, "instruction_files")
 			actualOutput = withoutLocalContextProperty(t, actualOutput, "plugins")
 			actualOutput = withoutLocalContextProperty(t, actualOutput, "tasks")
@@ -70,6 +71,37 @@ func TestCanonicalToolDefinitionsMatchSharedContract(t *testing.T) {
 			t.Fatalf("%s idempotentHint=%v want=%v", name, annotations.IdempotentHint, wantIdempotent)
 		}
 	}
+}
+
+func withoutLocalRuntimeRecovery(t *testing.T, schema map[string]any) map[string]any {
+	t.Helper()
+	copy := maps.Clone(schema)
+	properties := maps.Clone(schema["properties"].(map[string]any))
+	runtimeSchema, _ := properties["runtime"].(map[string]any)
+	if runtimeSchema == nil {
+		t.Fatal("agentdock_context output is missing runtime")
+	}
+	runtimeCopy := maps.Clone(runtimeSchema)
+	runtimeProperties := maps.Clone(runtimeSchema["properties"].(map[string]any))
+	for _, name := range []string{"execution_epoch", "command_recovery"} {
+		if runtimeProperties[name] == nil {
+			t.Fatalf("local runtime recovery field %q missing", name)
+		}
+		delete(runtimeProperties, name)
+	}
+	required, _ := runtimeSchema["required"].([]string)
+	filtered := make([]string, 0, len(required))
+	for _, name := range required {
+		if name == "execution_epoch" || name == "command_recovery" {
+			continue
+		}
+		filtered = append(filtered, name)
+	}
+	runtimeCopy["properties"] = runtimeProperties
+	runtimeCopy["required"] = filtered
+	properties["runtime"] = runtimeCopy
+	copy["properties"] = properties
+	return copy
 }
 
 func withoutLocalContextProperty(t *testing.T, schema map[string]any, name string) map[string]any {

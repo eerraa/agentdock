@@ -16,6 +16,7 @@ internal static partial class Program
         var started = Stopwatch.StartNew();
         try
         {
+            TestLocalization();
             TestTimeline();
             TestPresentation();
             TestPublicDiscoveryAsync().GetAwaiter().GetResult();

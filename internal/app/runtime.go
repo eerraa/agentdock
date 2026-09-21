@@ -46,6 +46,7 @@ type Runtime struct {
 	executionMu              sync.Mutex
 	activeCalls              map[string]*liveExecution
 	pendingCalls             map[string]*preparedExecution
+	receipts                 *receiptIndex
 	executionWG              sync.WaitGroup
 
 	workspaceRegistry *workspace.Registry
@@ -146,6 +147,7 @@ func NewRuntime(cfg config.Config) (*Runtime, error) {
 		executionInstance: instance,
 		conversations:     conversations, permissions: permissions, tasks: tasks,
 		activeCalls: map[string]*liveExecution{}, pendingCalls: map[string]*preparedExecution{},
+		receipts:          newReceiptIndex(defaultReceiptLimit, defaultReceiptOwnerLimit),
 		workspaceRegistry: workspaceRegistry, workspaceTools: toolworkspace.New(workspaceRegistry),
 		cfg: cfg, ws: ws, skills: skills, activity: activityStore,
 		toolNames: toolNames, toolValidators: toolValidators,

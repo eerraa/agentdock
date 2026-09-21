@@ -9,12 +9,27 @@ func (s *Service) Observe(request SessionObserveRequest) (Result, error) {
 	}
 	switch action {
 	case "list":
+		if err := rejectPeekOnlyFields(request); err != nil {
+			return nil, err
+		}
 		return s.listSessions()
 	case "status":
+		if err := rejectPeekOnlyFields(request); err != nil {
+			return nil, err
+		}
 		return s.sessionStatus(request)
+	case "peek":
+		return s.peekSession(request)
 	default:
-		return nil, toolErrorDetails("INVALID_ACTION", "unsupported session_observe action", "validation", map[string]any{"action": request.Action, "allowed": []string{"list", "status"}})
+		return nil, toolErrorDetails("INVALID_ACTION", "unsupported session_observe action", "validation", map[string]any{"action": request.Action, "allowed": []string{"list", "status", "peek"}})
 	}
+}
+
+func rejectPeekOnlyFields(request SessionObserveRequest) error {
+	if !peekFieldsPresent(request) {
+		return nil
+	}
+	return toolError("INVALID_ARGUMENT", "stdout_offset, stderr_offset, and execution_request_id are only valid for action=peek", "validation")
 }
 
 func (s *Service) Act(request SessionActRequest) (Result, error) {

@@ -57,3 +57,13 @@ SSE 客户端按序列号幂等合并。断线后查询补齐，遇到 gap/histo
 ## 旧记录
 
 旧记录的 read_only_legacy=true，ConversationID 为空。可靠的 SessionID/开始事件/顺序/任务归属允许只读聚合，其他旧事件独立呈现并标记不完整。旧记录不提供直接重放、停止或审批按钮。新投影不会复制或删除原始 Activity 日志。
+
+## 命令响应恢复
+
+`exec_command` 可以带可选 `execution_request_id`。格式是当前 Runtime epoch 的 32 位十六进制、一个点、以及客户端为这一次执行意图生成的 32 位十六进制 nonce。省略该字段时仍是原来的一次性调用，不会要求旧客户端补 ID。`request_id` 不是别名。MCP JSON-RPC id、CallID、`retry_of_call_id` 和 SessionID 都与这个字段不同。
+
+同一 Runtime、同一认证主体、同一 ID 只尝试启动一次操作系统进程。响应丢失时用同一个 ID 再次调用 `exec_command`，或调用 `session_observe` 且 `action=peek`。这会读回原来的 Call 和仍保留的 Session，不会重新执行。`new_execution_started` 只在这次请求真正启动了进程时为 true；重复查询、待审批和准备中为 false。`receipt.call_id` 是原来的 exec Call。直接 peek 时顶层 `call_id` 是这次观察 Call。
+
+错误码 `EXECUTION_REQUEST_CONFLICT`、`EXECUTION_EPOCH_MISMATCH`、`EXECUTION_REQUEST_NOT_FOUND` 和 `EXECUTION_RECEIPT_LIMIT` 都不会自动换成新 ID 重放。当前 epoch 下找不到 claim 只说明本进程没有该 ID 的记录，不证明外部效果没有发生。审批拒绝、权限拒绝、日志失败、进程启动失败和 stdin 错误都会留下 claim，同一个 ID 不能再启动一次。
+
+claim 只保存在当前进程内存中：全局最多 16384 条，每个认证主体最多 4096 条。达到限额时，新 ID 在创建进程或审批之前被拒绝，已有 ID 仍可查询。不会用 LRU 或 TTL 删掉 claim 来允许同一 ID 再次执行。这不是持久化 exactly-once。输出仍受每流 4 MiB、完成会话最长约 1 小时、同时 32 个运行会话和最多 128 个保留会话的限制。输出被清理时返回 `output_unavailable=true` 且不给出 stdout/stderr；Call 记录也消失时返回 `status=unknown` 和 `history_unavailable=true`。这两种情况都不填写 `command_ok` 或 `exit_code`。Runtime 重启后 epoch 改变，旧 ID 返回 `EXECUTION_EPOCH_MISMATCH`。

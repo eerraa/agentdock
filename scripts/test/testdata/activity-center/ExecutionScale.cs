@@ -60,6 +60,7 @@ internal static partial class Program
     }
     private static object TestExecutionLargeLists(string root)
     {
+        UiText.ApplyResourceCultureForTests("zh-CN");
         SynchronizationContext.SetSynchronizationContext(new DispatcherSynchronizationContext(Dispatcher.CurrentDispatcher));
         Directory.CreateDirectory(root);
         using var fixture = new LocalFixture(root) { ExecutionMode = true, ExecutionScaleMode = true }; fixture.WriteRuntime(root);

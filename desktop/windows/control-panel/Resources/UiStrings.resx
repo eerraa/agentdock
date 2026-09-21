@@ -921,4 +921,440 @@ Update now?</value>
   <data name="PublicMetadataMismatch" xml:space="preserve"><value>Metadata does not match the current origin</value></data>
   <data name="PublicDiscoveryAuthorizationRequired" xml:space="preserve"><value>Public endpoint reachable; authentication discovery passed</value></data>
   <data name="PublicOAuthCapabilitiesMissing" xml:space="preserve"><value>OAuth metadata is missing authorization code, S256 or refresh support.</value></data>
+  <data name="KoreanLanguage" xml:space="preserve"><value>한국어</value></data>
+  <data name="Activity_NeedsAttention" xml:space="preserve"><value>Needs attention</value></data>
+  <data name="Activity_InProgressTasks" xml:space="preserve"><value>In progress</value></data>
+  <data name="Activity_EndedTasks" xml:space="preserve"><value>Ended</value></data>
+  <data name="Activity_Records" xml:space="preserve"><value>Activity records</value></data>
+  <data name="Activity_NoStep" xml:space="preserve"><value>No current step recorded</value></data>
+  <data name="Activity_NoReason" xml:space="preserve"><value>No reason recorded</value></data>
+  <data name="Activity_NoNext" xml:space="preserve"><value>No next action recorded</value></data>
+  <data name="Activity_CancelReason" xml:space="preserve"><value>Cancellation reason</value></data>
+  <data name="Activity_TaskBlockReason" xml:space="preserve"><value>Task blocked</value></data>
+  <data name="Activity_ThreadBlockReason" xml:space="preserve"><value>Branch blocked</value></data>
+  <data name="Activity_NoWorkspace" xml:space="preserve"><value>No workspace bound</value></data>
+  <data name="Activity_WorkspaceMissing" xml:space="preserve"><value>Bound workspace is missing</value></data>
+  <data name="Activity_WorkspaceButton" xml:space="preserve"><value>Open workspace</value></data>
+  <data name="Activity_Summary" xml:space="preserve"><value>Checkpoint summary</value></data>
+  <data name="Activity_CommandDirectory" xml:space="preserve"><value>Command directory</value></data>
+  <data name="Activity_RunningNow" xml:space="preserve"><value>Running at latest check</value></data>
+  <data name="Activity_TaskCancelledEvent" xml:space="preserve"><value>Task cancelled</value></data>
+  <data name="Activity_Continue" xml:space="preserve"><value>Copy continuation instruction</value></data>
+  <data name="Activity_Retry" xml:space="preserve"><value>Copy retry instruction</value></data>
+  <data name="Activity_ContinueInstruction" xml:space="preserve"><value>Read this task and branch checkpoint, confirm its workspace, then continue the unfinished work. This instruction does not itself start execution.</value></data>
+  <data name="Activity_RetryInstruction" xml:space="preserve"><value>Keep the original task cancelled. Read its goal and cancellation reason, then create a new task for a retry.</value></data>
+  <data name="Activity_ResumeTask" xml:space="preserve"><value>Unblock task state</value></data>
+  <data name="Activity_ResumeHint" xml:space="preserve"><value>The state is restored. Continue from the connected client; no model was started.</value></data>
+  <data name="Activity_LiveCommands" xml:space="preserve"><value>Live command sessions · all branches of this task</value></data>
+  <data name="Activity_LiveUnavailable" xml:space="preserve"><value>Live session state unavailable; stopping is disabled until checked.</value></data>
+  <data name="Activity_NoRunning" xml:space="preserve"><value>No running commands at the latest check. Task progress does not indicate client execution.</value></data>
+  <data name="Activity_RunningAfterCancel" xml:space="preserve"><value>The task has ended, but its command processes are still running.</value></data>
+  <data name="Activity_UnknownCommand" xml:space="preserve"><value>Command session · command text not retained</value></data>
+  <data name="Activity_Technical" xml:space="preserve"><value>Technical details</value></data>
+  <data name="Activity_Progress" xml:space="preserve"><value>Step progress</value></data>
+  <data name="Activity_TaskSteps" xml:space="preserve"><value>Task steps</value></data>
+  <data name="Activity_BranchSteps" xml:space="preserve"><value>Selected branch steps</value></data>
+  <data name="Activity_History" xml:space="preserve"><value>Activity history</value></data>
+  <data name="Activity_ReturnLatest" xml:space="preserve"><value>Return to latest activity</value></data>
+  <data name="Activity_NoResults" xml:space="preserve"><value>No matching tasks</value></data>
+  <data name="Activity_CategoryAll" xml:space="preserve"><value>All activity types</value></data>
+  <data name="Activity_CategoryCommand" xml:space="preserve"><value>Commands</value></data>
+  <data name="Activity_CategoryFile" xml:space="preserve"><value>File changes</value></data>
+  <data name="Activity_CategoryCheckpoint" xml:space="preserve"><value>Checkpoints and review</value></data>
+  <data name="Activity_CategoryLifecycle" xml:space="preserve"><value>Lifecycle and other events</value></data>
+  <data name="Activity_LastChecked" xml:space="preserve"><value>Last check</value></data>
+  <data name="Activity_ClipboardReady" xml:space="preserve"><value>Continuation instruction copied.</value></data>
+  <data name="Activity_DiffCurrentHint" xml:space="preserve"><value>This compares the current working tree, not the file contents at event time.</value></data>
+  <data name="Activity_Title" xml:space="preserve"><value>AgentDock · Task activity</value></data>
+  <data name="Activity_Open" xml:space="preserve"><value>Task activity center</value></data>
+  <data name="Activity_Facts" xml:space="preserve"><value>Recorded AgentDock execution only. Threads are recoverable contexts, not background AI workers.</value></data>
+  <data name="Activity_Tasks" xml:space="preserve"><value>Tasks</value></data>
+  <data name="Activity_Search" xml:space="preserve"><value>Filter by title, project, workspace or task ID</value></data>
+  <data name="Activity_All" xml:space="preserve"><value>All states</value></data>
+  <data name="Activity_Refresh" xml:space="preserve"><value>Refresh</value></data>
+  <data name="Activity_Archived" xml:space="preserve"><value>Include archived</value></data>
+  <data name="Activity_Thread" xml:space="preserve"><value>Execution branch</value></data>
+  <data name="Activity_ThreadActions" xml:space="preserve"><value>Branch actions ▾</value></data>
+  <data name="Activity_TaskActions" xml:space="preserve"><value>Task actions ▾</value></data>
+  <data name="Activity_SetActive" xml:space="preserve"><value>Use as default continuation branch</value></data>
+  <data name="Activity_Create" xml:space="preserve"><value>Create thread</value></data>
+  <data name="Activity_Fork" xml:space="preserve"><value>Fork checkpoint</value></data>
+  <data name="Activity_Block" xml:space="preserve"><value>Block thread</value></data>
+  <data name="Activity_Resume" xml:space="preserve"><value>Unblock branch state</value></data>
+  <data name="Activity_Close" xml:space="preserve"><value>Close thread</value></data>
+  <data name="Activity_CancelTask" xml:space="preserve"><value>Cancel task</value></data>
+  <data name="Activity_Archive" xml:space="preserve"><value>Archive task</value></data>
+  <data name="Activity_Unarchive" xml:space="preserve"><value>Restore from archive</value></data>
+  <data name="Activity_Cleanup" xml:space="preserve"><value>Clean activity older than 30 days</value></data>
+  <data name="Activity_Stop" xml:space="preserve"><value>Stop command</value></data>
+  <data name="Activity_Copy" xml:space="preserve"><value>Copy redacted command</value></data>
+  <data name="Activity_Directory" xml:space="preserve"><value>Open command directory</value></data>
+  <data name="Activity_File" xml:space="preserve"><value>Locate modified file</value></data>
+  <data name="Activity_Diff" xml:space="preserve"><value>View current diff</value></data>
+  <data name="Activity_Follow" xml:space="preserve"><value>Follow latest</value></data>
+  <data name="Activity_Output" xml:space="preserve"><value>Show output</value></data>
+  <data name="Activity_OutputTruncated" xml:space="preserve"><value>Show output · bounded preview, truncated</value></data>
+  <data name="Activity_Details" xml:space="preserve"><value>Steps and acceptance</value></data>
+  <data name="Activity_Conditions" xml:space="preserve"><value>Acceptance conditions</value></data>
+  <data name="Activity_Review" xml:space="preserve"><value>Final review</value></data>
+  <data name="Activity_Risks" xml:space="preserve"><value>Open risks / missing checks</value></data>
+  <data name="Activity_Workspace" xml:space="preserve"><value>Workspace</value></data>
+  <data name="Activity_Step" xml:space="preserve"><value>Current step</value></data>
+  <data name="Activity_Next" xml:space="preserve"><value>Next action</value></data>
+  <data name="Activity_DefaultThread" xml:space="preserve"><value>Continuation thread</value></data>
+  <data name="Activity_NoTask" xml:space="preserve"><value>Select a task to view its execution timeline.</value></data>
+  <data name="Activity_NoEvents" xml:space="preserve"><value>No activity recorded for this thread yet.</value></data>
+  <data name="Activity_Unassigned" xml:space="preserve"><value>Unassigned legacy activity</value></data>
+  <data name="Activity_AllActivity" xml:space="preserve"><value>All recorded activity</value></data>
+  <data name="Activity_AllActivityDetail" xml:space="preserve"><value>All tasks and legacy unassigned operations</value></data>
+  <data name="Activity_CancelConfirmation" xml:space="preserve"><value>There are {0} running commands in this task. Cancelling changes the task state only and will not stop these processes. Cancel this task?</value></data>
+  <data name="Activity_Loading" xml:space="preserve"><value>Loading local activity…</value></data>
+  <data name="Activity_Live" xml:space="preserve"><value>Connected · live events</value></data>
+  <data name="Activity_Reconnecting" xml:space="preserve"><value>Disconnected. Reconnecting to the local service…</value></data>
+  <data name="Activity_Unavailable" xml:space="preserve"><value>Local activity is unavailable. Check the service connection.</value></data>
+  <data name="Activity_Gap" xml:space="preserve"><value>Some older activity was removed by retention. Remaining records are still available.</value></data>
+  <data name="Activity_Reset" xml:space="preserve"><value>The local journal changed; the replay cursor has been reset.</value></data>
+  <data name="Activity_Warning" xml:space="preserve"><value>Activity warning</value></data>
+  <data name="Activity_RecentOnly" xml:space="preserve"><value>Only the latest 1,000 timeline entries are retained in this window.</value></data>
+  <data name="Activity_MoreTasks" xml:space="preserve"><value>Showing at most 200 recent tasks. Narrow the server-side state filter to see older tasks.</value></data>
+  <data name="Activity_Confirm" xml:space="preserve"><value>Confirm operation</value></data>
+  <data name="Activity_ConfirmAction" xml:space="preserve"><value>Apply this operation to the selected task/thread? Existing history will be retained.</value></data>
+  <data name="Activity_ConfirmStop" xml:space="preserve"><value>Stop this command session? Unsaved work in that process may be lost.</value></data>
+  <data name="Activity_ConfirmCleanup" xml:space="preserve"><value>Remove complete activity segments older than 30 days? Task checkpoints and current output are retained.</value></data>
+  <data name="Activity_Name" xml:space="preserve"><value>Thread title</value></data>
+  <data name="Activity_Reason" xml:space="preserve"><value>Reason</value></data>
+  <data name="Activity_Required" xml:space="preserve"><value>Enter a non-empty value (at most 512 characters).</value></data>
+  <data name="Activity_OK" xml:space="preserve"><value>OK</value></data>
+  <data name="Activity_Dismiss" xml:space="preserve"><value>Cancel</value></data>
+  <data name="Activity_OperationFailed" xml:space="preserve"><value>The operation did not complete.</value></data>
+  <data name="Activity_InvalidPath" xml:space="preserve"><value>The recorded path is missing, redacted, remote, or not a local filesystem path.</value></data>
+  <data name="Activity_DiffTitle" xml:space="preserve"><value>Current repository diff</value></data>
+  <data name="Activity_DiffEmpty" xml:space="preserve"><value>No current tracked diff for this file.</value></data>
+  <data name="Activity_Interrupted" xml:space="preserve"><value>Last recorded running · not confirmed live</value></data>
+  <data name="Activity_State_active" xml:space="preserve"><value>Active</value></data>
+  <data name="Activity_State_blocked" xml:space="preserve"><value>Blocked</value></data>
+  <data name="Activity_State_completed" xml:space="preserve"><value>Completed</value></data>
+  <data name="Activity_State_cancelled" xml:space="preserve"><value>Cancelled</value></data>
+  <data name="Activity_State_archived" xml:space="preserve"><value>Archived</value></data>
+  <data name="Activity_State_open" xml:space="preserve"><value>Open</value></data>
+  <data name="Activity_State_closed" xml:space="preserve"><value>Closed</value></data>
+  <data name="Activity_State_success" xml:space="preserve"><value>Succeeded</value></data>
+  <data name="Activity_State_failed" xml:space="preserve"><value>Failed</value></data>
+  <data name="Activity_State_running" xml:space="preserve"><value>Running · last observed</value></data>
+  <data name="Activity_State_timeout" xml:space="preserve"><value>Timed out</value></data>
+  <data name="Activity_State_killed" xml:space="preserve"><value>Stopped</value></data>
+  <data name="Activity_State_pending" xml:space="preserve"><value>Pending</value></data>
+  <data name="Activity_State_in_progress" xml:space="preserve"><value>In progress</value></data>
+  <data name="Activity_State_partial" xml:space="preserve"><value>Partial</value></data>
+  <data name="Activity_State_exited" xml:space="preserve"><value>Exited</value></data>
+  <data name="Activity_Kind_command" xml:space="preserve"><value>Command</value></data>
+  <data name="Activity_Kind_task_created" xml:space="preserve"><value>Task created</value></data>
+  <data name="Activity_Kind_task_completed" xml:space="preserve"><value>Task completed</value></data>
+  <data name="Activity_Kind_task_blocked" xml:space="preserve"><value>Task blocked</value></data>
+  <data name="Activity_Kind_task_resumed" xml:space="preserve"><value>Task unblocked</value></data>
+  <data name="Activity_Kind_task_archived" xml:space="preserve"><value>Task archived</value></data>
+  <data name="Activity_Kind_task_unarchived" xml:space="preserve"><value>Task restored from archive</value></data>
+  <data name="Activity_Kind_thread_created" xml:space="preserve"><value>Branch created</value></data>
+  <data name="Activity_Kind_thread_switched" xml:space="preserve"><value>Continuation branch changed</value></data>
+  <data name="Activity_Kind_thread_blocked" xml:space="preserve"><value>Branch blocked</value></data>
+  <data name="Activity_Kind_thread_resumed" xml:space="preserve"><value>Branch unblocked</value></data>
+  <data name="Activity_Kind_thread_closed" xml:space="preserve"><value>Branch closed</value></data>
+  <data name="Activity_Kind_activity_cleaned" xml:space="preserve"><value>History cleaned</value></data>
+  <data name="Activity_Kind_file_changed" xml:space="preserve"><value>File changed</value></data>
+  <data name="Activity_Kind_step_started" xml:space="preserve"><value>Step started</value></data>
+  <data name="Activity_Kind_step_summary" xml:space="preserve"><value>Checkpoint</value></data>
+  <data name="Activity_Kind_tool" xml:space="preserve"><value>Tool call</value></data>
+  <data name="Activity_Kind_review_completed" xml:space="preserve"><value>Final review</value></data>
+  <data name="Execution_SearchWorkspaceOrConversation" xml:space="preserve"><value>Search workspaces or conversations</value></data>
+  <data name="Execution_Search" xml:space="preserve"><value>Search</value></data>
+  <data name="Execution_ConversationManagement" xml:space="preserve"><value>Conversation management</value></data>
+  <data name="Execution_MoreConversations" xml:space="preserve"><value>More conversations</value></data>
+  <data name="Execution_ManageThisConversation" xml:space="preserve"><value>Manage this conversation</value></data>
+  <data name="Execution_NoConversations" xml:space="preserve"><value>No conversations</value></data>
+  <data name="Execution_SelectConversation" xml:space="preserve"><value>Select a conversation</value></data>
+  <data name="Execution_Attention" xml:space="preserve"><value>Needs attention</value></data>
+  <data name="Execution_Permissions" xml:space="preserve"><value>Permissions</value></data>
+  <data name="Execution_Connection" xml:space="preserve"><value>Connection</value></data>
+  <data name="Execution_Theme" xml:space="preserve"><value>Theme</value></data>
+  <data name="Execution_Settings" xml:space="preserve"><value>Settings</value></data>
+  <data name="Execution_Stop" xml:space="preserve"><value>Stop</value></data>
+  <data name="Execution_CurrentConversationActions" xml:space="preserve"><value>Actions for the current conversation</value></data>
+  <data name="Execution_Close" xml:space="preserve"><value>Close</value></data>
+  <data name="Execution_RelatedTaskTooltip" xml:space="preserve"><value>Tasks linked to the current conversation</value></data>
+  <data name="Execution_FilterThisTask" xml:space="preserve"><value>Filter to this task</value></data>
+  <data name="Execution_ShowAllCalls" xml:space="preserve"><value>Show all</value></data>
+  <data name="Execution_TaskDetails" xml:space="preserve"><value>Task details</value></data>
+  <data name="Execution_SearchCalls" xml:space="preserve"><value>Search execution records</value></data>
+  <data name="Execution_StatusAll" xml:space="preserve"><value>All states</value></data>
+  <data name="Execution_StatusRunning" xml:space="preserve"><value>Running</value></data>
+  <data name="Execution_StatusPendingApproval" xml:space="preserve"><value>Pending approval</value></data>
+  <data name="Execution_StatusFailed" xml:space="preserve"><value>Failed</value></data>
+  <data name="Execution_StatusUnknown" xml:space="preserve"><value>Needs verification</value></data>
+  <data name="Execution_Older" xml:space="preserve"><value>Older</value></data>
+  <data name="Execution_Follow" xml:space="preserve"><value>Follow</value></data>
+  <data name="Execution_FollowLatestCalls" xml:space="preserve"><value>Follow the latest calls</value></data>
+  <data name="Execution_ResumeFollow" xml:space="preserve"><value>Follow again</value></data>
+  <data name="Execution_RecordManagement" xml:space="preserve"><value>Record management</value></data>
+  <data name="Execution_NoExecutionRecords" xml:space="preserve"><value>No execution records</value></data>
+  <data name="Execution_Refresh" xml:space="preserve"><value>Refresh</value></data>
+  <data name="Execution_TabCommandOutput" xml:space="preserve"><value>Command and output</value></data>
+  <data name="Execution_CopyCommand" xml:space="preserve"><value>Copy command</value></data>
+  <data name="Execution_CopyOutput" xml:space="preserve"><value>Copy output</value></data>
+  <data name="Execution_StopCall" xml:space="preserve"><value>Stop call</value></data>
+  <data name="Execution_Approve" xml:space="preserve"><value>Approve</value></data>
+  <data name="Execution_Reject" xml:space="preserve"><value>Reject</value></data>
+  <data name="Execution_RetryInstruction" xml:space="preserve"><value>Retry note</value></data>
+  <data name="Execution_TabSource" xml:space="preserve"><value>Source</value></data>
+  <data name="Execution_TabChildren" xml:space="preserve"><value>Child calls</value></data>
+  <data name="Execution_TabTechnical" xml:space="preserve"><value>Technical</value></data>
+  <data name="Execution_ContinueFromBranch" xml:space="preserve"><value>Continue from this branch</value></data>
+  <data name="Execution_CopyContinueInstruction" xml:space="preserve"><value>Copy continuation note</value></data>
+  <data name="Execution_ManageTask" xml:space="preserve"><value>Manage task</value></data>
+  <data name="Execution_DataHistoricalTasks" xml:space="preserve"><value>Historical tasks</value></data>
+  <data name="Execution_DataUnattributedCalls" xml:space="preserve"><value>Unattributed calls</value></data>
+  <data name="Execution_DataAllCalls" xml:space="preserve"><value>All calls</value></data>
+  <data name="Execution_DataCurrent" xml:space="preserve"><value>Current</value></data>
+  <data name="Execution_DataArchived" xml:space="preserve"><value>Archived</value></data>
+  <data name="Execution_DataIsolated" xml:space="preserve"><value>Isolated</value></data>
+  <data name="Execution_DataTrash" xml:space="preserve"><value>Trash</value></data>
+  <data name="Execution_ManageSelected" xml:space="preserve"><value>Manage selected</value></data>
+  <data name="Execution_Export" xml:space="preserve"><value>Export</value></data>
+  <data name="Execution_More" xml:space="preserve"><value>More</value></data>
+  <data name="Execution_AttentionCount" xml:space="preserve"><value>{0} pending</value></data>
+  <data name="Execution_NewPendingApprovals" xml:space="preserve"><value>{0} new requests are waiting for approval.</value></data>
+  <data name="Execution_UnattributedRecords" xml:space="preserve"><value>Unattributed records</value></data>
+  <data name="Execution_HistoricalWorkspace" xml:space="preserve"><value>Historical workspace</value></data>
+  <data name="Execution_ConversationTerminated" xml:space="preserve"><value>This conversation is terminated. Later execution is blocked. History remains available.</value></data>
+  <data name="Execution_NoConversationRecords" xml:space="preserve"><value>No conversation records</value></data>
+  <data name="Execution_ReadingExecutionRecords" xml:space="preserve"><value>Reading execution records</value></data>
+  <data name="Execution_HistoricalTask" xml:space="preserve"><value>Historical task</value></data>
+  <data name="Execution_ProgressNotRecorded" xml:space="preserve"><value>Progress was not recorded</value></data>
+  <data name="Execution_NextActionLine" xml:space="preserve"><value>Next action: {0}</value></data>
+  <data name="Execution_AcceptanceHeading" xml:space="preserve"><value>Acceptance conditions
+{0}</value></data>
+  <data name="Execution_NotRecorded" xml:space="preserve"><value>Not recorded</value></data>
+  <data name="Execution_HistoryRetentionGap" xml:space="preserve"><value>Some older records passed the retention limit. Showing the records that remain.</value></data>
+  <data name="Execution_LocalStreamConnected" xml:space="preserve"><value>Local execution stream is connected</value></data>
+  <data name="Execution_LocalStreamReconnecting" xml:space="preserve"><value>Reconnecting the local execution stream: {0}</value></data>
+  <data name="Execution_HistoryUnavailable" xml:space="preserve"><value>Some older history is unavailable.</value></data>
+  <data name="Execution_UnattributedSource" xml:space="preserve"><value>Unattributed: this record has no verifiable source conversation. The call ID can still be exported, isolated, archived, or deleted.</value></data>
+  <data name="Execution_SourceResolved" xml:space="preserve"><value>Source resolved</value></data>
+  <data name="Execution_WorkdirLine" xml:space="preserve"><value>Working directory: {0}</value></data>
+  <data name="Execution_PermissionLine" xml:space="preserve"><value>Permission: {0}</value></data>
+  <data name="Execution_FileChangesHeading" xml:space="preserve"><value>File changes</value></data>
+  <data name="Execution_NoMatchingRecords" xml:space="preserve"><value>No execution records match the current filter</value></data>
+  <data name="Execution_PreferencesTooLarge" xml:space="preserve"><value>Display settings exceed the size limit. The original file was kept.</value></data>
+  <data name="Execution_PreferencesNotLoaded" xml:space="preserve"><value>Display settings were not loaded. The original file was kept: {0}</value></data>
+  <data name="Execution_PreferencesNotSaved" xml:space="preserve"><value>Display settings were not saved: {0}</value></data>
+  <data name="Execution_CurrentConversations" xml:space="preserve"><value>Current conversations</value></data>
+  <data name="Execution_ArchivedView" xml:space="preserve"><value>Archived</value></data>
+  <data name="Execution_TrashView" xml:space="preserve"><value>Trash</value></data>
+  <data name="Execution_SelectAllFiltered" xml:space="preserve"><value>Select every conversation in the current filter</value></data>
+  <data name="Execution_ManageSelectedConversations" xml:space="preserve"><value>Manage selected conversations</value></data>
+  <data name="Execution_HistoricalTasksAndUnattributed" xml:space="preserve"><value>Historical tasks and unattributed records</value></data>
+  <data name="Execution_SelectedConversationCount" xml:space="preserve"><value>Selected {0} conversations in the current filter.</value></data>
+  <data name="Execution_ConversationDetails" xml:space="preserve"><value>Conversation details</value></data>
+  <data name="Execution_UnattributedManagedByCallId" xml:space="preserve"><value>Unattributed records are managed by their original call IDs.</value></data>
+  <data name="Execution_ExportExecutionRecords" xml:space="preserve"><value>Export execution records</value></data>
+  <data name="Execution_ManageRecords" xml:space="preserve"><value>Manage records</value></data>
+  <data name="Execution_Rename" xml:space="preserve"><value>Rename</value></data>
+  <data name="Execution_Tags" xml:space="preserve"><value>Tags</value></data>
+  <data name="Execution_Unpin" xml:space="preserve"><value>Unpin</value></data>
+  <data name="Execution_Pin" xml:space="preserve"><value>Pin</value></data>
+  <data name="Execution_Unarchive" xml:space="preserve"><value>Unarchive</value></data>
+  <data name="Execution_Archive" xml:space="preserve"><value>Archive</value></data>
+  <data name="Execution_RestoreFromTrash" xml:space="preserve"><value>Restore from trash</value></data>
+  <data name="Execution_MoveToTrash" xml:space="preserve"><value>Move to trash</value></data>
+  <data name="Execution_DeletePermanently" xml:space="preserve"><value>Delete permanently</value></data>
+  <data name="Execution_ResumeConversation" xml:space="preserve"><value>Resume this conversation</value></data>
+  <data name="Execution_TerminateConversation" xml:space="preserve"><value>Terminate this conversation</value></data>
+  <data name="Execution_LinkExistingTask" xml:space="preserve"><value>Link an existing task</value></data>
+  <data name="Execution_EnterName" xml:space="preserve"><value>Enter a name</value></data>
+  <data name="Execution_NameRequired" xml:space="preserve"><value>The name cannot be empty.</value></data>
+  <data name="Execution_TagPrompt" xml:space="preserve"><value>Separate tags with commas. Leave empty to clear them.</value></data>
+  <data name="Execution_PermanentDeletePrompt" xml:space="preserve"><value>Permanently delete the {0} selected records and their management index. This cannot be restored from trash. Workspace source files stay unchanged.</value></data>
+  <data name="Execution_TrashPrompt" xml:space="preserve"><value>Move the {0} selected records to trash. Running or pending-approval records are kept. Workspace source files stay unchanged.</value></data>
+  <data name="Execution_ManagementResult" xml:space="preserve"><value>Completed {0}, skipped {1}, failed {2}.
+
+{3}</value></data>
+  <data name="Execution_ManagementResultTitle" xml:space="preserve"><value>Management result</value></data>
+  <data name="Execution_RecordsUpdated" xml:space="preserve"><value>Updated {0} records.</value></data>
+  <data name="Execution_TerminatePrompt" xml:space="preserve"><value>Block new execution for this conversation, then cancel pending approvals and stop running calls. History stays readable.</value></data>
+  <data name="Execution_ResumePrompt" xml:space="preserve"><value>Allow this conversation to submit requests again. Calls that were already cancelled are not retried automatically.</value></data>
+  <data name="Execution_Terminate" xml:space="preserve"><value>Terminate</value></data>
+  <data name="Execution_Resume" xml:space="preserve"><value>Resume</value></data>
+  <data name="Execution_TerminationRemaining" xml:space="preserve"><value>The termination gate is in effect, but some calls still need their stop result checked.</value></data>
+  <data name="Execution_ConversationTerminatedShort" xml:space="preserve"><value>This conversation is terminated. Later execution is blocked.</value></data>
+  <data name="Execution_ConversationResumed" xml:space="preserve"><value>This conversation is resumed. Cancelled calls were not replayed.</value></data>
+  <data name="Execution_LinkTaskExplanation" xml:space="preserve"><value>Create the link only. This does not switch the task that is executing.</value></data>
+  <data name="Execution_OrEnterTaskId" xml:space="preserve"><value>Or enter a task_id that is not shown in the first 200 items:</value></data>
+  <data name="Execution_LinkTask" xml:space="preserve"><value>Link task</value></data>
+  <data name="Execution_PermissionsSaved" xml:space="preserve"><value>Permission settings were saved.</value></data>
+  <data name="Execution_LocalStreamLine" xml:space="preserve"><value>Local execution stream: {0}</value></data>
+  <data name="Execution_StreamConnected" xml:space="preserve"><value>Connected</value></data>
+  <data name="Execution_StreamReconnecting" xml:space="preserve"><value>Reconnecting</value></data>
+  <data name="Execution_CheckingPublicAccess" xml:space="preserve"><value>Checking public access…</value></data>
+  <data name="Execution_PublicAddressNotConfigured" xml:space="preserve"><value>No public address is configured</value></data>
+  <data name="Execution_RuntimeConfigTooLarge" xml:space="preserve"><value>The runtime configuration exceeds the size limit.</value></data>
+  <data name="Execution_PublicReachable" xml:space="preserve"><value>Public endpoint is reachable</value></data>
+  <data name="Execution_PublicUnreachable" xml:space="preserve"><value>Public endpoint is unreachable or the check did not pass</value></data>
+  <data name="Execution_ThemeSystem" xml:space="preserve"><value>Follow system</value></data>
+  <data name="Execution_ThemeLight" xml:space="preserve"><value>Light</value></data>
+  <data name="Execution_ThemeDark" xml:space="preserve"><value>Dark</value></data>
+  <data name="Execution_DisplayRetentionNotifications" xml:space="preserve"><value>Display, retention, and notifications</value></data>
+  <data name="Execution_HistoricalTaskManagement" xml:space="preserve"><value>Historical tasks and record management</value></data>
+  <data name="Execution_SaveCurrentFilter" xml:space="preserve"><value>Save the current filter</value></data>
+  <data name="Execution_SaveFilterTitle" xml:space="preserve"><value>Save filter</value></data>
+  <data name="Execution_FilterName" xml:space="preserve"><value>Filter name</value></data>
+  <data name="Execution_SavedFilter" xml:space="preserve"><value>Filter: {0}</value></data>
+  <data name="Execution_StructureHelpTitle" xml:space="preserve"><value>Structure and usage</value></data>
+  <data name="Execution_StructureHelp" xml:space="preserve"><value>Conversations are grouped by workspace. Tasks stay inside the current conversation. Choosing a task or browsing a branch does not change the context that is executing.
+
+Each execution record shows state, action, duration, and time. Select a record to see its command, output, source, and child calls below. Use the menu or right-click to manage records in bulk.
+
+Terminating a conversation writes the server gate first, then cancels pending approvals and running calls. Closing this window only stops observation. It does not stop execution.
+
+Older tasks without steps show that progress was not recorded. Unattributed calls keep their original call IDs and can be exported, isolated, archived, or moved to trash. Permanent deletion does not delete project source files.
+
+Shortcuts: Ctrl+F searches conversations, F5 refreshes, Esc closes details, and Shift+F10 opens the menu for the selected item.</value></data>
+  <data name="Execution_ExportCurrentFilter" xml:space="preserve"><value>Export the current filter</value></data>
+  <data name="Execution_ExportSelectedRecords" xml:space="preserve"><value>Export selected records</value></data>
+  <data name="Execution_ArchiveSelected" xml:space="preserve"><value>Archive selected</value></data>
+  <data name="Execution_IsolateSelected" xml:space="preserve"><value>Isolate selected</value></data>
+  <data name="Execution_CurrentRecords" xml:space="preserve"><value>Current records</value></data>
+  <data name="Execution_ArchivedRecords" xml:space="preserve"><value>Archived records</value></data>
+  <data name="Execution_IsolatedRecords" xml:space="preserve"><value>Isolated records</value></data>
+  <data name="Execution_TrashRecords" xml:space="preserve"><value>Trash records</value></data>
+  <data name="Execution_RestoreSelected" xml:space="preserve"><value>Restore selected</value></data>
+  <data name="Execution_DeleteSelectedPermanently" xml:space="preserve"><value>Delete selected permanently</value></data>
+  <data name="Execution_UnisolateSelected" xml:space="preserve"><value>Remove isolation</value></data>
+  <data name="Execution_UnarchiveSelected" xml:space="preserve"><value>Unarchive selected</value></data>
+  <data name="Execution_ClipboardBusy" xml:space="preserve"><value>The clipboard is busy. Try copying again.</value></data>
+  <data name="Execution_RetryInstructionCopiedTitle" xml:space="preserve"><value>Retry note copied</value></data>
+  <data name="Execution_RetryInstructionBody" xml:space="preserve"><value>Read call {0}, including its original request and failure, and check whether it already had a partial effect before deciding whether to retry with retry_of_call_id={0}. Do not replay the command from the summary.</value></data>
+  <data name="Execution_SwitchBranchTitle" xml:space="preserve"><value>Switch continuation branch</value></data>
+  <data name="Execution_SwitchBranchPrompt" xml:space="preserve"><value>Move this task's continuation point to the selected branch. Commands that already ran keep their original binding.</value></data>
+  <data name="Execution_Switch" xml:space="preserve"><value>Switch</value></data>
+  <data name="Execution_ContinuationBranchUpdated" xml:space="preserve"><value>The continuation branch was updated.</value></data>
+  <data name="Execution_ContinueTaskBody" xml:space="preserve"><value>Continue task {0}. Read the latest state of the task and branch {1}, continue from the checkpoint, and do not repeat work that is already complete.</value></data>
+  <data name="Execution_ContinueTaskCopied" xml:space="preserve"><value>The continuation note was copied.</value></data>
+  <data name="Execution_SetCurrentTask" xml:space="preserve"><value>Use as this conversation's current task</value></data>
+  <data name="Execution_RenameTask" xml:space="preserve"><value>Rename task</value></data>
+  <data name="Execution_ArchiveTask" xml:space="preserve"><value>Archive task</value></data>
+  <data name="Execution_CancelTask" xml:space="preserve"><value>Cancel task</value></data>
+  <data name="Execution_CancelReason" xml:space="preserve"><value>Cancellation reason</value></data>
+  <data name="Execution_AttentionTitle" xml:space="preserve"><value>Needs attention</value></data>
+  <data name="Execution_SelectRecordsFirst" xml:space="preserve"><value>Select the records to manage first.</value></data>
+  <data name="Execution_ViewDetails" xml:space="preserve"><value>View details</value></data>
+  <data name="Execution_Unisolate" xml:space="preserve"><value>Remove isolation</value></data>
+  <data name="Execution_Isolate" xml:space="preserve"><value>Isolate</value></data>
+  <data name="Execution_Restore" xml:space="preserve"><value>Restore</value></data>
+  <data name="Execution_SelectExportFirst" xml:space="preserve"><value>Select what to export first.</value></data>
+  <data name="Execution_TaskRecords" xml:space="preserve"><value>Task records</value></data>
+  <data name="Execution_ConversationExecutionRecords" xml:space="preserve"><value>Conversation execution records</value></data>
+  <data name="Execution_SelectedExecutionRecords" xml:space="preserve"><value>Selected execution records</value></data>
+  <data name="Execution_ExecutionRecords" xml:space="preserve"><value>Execution records</value></data>
+  <data name="Execution_ExportPageDidNotAdvance" xml:space="preserve"><value>Export paging did not advance, so the file was not written.</value></data>
+  <data name="Execution_ExportTooLarge" xml:space="preserve"><value>This export exceeds 100000 records. Narrow the filter.</value></data>
+  <data name="Execution_ExportDialogTitle" xml:space="preserve"><value>Export {0}</value></data>
+  <data name="Execution_JsonFileFilter" xml:space="preserve"><value>JSON files|*.json</value></data>
+  <data name="Execution_ExportedPath" xml:space="preserve"><value>Exported: {0}</value></data>
+  <data name="Execution_StateWaiting" xml:space="preserve"><value>Waiting to run</value></data>
+  <data name="Execution_StateRunning" xml:space="preserve"><value>Running</value></data>
+  <data name="Execution_StatePendingApproval" xml:space="preserve"><value>Pending approval</value></data>
+  <data name="Execution_StateCompleted" xml:space="preserve"><value>Completed</value></data>
+  <data name="Execution_StateFailed" xml:space="preserve"><value>Failed</value></data>
+  <data name="Execution_StatePartial" xml:space="preserve"><value>Partial</value></data>
+  <data name="Execution_StateCancelled" xml:space="preserve"><value>Cancelled</value></data>
+  <data name="Execution_StateUnknown" xml:space="preserve"><value>Result needs verification</value></data>
+  <data name="Execution_StateBlocked" xml:space="preserve"><value>Blocked</value></data>
+  <data name="Execution_StateNotStarted" xml:space="preserve"><value>Not started</value></data>
+  <data name="Execution_ModeFull" xml:space="preserve"><value>Full permission</value></data>
+  <data name="Execution_ModeReadOnly" xml:space="preserve"><value>Read-only</value></data>
+  <data name="Execution_ModeApproval" xml:space="preserve"><value>Approval required</value></data>
+  <data name="Execution_UnassignedWorkspace" xml:space="preserve"><value>No workspace</value></data>
+  <data name="Execution_HistoricalRecord" xml:space="preserve"><value>Historical record</value></data>
+  <data name="Execution_ConversationFallbackTitle" xml:space="preserve"><value>Conversation · {0}</value></data>
+  <data name="Execution_GlyphPendingApproval" xml:space="preserve"><value>A</value></data>
+  <data name="Execution_OriginUnattributed" xml:space="preserve"><value>Unattributed</value></data>
+  <data name="Execution_OriginLoading" xml:space="preserve"><value>Reading the source</value></data>
+  <data name="Execution_OriginDeleted" xml:space="preserve"><value>Source was deleted</value></data>
+  <data name="Execution_OriginError" xml:space="preserve"><value>Could not read the source</value></data>
+  <data name="Execution_OriginUnavailable" xml:space="preserve"><value>Source is unavailable</value></data>
+  <data name="Execution_HistoryIncomplete" xml:space="preserve"><value>Part of this record's history is unavailable.</value></data>
+  <data name="Execution_StderrHeading" xml:space="preserve"><value>Standard error</value></data>
+  <data name="Execution_NoOutput" xml:space="preserve"><value>No output.</value></data>
+  <data name="Execution_OutputTruncatedNotice" xml:space="preserve"><value>Output was truncated. Only the retained part is shown.</value></data>
+  <data name="Execution_DurationSeconds" xml:space="preserve"><value>{0:0.000} s</value></data>
+  <data name="Execution_DialogClose" xml:space="preserve"><value>Close</value></data>
+  <data name="Execution_DialogConfirm" xml:space="preserve"><value>OK</value></data>
+  <data name="Execution_DialogCancel" xml:space="preserve"><value>Cancel</value></data>
+  <data name="Execution_ApprovalTitle" xml:space="preserve"><value>Approval before execution · fixed request</value></data>
+  <data name="Execution_ApprovalHeader" xml:space="preserve"><value>Source conversation: {0}
+Linked task: {1}
+Operation: {2}
+Matched rule: {3}
+Reason: {4}
+
+Scope:
+{5}
+
+Current state: {6}</value></data>
+  <data name="Execution_NoLinkedTask" xml:space="preserve"><value>None</value></data>
+  <data name="Execution_NotYetExecuted" xml:space="preserve"><value>Not executed yet</value></data>
+  <data name="Execution_AllowWorkspaceTools" xml:space="preserve"><value>Also allow similar tool operations in this workspace (create the Allow rule below)</value></data>
+  <data name="Execution_RejectApproval" xml:space="preserve"><value>Reject</value></data>
+  <data name="Execution_AllowOnce" xml:space="preserve"><value>Allow once</value></data>
+  <data name="Execution_ApproveAndSaveRule" xml:space="preserve"><value>Approve and save the workspace rule</value></data>
+  <data name="Execution_Back" xml:space="preserve"><value>Back</value></data>
+  <data name="Execution_PermissionsTitle" xml:space="preserve"><value>Execution permissions · server policy</value></data>
+  <data name="Execution_PermissionSummary" xml:space="preserve"><value>Effective mode for the selected object: {0}
+Default mode: {1} · policy revision: {2}
+Permissions only decide whether AgentDock dispatches a request. They do not raise operating-system privileges. An explicit Deny rule still applies under full permission.</value></data>
+  <data name="Execution_GlobalDefault" xml:space="preserve"><value>Global default</value></data>
+  <data name="Execution_CurrentConversation" xml:space="preserve"><value>Current conversation</value></data>
+  <data name="Execution_InheritanceLine" xml:space="preserve"><value>Inheritance: conversation, then workspace, then the global default. Unconfigured levels keep inheriting. Effective source: {0}</value></data>
+  <data name="Execution_Scope" xml:space="preserve"><value>Scope</value></data>
+  <data name="Execution_ExecutionMode" xml:space="preserve"><value>Execution mode</value></data>
+  <data name="Execution_ModeReadOnlyChoice" xml:space="preserve"><value>Read-only check: writes and unknown side effects are not dispatched</value></data>
+  <data name="Execution_ModeRulesChoice" xml:space="preserve"><value>Approve by rules: confirmed safe items run, everything else waits</value></data>
+  <data name="Execution_ModeFullChoice" xml:space="preserve"><value>Full permission: this scope skips optional approval; explicit denies still apply</value></data>
+  <data name="Execution_EditDangerousRules" xml:space="preserve"><value>Also edit dangerous rules (advanced)</value></data>
+  <data name="Execution_RulesHelp" xml:space="preserve"><value>Rules match a tool name, an optional action, and a workspace. effect is deny, ask, or allow. Unlisted operations with side effects wait for approval.</value></data>
+  <data name="Execution_SaveAndApply" xml:space="preserve"><value>Save and apply</value></data>
+  <data name="Execution_FullRequiresWorkspace" xml:space="preserve"><value>Full permission must use a workspace or the global scope. A conversation scope can only restrict permission.</value></data>
+  <data name="Execution_ConfirmFullTitle" xml:space="preserve"><value>Confirm the full-permission scope</value></data>
+  <data name="Execution_ConfirmFullPrompt" xml:space="preserve"><value>Enable full permission for “{0}”. Commands, file writes, and third-party tools skip optional approval. Explicit deny rules still apply.</value></data>
+  <data name="Execution_Enable" xml:space="preserve"><value>Enable</value></data>
+  <data name="Execution_RulesMustBeArray" xml:space="preserve"><value>Rules must be a JSON array.</value></data>
+  <data name="Execution_RulesInvalid" xml:space="preserve"><value>Rules are invalid</value></data>
+  <data name="Execution_PreferencesTitle" xml:space="preserve"><value>Display and trash retention</value></data>
+  <data name="Execution_RetentionHelp" xml:space="preserve"><value>Days to keep objects newly moved to trash (1–3650). Existing objects keep their original expiry. Workspaces and source files are not cleaned from trash.</value></data>
+  <data name="Execution_FontSizeLabel" xml:space="preserve"><value>Interface font size (12–20)</value></data>
+  <data name="Execution_NotifyPending" xml:space="preserve"><value>Notify when a new approval request arrives</value></data>
+  <data name="Execution_Save" xml:space="preserve"><value>Save</value></data>
+  <data name="Execution_RetentionInvalid" xml:space="preserve"><value>Enter a number of days from 1 to 3650.</value></data>
+  <data name="Execution_RetentionInvalidTitle" xml:space="preserve"><value>Invalid retention period</value></data>
+  <data name="Execution_StreamNotEvent" xml:space="preserve"><value>The service did not return an execution-record event stream.</value></data>
+  <data name="Execution_StreamDisconnected" xml:space="preserve"><value>The execution stream disconnected. Reconnecting by sequence.</value></data>
+  <data name="Execution_EventTooLarge" xml:space="preserve"><value>The execution event exceeds the size limit.</value></data>
+  <data name="Execution_EventSequenceInvalid" xml:space="preserve"><value>The execution event sequence is invalid.</value></data>
+  <data name="Execution_EventIdInvalid" xml:space="preserve"><value>The execution event ID is invalid.</value></data>
+  <data name="Execution_EventLineTooLarge" xml:space="preserve"><value>The execution event line exceeds the size limit.</value></data>
+  <data name="Execution_ActivitySummary" xml:space="preserve"><value>{0} running · {1} pending approval · {2} result needs verification</value></data>
+  <data name="Execution_RuntimeRootRequired" xml:space="preserve"><value>--runtime-root requires an explicit directory.</value></data>
+  <data name="Execution_OutputBlock" xml:space="preserve"><value>{0}
+
+{1}
+{2}</value></data>
+  <data name="Execution_SourceDetails" xml:space="preserve"><value>{0}{1}{2}{3}{4}</value></data>
+  <data name="Execution_GoalWithNext" xml:space="preserve"><value>{0}
+{1}</value></data>
+  <data name="Execution_StepLine" xml:space="preserve"><value>{0}  {1}</value></data>
+  <data name="Execution_PublicStateBlock" xml:space="preserve"><value>{0}
+{1}</value></data>
+  <data name="Execution_IdMessage" xml:space="preserve"><value>{0}: {1}</value></data>
+  <data name="Execution_WarningWithDetails" xml:space="preserve"><value>{0}{1}</value></data>
+  <data name="Execution_EventSequenceMismatch" xml:space="preserve"><value>The call sequence does not match the event sequence.</value></data>
+  <data name="Execution_TagSeparator" xml:space="preserve"><value>, </value></data>
 </root>

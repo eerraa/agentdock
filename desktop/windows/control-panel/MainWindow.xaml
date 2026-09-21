@@ -319,6 +319,7 @@
                   <ComboBoxItem Content="{local:Loc FollowSystem}" Tag="system" />
                   <ComboBoxItem Content="{local:Loc SimplifiedChinese}" Tag="zh-CN" />
                   <ComboBoxItem Content="{local:Loc EnglishLanguage}" Tag="en" />
+                  <ComboBoxItem Content="{local:Loc KoreanLanguage}" Tag="ko-KR" />
                 </ComboBox>
               </Grid>
             </GroupBox>

@@ -283,6 +283,7 @@ func TestWindowsControlPanelManagesHeavyPluginsWithoutDuplicateTopLevelRows(t *t
 	for _, resourceFile := range []string{
 		filepath.Join(root, "Resources", "UiStrings.resx"),
 		filepath.Join(root, "Resources", "UiStrings.zh-CN.resx"),
+		filepath.Join(root, "Resources", "UiStrings.ko-KR.resx"),
 	} {
 		data, err := os.ReadFile(resourceFile)
 		if err != nil {

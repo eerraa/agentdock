@@ -42,7 +42,18 @@ func (r *Runtime) executionGuidance(name string, state executionObservation, res
 	sessionID := stringArg(result, "session_id")
 	running := stringArg(result, "status") == "running"
 	if running && sessionID != "" {
-		guidance["next_required"] = []map[string]any{{"action": "observe", "tool": "session_observe", "arguments": map[string]any{"action": "status", "session_id": sessionID}, "text": "Continue observing this session. Do not start the same long command again."}}
+		if requestID := stringArg(result, "execution_request_id"); requestID != "" {
+			arguments := map[string]any{"action": "peek", "execution_request_id": requestID}
+			if offset, ok := result["stdout_next_offset"]; ok && offset != nil {
+				arguments["stdout_offset"] = offset
+			}
+			if offset, ok := result["stderr_next_offset"]; ok && offset != nil {
+				arguments["stderr_offset"] = offset
+			}
+			guidance["next_required"] = []map[string]any{{"action": "peek", "tool": "session_observe", "arguments": arguments, "text": "Read this execution again with the same execution_request_id and the returned offsets. A lost response is not a reason to start another execution."}}
+		} else {
+			guidance["next_required"] = []map[string]any{{"action": "observe", "tool": "session_observe", "arguments": map[string]any{"action": "status", "session_id": sessionID}, "text": "Continue observing this session. Do not start the same long command again."}}
+		}
 	} else if failed || resultReportsFailure(result) || result["command_ok"] == false {
 		guidance["next_required"] = []map[string]any{{"action": "inspect", "text": "Inspect the actual error, exit code and partial effects before retrying. Reuse the same task and thread; a tool response alone does not imply command success."}}
 	} else if name == "file_edit" && result["dry_run"] != true && result["changed"] != false {

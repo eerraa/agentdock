@@ -38,6 +38,8 @@ Native 工作区校验实际路径、符号链接、父目录、越界和 Window
 
 事件存储于 `<AGENTDOCK_HOME>/tasks/activity`，按全局 seq 分段，Task/Thread 字段用于筛选。默认最多保留 8 个约 8 MiB 分段；轮换、按时间清理或崩溃预留序号可以造成明确的历史缺口，不重用已经分配的序号。恢复缺口以 gap/reset/warning 通知客户端，不能把已清理数据作为完整历史。
 
+带 `execution_request_id` 的命令 Session 在 status、write、kill 和 kill_all 之后仍保留到现有输出清理边界，供 `session_observe action=peek` 按绝对字节偏移重复读取。没有该 ID 的旧 Session 仍在完成后被消费删除。peek 不移动 status 使用的共享游标。输出被容量或时间清理后，claim 还在，但结果是 `output_unavailable`，不能把空输出当成命令没有产生输出。Activity 里删除 Call 也不会让同一个 ID 再执行一次；这时查询为 `history_unavailable`。claim 元数据有进程内上限（全局 16384、每个认证主体 4096），不是持久化 exactly-once。
+
 终端 stdout/stderr 以 300 ms 窗口合并，每条预览各最多 8 KiB。活动读取与工具输出具有独立游标。分段写入前脱敏命令、授权头、密码参数、私钥参数及已知秘密环境值，超长不完整行和私钥块被省略并标记截断；不保存环境变量映射或完整终端输出。动态 MCP、浏览器和插件事件只保存外层调用事实，不将任意远端正文保存成可信执行指导。
 
 本地 API 支持活动查询、SSE、线程查询、控制和当前 Diff：

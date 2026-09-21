@@ -10,6 +10,7 @@ internal static class UiText
     internal const string SystemPreference = "system";
     internal const string EnglishPreference = "en";
     internal const string SimplifiedChinesePreference = "zh-CN";
+    internal const string KoreanPreference = "ko-KR";
 
     private static readonly string SystemLocale = NormalizeCultureName(CultureInfo.CurrentUICulture.Name);
     private static readonly ResourceManager Resources = new(
@@ -62,12 +63,24 @@ internal static class UiText
 
     internal static string NormalizePreference(string? value)
     {
-        return value?.Trim() switch
+        var token = value?.Trim();
+        if (string.IsNullOrEmpty(token))
         {
-            EnglishPreference => EnglishPreference,
-            SimplifiedChinesePreference => SimplifiedChinesePreference,
-            _ => SystemPreference
-        };
+            return SystemPreference;
+        }
+        if (token.Equals(EnglishPreference, StringComparison.OrdinalIgnoreCase))
+        {
+            return EnglishPreference;
+        }
+        if (token.Equals(SimplifiedChinesePreference, StringComparison.OrdinalIgnoreCase))
+        {
+            return SimplifiedChinesePreference;
+        }
+        if (token.Equals(KoreanPreference, StringComparison.OrdinalIgnoreCase))
+        {
+            return KoreanPreference;
+        }
+        return SystemPreference;
     }
 
     internal static string ResolveLocale(string preference, string systemCultureName)
@@ -76,13 +89,14 @@ internal static class UiText
         {
             EnglishPreference => EnglishPreference,
             SimplifiedChinesePreference => SimplifiedChinesePreference,
+            KoreanPreference => KoreanPreference,
             _ => NormalizeCultureName(systemCultureName)
         };
     }
 
     internal static string NormalizeCultureName(string? value)
     {
-        var locale = value?.Trim().ToLowerInvariant();
+        var locale = value?.Trim().Replace('_', '-').ToLowerInvariant();
         if (string.IsNullOrEmpty(locale))
         {
             return EnglishPreference;
@@ -90,6 +104,11 @@ internal static class UiText
         if (locale is "zh" or "zh-cn" or "zh-sg" or "zh-hans" || locale.StartsWith("zh-hans-", StringComparison.Ordinal))
         {
             return SimplifiedChinesePreference;
+        }
+        // Only the explicit Korean tags from the locale table. Other ko-* tags stay English.
+        if (locale is "ko" or "ko-kr")
+        {
+            return KoreanPreference;
         }
         return EnglishPreference;
     }
@@ -102,6 +121,15 @@ internal static class UiText
     public static string Format(string key, params object?[] args)
     {
         return string.Format(CultureInfo.CurrentCulture, Get(key), args);
+    }
+
+    // Tests set the resource culture without writing the user preference file.
+    internal static void ApplyResourceCultureForTests(string locale)
+    {
+        var culture = CultureInfo.GetCultureInfo(locale);
+        _resourceCulture = culture;
+        CultureInfo.CurrentUICulture = culture;
+        CultureInfo.DefaultThreadCurrentUICulture = culture;
     }
 
     private static void ApplyPreference(string preference)
