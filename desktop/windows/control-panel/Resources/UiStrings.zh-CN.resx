@@ -921,4 +921,440 @@
   <data name="PublicMetadataMismatch" xml:space="preserve"><value>元数据与当前 Origin 不一致</value></data>
   <data name="PublicDiscoveryAuthorizationRequired" xml:space="preserve"><value>公网可达，认证发现通过</value></data>
   <data name="PublicOAuthCapabilitiesMissing" xml:space="preserve"><value>OAuth 元数据缺少授权码、S256 或刷新能力声明。</value></data>
+  <data name="KoreanLanguage" xml:space="preserve"><value>한국어</value></data>
+  <data name="Activity_NeedsAttention" xml:space="preserve"><value>待处理任务</value></data>
+  <data name="Activity_InProgressTasks" xml:space="preserve"><value>进行中任务</value></data>
+  <data name="Activity_EndedTasks" xml:space="preserve"><value>已结束任务</value></data>
+  <data name="Activity_Records" xml:space="preserve"><value>活动记录</value></data>
+  <data name="Activity_NoStep" xml:space="preserve"><value>尚未记录当前步骤</value></data>
+  <data name="Activity_NoReason" xml:space="preserve"><value>尚未记录原因</value></data>
+  <data name="Activity_NoNext" xml:space="preserve"><value>尚未记录下一动作</value></data>
+  <data name="Activity_CancelReason" xml:space="preserve"><value>取消原因</value></data>
+  <data name="Activity_TaskBlockReason" xml:space="preserve"><value>任务阻塞原因</value></data>
+  <data name="Activity_ThreadBlockReason" xml:space="preserve"><value>分支阻塞原因</value></data>
+  <data name="Activity_NoWorkspace" xml:space="preserve"><value>未绑定工作区</value></data>
+  <data name="Activity_WorkspaceMissing" xml:space="preserve"><value>绑定的工作区记录已缺失</value></data>
+  <data name="Activity_WorkspaceButton" xml:space="preserve"><value>打开工作区</value></data>
+  <data name="Activity_Summary" xml:space="preserve"><value>阶段摘要</value></data>
+  <data name="Activity_CommandDirectory" xml:space="preserve"><value>命令目录</value></data>
+  <data name="Activity_RunningNow" xml:space="preserve"><value>最近检查：运行中</value></data>
+  <data name="Activity_TaskCancelledEvent" xml:space="preserve"><value>任务已取消</value></data>
+  <data name="Activity_Continue" xml:space="preserve"><value>复制继续指令</value></data>
+  <data name="Activity_Retry" xml:space="preserve"><value>复制重试指令</value></data>
+  <data name="Activity_ContinueInstruction" xml:space="preserve"><value>读取此任务与分支的检查点，确认绑定工作区后继续未完成工作。复制本指令不会自动启动执行。</value></data>
+  <data name="Activity_RetryInstruction" xml:space="preserve"><value>保留原任务的已取消状态。读取其目标和取消原因，另建新任务重试。</value></data>
+  <data name="Activity_ResumeTask" xml:space="preserve"><value>解除任务阻塞</value></data>
+  <data name="Activity_ResumeHint" xml:space="preserve"><value>状态已恢复，请在已连接的客户端继续执行。此操作不会启动模型。</value></data>
+  <data name="Activity_LiveCommands" xml:space="preserve"><value>实时命令会话 · 当前任务所有分支</value></data>
+  <data name="Activity_LiveUnavailable" xml:space="preserve"><value>实时会话状态不可用，重新检查前无法停止命令。</value></data>
+  <data name="Activity_NoRunning" xml:space="preserve"><value>最近检查没有运行命令。任务进度不代表客户端当前执行状态。</value></data>
+  <data name="Activity_RunningAfterCancel" xml:space="preserve"><value>任务已结束，但其命令进程仍在运行。</value></data>
+  <data name="Activity_UnknownCommand" xml:space="preserve"><value>命令会话 · 命令正文未保留</value></data>
+  <data name="Activity_Technical" xml:space="preserve"><value>技术详情</value></data>
+  <data name="Activity_Progress" xml:space="preserve"><value>步骤进度</value></data>
+  <data name="Activity_TaskSteps" xml:space="preserve"><value>任务步骤</value></data>
+  <data name="Activity_BranchSteps" xml:space="preserve"><value>当前查看分支步骤</value></data>
+  <data name="Activity_History" xml:space="preserve"><value>活动记录</value></data>
+  <data name="Activity_ReturnLatest" xml:space="preserve"><value>返回最新活动</value></data>
+  <data name="Activity_NoResults" xml:space="preserve"><value>没有符合筛选条件的任务</value></data>
+  <data name="Activity_CategoryAll" xml:space="preserve"><value>全部活动类型</value></data>
+  <data name="Activity_CategoryCommand" xml:space="preserve"><value>命令</value></data>
+  <data name="Activity_CategoryFile" xml:space="preserve"><value>文件修改</value></data>
+  <data name="Activity_CategoryCheckpoint" xml:space="preserve"><value>阶段摘要与验收</value></data>
+  <data name="Activity_CategoryLifecycle" xml:space="preserve"><value>生命周期及其他活动</value></data>
+  <data name="Activity_LastChecked" xml:space="preserve"><value>最近检查</value></data>
+  <data name="Activity_ClipboardReady" xml:space="preserve"><value>继续指令已复制。</value></data>
+  <data name="Activity_DiffCurrentHint" xml:space="preserve"><value>此处比较当前工作树，不代表事件发生时的历史文件内容。</value></data>
+  <data name="Activity_Title" xml:space="preserve"><value>AgentDock · 任务活动中心</value></data>
+  <data name="Activity_Open" xml:space="preserve"><value>任务活动中心</value></data>
+  <data name="Activity_Facts" xml:space="preserve"><value>仅展示 AgentDock 已记录的执行事实。线程用于恢复任务，不表示后台 AI 工作进程。</value></data>
+  <data name="Activity_Tasks" xml:space="preserve"><value>任务</value></data>
+  <data name="Activity_Search" xml:space="preserve"><value>按标题、项目、工作区或任务 ID 筛选</value></data>
+  <data name="Activity_All" xml:space="preserve"><value>全部状态</value></data>
+  <data name="Activity_Refresh" xml:space="preserve"><value>刷新</value></data>
+  <data name="Activity_Archived" xml:space="preserve"><value>显示归档任务</value></data>
+  <data name="Activity_Thread" xml:space="preserve"><value>执行分支</value></data>
+  <data name="Activity_ThreadActions" xml:space="preserve"><value>分支操作 ▾</value></data>
+  <data name="Activity_TaskActions" xml:space="preserve"><value>任务操作 ▾</value></data>
+  <data name="Activity_SetActive" xml:space="preserve"><value>设为默认继续分支</value></data>
+  <data name="Activity_Create" xml:space="preserve"><value>新建线程</value></data>
+  <data name="Activity_Fork" xml:space="preserve"><value>从检查点分叉</value></data>
+  <data name="Activity_Block" xml:space="preserve"><value>阻塞线程</value></data>
+  <data name="Activity_Resume" xml:space="preserve"><value>解除分支阻塞</value></data>
+  <data name="Activity_Close" xml:space="preserve"><value>关闭线程</value></data>
+  <data name="Activity_CancelTask" xml:space="preserve"><value>取消任务</value></data>
+  <data name="Activity_Archive" xml:space="preserve"><value>归档任务</value></data>
+  <data name="Activity_Unarchive" xml:space="preserve"><value>解除归档</value></data>
+  <data name="Activity_Cleanup" xml:space="preserve"><value>清理 30 天前的活动日志</value></data>
+  <data name="Activity_Stop" xml:space="preserve"><value>停止命令</value></data>
+  <data name="Activity_Copy" xml:space="preserve"><value>复制脱敏命令</value></data>
+  <data name="Activity_Directory" xml:space="preserve"><value>打开命令目录</value></data>
+  <data name="Activity_File" xml:space="preserve"><value>定位修改文件</value></data>
+  <data name="Activity_Diff" xml:space="preserve"><value>查看当前差异</value></data>
+  <data name="Activity_Follow" xml:space="preserve"><value>跟随最新活动</value></data>
+  <data name="Activity_Output" xml:space="preserve"><value>展开输出</value></data>
+  <data name="Activity_OutputTruncated" xml:space="preserve"><value>展开输出 · 有界预览，已截断</value></data>
+  <data name="Activity_Details" xml:space="preserve"><value>步骤与验收</value></data>
+  <data name="Activity_Conditions" xml:space="preserve"><value>验收条件</value></data>
+  <data name="Activity_Review" xml:space="preserve"><value>最终复核</value></data>
+  <data name="Activity_Risks" xml:space="preserve"><value>剩余风险与未完成检查</value></data>
+  <data name="Activity_Workspace" xml:space="preserve"><value>工作区</value></data>
+  <data name="Activity_Step" xml:space="preserve"><value>当前步骤</value></data>
+  <data name="Activity_Next" xml:space="preserve"><value>下一动作</value></data>
+  <data name="Activity_DefaultThread" xml:space="preserve"><value>默认继续线程</value></data>
+  <data name="Activity_NoTask" xml:space="preserve"><value>选择任务后查看执行时间线。</value></data>
+  <data name="Activity_NoEvents" xml:space="preserve"><value>该线程尚无活动记录。</value></data>
+  <data name="Activity_Unassigned" xml:space="preserve"><value>未绑定任务的历史活动</value></data>
+  <data name="Activity_AllActivity" xml:space="preserve"><value>全部执行记录</value></data>
+  <data name="Activity_AllActivityDetail" xml:space="preserve"><value>所有任务及旧版未绑定操作</value></data>
+  <data name="Activity_CancelConfirmation" xml:space="preserve"><value>该任务当前有 {0} 条运行中的命令。取消任务只修改任务状态，不会停止这些进程。是否取消任务？</value></data>
+  <data name="Activity_Loading" xml:space="preserve"><value>正在加载本地活动…</value></data>
+  <data name="Activity_Live" xml:space="preserve"><value>已连接 · 实时活动</value></data>
+  <data name="Activity_Reconnecting" xml:space="preserve"><value>连接中断，正在重连本地服务…</value></data>
+  <data name="Activity_Unavailable" xml:space="preserve"><value>本地活动暂不可用，请检查服务连接。</value></data>
+  <data name="Activity_Gap" xml:space="preserve"><value>较早的活动已按保留策略清理，其余记录仍可查看。</value></data>
+  <data name="Activity_Reset" xml:space="preserve"><value>本地活动日志已变化，已重置重放位置。</value></data>
+  <data name="Activity_Warning" xml:space="preserve"><value>活动记录提示</value></data>
+  <data name="Activity_RecentOnly" xml:space="preserve"><value>窗口只保留最近 1,000 条时间线记录。</value></data>
+  <data name="Activity_MoreTasks" xml:space="preserve"><value>最多显示最近 200 个任务，可按状态缩小范围查看较早任务。</value></data>
+  <data name="Activity_Confirm" xml:space="preserve"><value>确认操作</value></data>
+  <data name="Activity_ConfirmAction" xml:space="preserve"><value>将此操作应用于所选任务或线程？已有历史记录将保留。</value></data>
+  <data name="Activity_ConfirmStop" xml:space="preserve"><value>停止当前命令会话？该进程中尚未保存的工作可能丢失。</value></data>
+  <data name="Activity_ConfirmCleanup" xml:space="preserve"><value>删除 30 天前的完整活动日志分段？任务检查点与当前输出会保留。</value></data>
+  <data name="Activity_Name" xml:space="preserve"><value>线程名称</value></data>
+  <data name="Activity_Reason" xml:space="preserve"><value>原因</value></data>
+  <data name="Activity_Required" xml:space="preserve"><value>请填写非空内容，最多 512 个字符。</value></data>
+  <data name="Activity_OK" xml:space="preserve"><value>确定</value></data>
+  <data name="Activity_Dismiss" xml:space="preserve"><value>取消</value></data>
+  <data name="Activity_OperationFailed" xml:space="preserve"><value>操作未完成。</value></data>
+  <data name="Activity_InvalidPath" xml:space="preserve"><value>记录中的路径不存在、已脱敏、属于远端环境，或不是本地文件系统路径。</value></data>
+  <data name="Activity_DiffTitle" xml:space="preserve"><value>当前仓库差异</value></data>
+  <data name="Activity_DiffEmpty" xml:space="preserve"><value>该文件当前没有已跟踪差异。</value></data>
+  <data name="Activity_Interrupted" xml:space="preserve"><value>历史记录为运行中 · 实时状态未确认</value></data>
+  <data name="Activity_State_active" xml:space="preserve"><value>进行中</value></data>
+  <data name="Activity_State_blocked" xml:space="preserve"><value>已阻塞</value></data>
+  <data name="Activity_State_completed" xml:space="preserve"><value>已完成</value></data>
+  <data name="Activity_State_cancelled" xml:space="preserve"><value>已取消</value></data>
+  <data name="Activity_State_archived" xml:space="preserve"><value>已归档</value></data>
+  <data name="Activity_State_open" xml:space="preserve"><value>开放</value></data>
+  <data name="Activity_State_closed" xml:space="preserve"><value>已关闭</value></data>
+  <data name="Activity_State_success" xml:space="preserve"><value>成功</value></data>
+  <data name="Activity_State_failed" xml:space="preserve"><value>失败</value></data>
+  <data name="Activity_State_running" xml:space="preserve"><value>运行中 · 最后记录</value></data>
+  <data name="Activity_State_timeout" xml:space="preserve"><value>已超时</value></data>
+  <data name="Activity_State_killed" xml:space="preserve"><value>已停止</value></data>
+  <data name="Activity_State_pending" xml:space="preserve"><value>待执行</value></data>
+  <data name="Activity_State_in_progress" xml:space="preserve"><value>执行中</value></data>
+  <data name="Activity_State_partial" xml:space="preserve"><value>部分完成</value></data>
+  <data name="Activity_State_exited" xml:space="preserve"><value>已退出</value></data>
+  <data name="Activity_Kind_command" xml:space="preserve"><value>命令</value></data>
+  <data name="Activity_Kind_task_created" xml:space="preserve"><value>任务已创建</value></data>
+  <data name="Activity_Kind_task_completed" xml:space="preserve"><value>任务已完成</value></data>
+  <data name="Activity_Kind_task_blocked" xml:space="preserve"><value>任务已阻塞</value></data>
+  <data name="Activity_Kind_task_resumed" xml:space="preserve"><value>任务已解除阻塞</value></data>
+  <data name="Activity_Kind_task_archived" xml:space="preserve"><value>任务已归档</value></data>
+  <data name="Activity_Kind_task_unarchived" xml:space="preserve"><value>任务已解除归档</value></data>
+  <data name="Activity_Kind_thread_created" xml:space="preserve"><value>分支已创建</value></data>
+  <data name="Activity_Kind_thread_switched" xml:space="preserve"><value>默认继续分支已更改</value></data>
+  <data name="Activity_Kind_thread_blocked" xml:space="preserve"><value>分支已阻塞</value></data>
+  <data name="Activity_Kind_thread_resumed" xml:space="preserve"><value>分支已解除阻塞</value></data>
+  <data name="Activity_Kind_thread_closed" xml:space="preserve"><value>分支已关闭</value></data>
+  <data name="Activity_Kind_activity_cleaned" xml:space="preserve"><value>历史活动已清理</value></data>
+  <data name="Activity_Kind_file_changed" xml:space="preserve"><value>文件修改</value></data>
+  <data name="Activity_Kind_step_started" xml:space="preserve"><value>步骤开始</value></data>
+  <data name="Activity_Kind_step_summary" xml:space="preserve"><value>阶段检查点</value></data>
+  <data name="Activity_Kind_tool" xml:space="preserve"><value>工具调用</value></data>
+  <data name="Activity_Kind_review_completed" xml:space="preserve"><value>最终复核</value></data>
+  <data name="Execution_SearchWorkspaceOrConversation" xml:space="preserve"><value>搜索工作区或对话</value></data>
+  <data name="Execution_Search" xml:space="preserve"><value>搜索</value></data>
+  <data name="Execution_ConversationManagement" xml:space="preserve"><value>对话管理</value></data>
+  <data name="Execution_MoreConversations" xml:space="preserve"><value>更多对话</value></data>
+  <data name="Execution_ManageThisConversation" xml:space="preserve"><value>管理此对话</value></data>
+  <data name="Execution_NoConversations" xml:space="preserve"><value>暂无对话</value></data>
+  <data name="Execution_SelectConversation" xml:space="preserve"><value>选择对话</value></data>
+  <data name="Execution_Attention" xml:space="preserve"><value>待处理</value></data>
+  <data name="Execution_Permissions" xml:space="preserve"><value>权限</value></data>
+  <data name="Execution_Connection" xml:space="preserve"><value>连接</value></data>
+  <data name="Execution_Theme" xml:space="preserve"><value>主题</value></data>
+  <data name="Execution_Settings" xml:space="preserve"><value>设置</value></data>
+  <data name="Execution_Stop" xml:space="preserve"><value>停止</value></data>
+  <data name="Execution_CurrentConversationActions" xml:space="preserve"><value>当前对话操作</value></data>
+  <data name="Execution_Close" xml:space="preserve"><value>关闭</value></data>
+  <data name="Execution_RelatedTaskTooltip" xml:space="preserve"><value>当前对话的关联任务</value></data>
+  <data name="Execution_FilterThisTask" xml:space="preserve"><value>筛选此任务</value></data>
+  <data name="Execution_ShowAllCalls" xml:space="preserve"><value>显示全部</value></data>
+  <data name="Execution_TaskDetails" xml:space="preserve"><value>任务详情</value></data>
+  <data name="Execution_SearchCalls" xml:space="preserve"><value>搜索执行记录</value></data>
+  <data name="Execution_StatusAll" xml:space="preserve"><value>全部状态</value></data>
+  <data name="Execution_StatusRunning" xml:space="preserve"><value>运行中</value></data>
+  <data name="Execution_StatusPendingApproval" xml:space="preserve"><value>待审批</value></data>
+  <data name="Execution_StatusFailed" xml:space="preserve"><value>失败</value></data>
+  <data name="Execution_StatusUnknown" xml:space="preserve"><value>待核对</value></data>
+  <data name="Execution_Older" xml:space="preserve"><value>更早</value></data>
+  <data name="Execution_Follow" xml:space="preserve"><value>跟随</value></data>
+  <data name="Execution_FollowLatestCalls" xml:space="preserve"><value>跟随最新调用</value></data>
+  <data name="Execution_ResumeFollow" xml:space="preserve"><value>继续跟随</value></data>
+  <data name="Execution_RecordManagement" xml:space="preserve"><value>记录管理</value></data>
+  <data name="Execution_NoExecutionRecords" xml:space="preserve"><value>暂无执行记录</value></data>
+  <data name="Execution_Refresh" xml:space="preserve"><value>刷新</value></data>
+  <data name="Execution_TabCommandOutput" xml:space="preserve"><value>命令与输出</value></data>
+  <data name="Execution_CopyCommand" xml:space="preserve"><value>复制命令</value></data>
+  <data name="Execution_CopyOutput" xml:space="preserve"><value>复制输出</value></data>
+  <data name="Execution_StopCall" xml:space="preserve"><value>停止调用</value></data>
+  <data name="Execution_Approve" xml:space="preserve"><value>审批</value></data>
+  <data name="Execution_Reject" xml:space="preserve"><value>拒绝</value></data>
+  <data name="Execution_RetryInstruction" xml:space="preserve"><value>重试说明</value></data>
+  <data name="Execution_TabSource" xml:space="preserve"><value>来源</value></data>
+  <data name="Execution_TabChildren" xml:space="preserve"><value>子调用</value></data>
+  <data name="Execution_TabTechnical" xml:space="preserve"><value>技术</value></data>
+  <data name="Execution_ContinueFromBranch" xml:space="preserve"><value>从此分支继续</value></data>
+  <data name="Execution_CopyContinueInstruction" xml:space="preserve"><value>复制继续说明</value></data>
+  <data name="Execution_ManageTask" xml:space="preserve"><value>管理任务</value></data>
+  <data name="Execution_DataHistoricalTasks" xml:space="preserve"><value>历史任务</value></data>
+  <data name="Execution_DataUnattributedCalls" xml:space="preserve"><value>未归属调用</value></data>
+  <data name="Execution_DataAllCalls" xml:space="preserve"><value>全部调用</value></data>
+  <data name="Execution_DataCurrent" xml:space="preserve"><value>当前</value></data>
+  <data name="Execution_DataArchived" xml:space="preserve"><value>已归档</value></data>
+  <data name="Execution_DataIsolated" xml:space="preserve"><value>已隔离</value></data>
+  <data name="Execution_DataTrash" xml:space="preserve"><value>回收站</value></data>
+  <data name="Execution_ManageSelected" xml:space="preserve"><value>管理所选</value></data>
+  <data name="Execution_Export" xml:space="preserve"><value>导出</value></data>
+  <data name="Execution_More" xml:space="preserve"><value>更多</value></data>
+  <data name="Execution_AttentionCount" xml:space="preserve"><value>待处理 {0}</value></data>
+  <data name="Execution_NewPendingApprovals" xml:space="preserve"><value>新增 {0} 项待审批请求。</value></data>
+  <data name="Execution_UnattributedRecords" xml:space="preserve"><value>未归属记录</value></data>
+  <data name="Execution_HistoricalWorkspace" xml:space="preserve"><value>历史工作区</value></data>
+  <data name="Execution_ConversationTerminated" xml:space="preserve"><value>此对话已终止，后续执行已被拦截。历史记录仍可查看和管理。</value></data>
+  <data name="Execution_NoConversationRecords" xml:space="preserve"><value>暂无对话记录</value></data>
+  <data name="Execution_ReadingExecutionRecords" xml:space="preserve"><value>正在读取执行记录</value></data>
+  <data name="Execution_HistoricalTask" xml:space="preserve"><value>历史任务</value></data>
+  <data name="Execution_ProgressNotRecorded" xml:space="preserve"><value>进度未记录</value></data>
+  <data name="Execution_NextActionLine" xml:space="preserve"><value>下一动作：{0}</value></data>
+  <data name="Execution_AcceptanceHeading" xml:space="preserve"><value>验收条件
+{0}</value></data>
+  <data name="Execution_NotRecorded" xml:space="preserve"><value>未记录</value></data>
+  <data name="Execution_HistoryRetentionGap" xml:space="preserve"><value>部分历史记录已过保留期限，当前显示现有记录。</value></data>
+  <data name="Execution_LocalStreamConnected" xml:space="preserve"><value>本地执行流已连接</value></data>
+  <data name="Execution_LocalStreamReconnecting" xml:space="preserve"><value>本地执行流重连中：{0}</value></data>
+  <data name="Execution_HistoryUnavailable" xml:space="preserve"><value>部分历史记录已不可用。</value></data>
+  <data name="Execution_UnattributedSource" xml:space="preserve"><value>未归属：记录没有可验证的来源对话。调用 ID 可用于导出、隔离、归档与删除。</value></data>
+  <data name="Execution_SourceResolved" xml:space="preserve"><value>来源已解析</value></data>
+  <data name="Execution_WorkdirLine" xml:space="preserve"><value>工作目录：{0}</value></data>
+  <data name="Execution_PermissionLine" xml:space="preserve"><value>权限：{0}</value></data>
+  <data name="Execution_FileChangesHeading" xml:space="preserve"><value>文件变更</value></data>
+  <data name="Execution_NoMatchingRecords" xml:space="preserve"><value>暂无符合条件的执行记录</value></data>
+  <data name="Execution_PreferencesTooLarge" xml:space="preserve"><value>显示设置超过大小限制，原文件已保留。</value></data>
+  <data name="Execution_PreferencesNotLoaded" xml:space="preserve"><value>显示设置未加载，原文件已保留：{0}</value></data>
+  <data name="Execution_PreferencesNotSaved" xml:space="preserve"><value>显示设置未保存：{0}</value></data>
+  <data name="Execution_CurrentConversations" xml:space="preserve"><value>当前对话</value></data>
+  <data name="Execution_ArchivedView" xml:space="preserve"><value>已归档</value></data>
+  <data name="Execution_TrashView" xml:space="preserve"><value>回收站</value></data>
+  <data name="Execution_SelectAllFiltered" xml:space="preserve"><value>选择当前筛选的全部对话</value></data>
+  <data name="Execution_ManageSelectedConversations" xml:space="preserve"><value>管理所选对话</value></data>
+  <data name="Execution_HistoricalTasksAndUnattributed" xml:space="preserve"><value>历史任务与未归属记录</value></data>
+  <data name="Execution_SelectedConversationCount" xml:space="preserve"><value>已选择当前筛选中的 {0} 个对话。</value></data>
+  <data name="Execution_ConversationDetails" xml:space="preserve"><value>对话详情</value></data>
+  <data name="Execution_UnattributedManagedByCallId" xml:space="preserve"><value>未归属记录使用原始调用 ID 管理。</value></data>
+  <data name="Execution_ExportExecutionRecords" xml:space="preserve"><value>导出执行记录</value></data>
+  <data name="Execution_ManageRecords" xml:space="preserve"><value>管理记录</value></data>
+  <data name="Execution_Rename" xml:space="preserve"><value>重命名</value></data>
+  <data name="Execution_Tags" xml:space="preserve"><value>分类标签</value></data>
+  <data name="Execution_Unpin" xml:space="preserve"><value>取消置顶</value></data>
+  <data name="Execution_Pin" xml:space="preserve"><value>置顶</value></data>
+  <data name="Execution_Unarchive" xml:space="preserve"><value>取消归档</value></data>
+  <data name="Execution_Archive" xml:space="preserve"><value>归档</value></data>
+  <data name="Execution_RestoreFromTrash" xml:space="preserve"><value>从回收站恢复</value></data>
+  <data name="Execution_MoveToTrash" xml:space="preserve"><value>移入回收站</value></data>
+  <data name="Execution_DeletePermanently" xml:space="preserve"><value>永久删除</value></data>
+  <data name="Execution_ResumeConversation" xml:space="preserve"><value>恢复此对话</value></data>
+  <data name="Execution_TerminateConversation" xml:space="preserve"><value>终止此对话</value></data>
+  <data name="Execution_LinkExistingTask" xml:space="preserve"><value>关联已有任务</value></data>
+  <data name="Execution_EnterName" xml:space="preserve"><value>输入名称</value></data>
+  <data name="Execution_NameRequired" xml:space="preserve"><value>名称不能为空。</value></data>
+  <data name="Execution_TagPrompt" xml:space="preserve"><value>使用逗号分隔多个标签，留空可清除。</value></data>
+  <data name="Execution_PermanentDeletePrompt" xml:space="preserve"><value>永久删除所选的 {0} 条记录及其管理索引。此操作不能从回收站恢复，工作区源码保持不变。</value></data>
+  <data name="Execution_TrashPrompt" xml:space="preserve"><value>将所选的 {0} 条记录移入回收站。运行中或待审批的记录会被保留，工作区源码保持不变。</value></data>
+  <data name="Execution_ManagementResult" xml:space="preserve"><value>已完成 {0}，跳过 {1}，失败 {2}。
+
+{3}</value></data>
+  <data name="Execution_ManagementResultTitle" xml:space="preserve"><value>管理结果</value></data>
+  <data name="Execution_RecordsUpdated" xml:space="preserve"><value>已更新 {0} 条记录。</value></data>
+  <data name="Execution_TerminatePrompt" xml:space="preserve"><value>先阻止该对话的新执行请求，再取消待审批请求并停止正在运行的调用。历史记录保持可读。</value></data>
+  <data name="Execution_ResumePrompt" xml:space="preserve"><value>重新允许此对话提交请求。已经取消的调用不会自动重试。</value></data>
+  <data name="Execution_Terminate" xml:space="preserve"><value>终止</value></data>
+  <data name="Execution_Resume" xml:space="preserve"><value>恢复</value></data>
+  <data name="Execution_TerminationRemaining" xml:space="preserve"><value>终止门禁已生效，仍有调用需要核对停止结果。</value></data>
+  <data name="Execution_ConversationTerminatedShort" xml:space="preserve"><value>此对话已终止，后续执行已被拦截。</value></data>
+  <data name="Execution_ConversationResumed" xml:space="preserve"><value>此对话已恢复，已取消的调用未重放。</value></data>
+  <data name="Execution_LinkTaskExplanation" xml:space="preserve"><value>只建立关联，不切换正在执行的任务。</value></data>
+  <data name="Execution_OrEnterTaskId" xml:space="preserve"><value>或输入未在前 200 项中显示的 task_id：</value></data>
+  <data name="Execution_LinkTask" xml:space="preserve"><value>关联任务</value></data>
+  <data name="Execution_PermissionsSaved" xml:space="preserve"><value>权限设置已保存。</value></data>
+  <data name="Execution_LocalStreamLine" xml:space="preserve"><value>本地执行流：{0}</value></data>
+  <data name="Execution_StreamConnected" xml:space="preserve"><value>已连接</value></data>
+  <data name="Execution_StreamReconnecting" xml:space="preserve"><value>重连中</value></data>
+  <data name="Execution_CheckingPublicAccess" xml:space="preserve"><value>正在检查公网访问…</value></data>
+  <data name="Execution_PublicAddressNotConfigured" xml:space="preserve"><value>未配置公网地址</value></data>
+  <data name="Execution_RuntimeConfigTooLarge" xml:space="preserve"><value>运行配置超过大小限制。</value></data>
+  <data name="Execution_PublicReachable" xml:space="preserve"><value>公网可达</value></data>
+  <data name="Execution_PublicUnreachable" xml:space="preserve"><value>公网不可达或检查未通过</value></data>
+  <data name="Execution_ThemeSystem" xml:space="preserve"><value>跟随系统</value></data>
+  <data name="Execution_ThemeLight" xml:space="preserve"><value>浅色</value></data>
+  <data name="Execution_ThemeDark" xml:space="preserve"><value>深色</value></data>
+  <data name="Execution_DisplayRetentionNotifications" xml:space="preserve"><value>显示、保留与通知</value></data>
+  <data name="Execution_HistoricalTaskManagement" xml:space="preserve"><value>历史任务与记录管理</value></data>
+  <data name="Execution_SaveCurrentFilter" xml:space="preserve"><value>保存当前筛选</value></data>
+  <data name="Execution_SaveFilterTitle" xml:space="preserve"><value>保存筛选</value></data>
+  <data name="Execution_FilterName" xml:space="preserve"><value>筛选名称</value></data>
+  <data name="Execution_SavedFilter" xml:space="preserve"><value>筛选：{0}</value></data>
+  <data name="Execution_StructureHelpTitle" xml:space="preserve"><value>结构与使用说明</value></data>
+  <data name="Execution_StructureHelp" xml:space="preserve"><value>左侧按工作区组织对话。任务位于当前对话内，任务选择和分支浏览不会改变正在执行的上下文。
+
+单条执行记录显示状态、动作、耗时和时间；点击记录后在下方查看命令、输出、来源和子调用。右键或使用菜单可批量管理记录。
+
+终止对话会先写入服务端门禁，再取消待审批和运行调用。关闭本窗口只退出观察，不会停止执行。
+
+旧任务缺少步骤时显示“进度未记录”。未归属调用保留原始调用 ID，可以导出、隔离、归档和移入回收站。永久删除不会删除项目源码。
+
+快捷键：Ctrl+F 搜索对话，F5 刷新，Esc 关闭详情，Shift+F10 打开所选条目菜单。</value></data>
+  <data name="Execution_ExportCurrentFilter" xml:space="preserve"><value>导出当前筛选</value></data>
+  <data name="Execution_ExportSelectedRecords" xml:space="preserve"><value>导出所选记录</value></data>
+  <data name="Execution_ArchiveSelected" xml:space="preserve"><value>归档所选</value></data>
+  <data name="Execution_IsolateSelected" xml:space="preserve"><value>隔离所选</value></data>
+  <data name="Execution_CurrentRecords" xml:space="preserve"><value>当前记录</value></data>
+  <data name="Execution_ArchivedRecords" xml:space="preserve"><value>已归档记录</value></data>
+  <data name="Execution_IsolatedRecords" xml:space="preserve"><value>已隔离记录</value></data>
+  <data name="Execution_TrashRecords" xml:space="preserve"><value>回收站记录</value></data>
+  <data name="Execution_RestoreSelected" xml:space="preserve"><value>恢复所选</value></data>
+  <data name="Execution_DeleteSelectedPermanently" xml:space="preserve"><value>永久删除所选</value></data>
+  <data name="Execution_UnisolateSelected" xml:space="preserve"><value>取消隔离所选</value></data>
+  <data name="Execution_UnarchiveSelected" xml:space="preserve"><value>取消归档所选</value></data>
+  <data name="Execution_ClipboardBusy" xml:space="preserve"><value>剪贴板正忙，请重试复制。</value></data>
+  <data name="Execution_RetryInstructionCopiedTitle" xml:space="preserve"><value>重试说明已复制</value></data>
+  <data name="Execution_RetryInstructionBody" xml:space="preserve"><value>请读取调用 {0} 的原始请求与失败原因，核对是否已产生部分效果，再决定是否以 retry_of_call_id={0} 重试。不要直接重放摘要中的命令。</value></data>
+  <data name="Execution_SwitchBranchTitle" xml:space="preserve"><value>切换执行分支</value></data>
+  <data name="Execution_SwitchBranchPrompt" xml:space="preserve"><value>将此任务的继续位置切换到所选分支。已运行的命令保留原绑定。</value></data>
+  <data name="Execution_Switch" xml:space="preserve"><value>切换</value></data>
+  <data name="Execution_ContinuationBranchUpdated" xml:space="preserve"><value>继续分支已更新。</value></data>
+  <data name="Execution_ContinueTaskBody" xml:space="preserve"><value>继续任务 {0}，先读取任务及分支 {1} 的最新状态，按检查点继续，已完成的操作不要重复执行。</value></data>
+  <data name="Execution_ContinueTaskCopied" xml:space="preserve"><value>继续任务说明已复制。</value></data>
+  <data name="Execution_SetCurrentTask" xml:space="preserve"><value>设为此对话当前任务</value></data>
+  <data name="Execution_RenameTask" xml:space="preserve"><value>重命名任务</value></data>
+  <data name="Execution_ArchiveTask" xml:space="preserve"><value>归档任务</value></data>
+  <data name="Execution_CancelTask" xml:space="preserve"><value>取消任务</value></data>
+  <data name="Execution_CancelReason" xml:space="preserve"><value>取消原因</value></data>
+  <data name="Execution_AttentionTitle" xml:space="preserve"><value>待处理</value></data>
+  <data name="Execution_SelectRecordsFirst" xml:space="preserve"><value>请先选择要管理的记录。</value></data>
+  <data name="Execution_ViewDetails" xml:space="preserve"><value>查看详情</value></data>
+  <data name="Execution_Unisolate" xml:space="preserve"><value>取消隔离</value></data>
+  <data name="Execution_Isolate" xml:space="preserve"><value>隔离</value></data>
+  <data name="Execution_Restore" xml:space="preserve"><value>恢复</value></data>
+  <data name="Execution_SelectExportFirst" xml:space="preserve"><value>请先选择导出对象。</value></data>
+  <data name="Execution_TaskRecords" xml:space="preserve"><value>任务记录</value></data>
+  <data name="Execution_ConversationExecutionRecords" xml:space="preserve"><value>对话执行记录</value></data>
+  <data name="Execution_SelectedExecutionRecords" xml:space="preserve"><value>所选执行记录</value></data>
+  <data name="Execution_ExecutionRecords" xml:space="preserve"><value>执行记录</value></data>
+  <data name="Execution_ExportPageDidNotAdvance" xml:space="preserve"><value>导出分页未前进，文件尚未写入。</value></data>
+  <data name="Execution_ExportTooLarge" xml:space="preserve"><value>当前导出超过 100000 条记录，请缩小筛选范围。</value></data>
+  <data name="Execution_ExportDialogTitle" xml:space="preserve"><value>导出{0}</value></data>
+  <data name="Execution_JsonFileFilter" xml:space="preserve"><value>JSON 文件|*.json</value></data>
+  <data name="Execution_ExportedPath" xml:space="preserve"><value>已导出：{0}</value></data>
+  <data name="Execution_StateWaiting" xml:space="preserve"><value>等待执行</value></data>
+  <data name="Execution_StateRunning" xml:space="preserve"><value>运行中</value></data>
+  <data name="Execution_StatePendingApproval" xml:space="preserve"><value>待审批</value></data>
+  <data name="Execution_StateCompleted" xml:space="preserve"><value>已完成</value></data>
+  <data name="Execution_StateFailed" xml:space="preserve"><value>失败</value></data>
+  <data name="Execution_StatePartial" xml:space="preserve"><value>部分完成</value></data>
+  <data name="Execution_StateCancelled" xml:space="preserve"><value>已取消</value></data>
+  <data name="Execution_StateUnknown" xml:space="preserve"><value>结果待核对</value></data>
+  <data name="Execution_StateBlocked" xml:space="preserve"><value>受阻</value></data>
+  <data name="Execution_StateNotStarted" xml:space="preserve"><value>未开始</value></data>
+  <data name="Execution_ModeFull" xml:space="preserve"><value>完全权限</value></data>
+  <data name="Execution_ModeReadOnly" xml:space="preserve"><value>只读</value></data>
+  <data name="Execution_ModeApproval" xml:space="preserve"><value>需要审批</value></data>
+  <data name="Execution_UnassignedWorkspace" xml:space="preserve"><value>未归属工作区</value></data>
+  <data name="Execution_HistoricalRecord" xml:space="preserve"><value>历史记录</value></data>
+  <data name="Execution_ConversationFallbackTitle" xml:space="preserve"><value>对话 · {0}</value></data>
+  <data name="Execution_GlyphPendingApproval" xml:space="preserve"><value>审</value></data>
+  <data name="Execution_OriginUnattributed" xml:space="preserve"><value>未归属</value></data>
+  <data name="Execution_OriginLoading" xml:space="preserve"><value>正在读取来源</value></data>
+  <data name="Execution_OriginDeleted" xml:space="preserve"><value>来源已删除</value></data>
+  <data name="Execution_OriginError" xml:space="preserve"><value>来源读取失败</value></data>
+  <data name="Execution_OriginUnavailable" xml:space="preserve"><value>来源暂不可用</value></data>
+  <data name="Execution_HistoryIncomplete" xml:space="preserve"><value>该记录的部分历史已不可用。</value></data>
+  <data name="Execution_StderrHeading" xml:space="preserve"><value>标准错误</value></data>
+  <data name="Execution_NoOutput" xml:space="preserve"><value>没有输出。</value></data>
+  <data name="Execution_OutputTruncatedNotice" xml:space="preserve"><value>输出已截断，仅显示保留部分。</value></data>
+  <data name="Execution_DurationSeconds" xml:space="preserve"><value>{0:0.000} s</value></data>
+  <data name="Execution_DialogClose" xml:space="preserve"><value>关闭</value></data>
+  <data name="Execution_DialogConfirm" xml:space="preserve"><value>确定</value></data>
+  <data name="Execution_DialogCancel" xml:space="preserve"><value>取消</value></data>
+  <data name="Execution_ApprovalTitle" xml:space="preserve"><value>执行前审批 · 固定请求</value></data>
+  <data name="Execution_ApprovalHeader" xml:space="preserve"><value>来源对话：{0}
+关联任务：{1}
+操作：{2}
+拦截规则：{3}
+原因：{4}
+
+影响范围：
+{5}
+
+当前状态：{6}</value></data>
+  <data name="Execution_NoLinkedTask" xml:space="preserve"><value>无</value></data>
+  <data name="Execution_NotYetExecuted" xml:space="preserve"><value>尚未执行</value></data>
+  <data name="Execution_AllowWorkspaceTools" xml:space="preserve"><value>同时允许此工作区的同类工具操作（创建下列 Allow 规则）</value></data>
+  <data name="Execution_RejectApproval" xml:space="preserve"><value>拒绝</value></data>
+  <data name="Execution_AllowOnce" xml:space="preserve"><value>允许一次</value></data>
+  <data name="Execution_ApproveAndSaveRule" xml:space="preserve"><value>批准并保存工作区规则</value></data>
+  <data name="Execution_Back" xml:space="preserve"><value>返回</value></data>
+  <data name="Execution_PermissionsTitle" xml:space="preserve"><value>执行权限 · 服务端策略</value></data>
+  <data name="Execution_PermissionSummary" xml:space="preserve"><value>当前选中对象生效模式：{0}
+默认模式：{1} · 策略修订：{2}
+权限只控制 AgentDock 是否派发请求，不提升操作系统权限。显式 Deny 规则在完全权限下仍然有效。</value></data>
+  <data name="Execution_GlobalDefault" xml:space="preserve"><value>全局默认</value></data>
+  <data name="Execution_CurrentConversation" xml:space="preserve"><value>当前对话</value></data>
+  <data name="Execution_InheritanceLine" xml:space="preserve"><value>继承关系：对话设置 → 工作区设置 → 全局默认。未配置的层级继续继承。当前生效来源：{0}</value></data>
+  <data name="Execution_Scope" xml:space="preserve"><value>作用范围</value></data>
+  <data name="Execution_ExecutionMode" xml:space="preserve"><value>执行模式</value></data>
+  <data name="Execution_ModeReadOnlyChoice" xml:space="preserve"><value>只读检查：写入和未知副作用禁止派发</value></data>
+  <data name="Execution_ModeRulesChoice" xml:space="preserve"><value>按规则审批：已确认安全项直行，其余等待决定</value></data>
+  <data name="Execution_ModeFullChoice" xml:space="preserve"><value>完全权限：当前范围免审批，显式禁止仍生效</value></data>
+  <data name="Execution_EditDangerousRules" xml:space="preserve"><value>同时修改危险规则（高级）</value></data>
+  <data name="Execution_RulesHelp" xml:space="preserve"><value>规则按工具名、可选 action 和工作区匹配。effect 为 deny、ask 或 allow。未列出的有副作用操作默认等待审批。</value></data>
+  <data name="Execution_SaveAndApply" xml:space="preserve"><value>保存并生效</value></data>
+  <data name="Execution_FullRequiresWorkspace" xml:space="preserve"><value>完全权限需要选择工作区或全局范围。对话范围只用于限制权限。</value></data>
+  <data name="Execution_ConfirmFullTitle" xml:space="preserve"><value>确认完全权限范围</value></data>
+  <data name="Execution_ConfirmFullPrompt" xml:space="preserve"><value>在“{0}”启用完全权限。命令、文件写入及第三方工具将免去可选审批，显式禁止规则仍生效。</value></data>
+  <data name="Execution_Enable" xml:space="preserve"><value>启用</value></data>
+  <data name="Execution_RulesMustBeArray" xml:space="preserve"><value>规则必须是 JSON 数组。</value></data>
+  <data name="Execution_RulesInvalid" xml:space="preserve"><value>规则无效</value></data>
+  <data name="Execution_PreferencesTitle" xml:space="preserve"><value>显示与回收站保留</value></data>
+  <data name="Execution_RetentionHelp" xml:space="preserve"><value>新移入回收站对象的保留天数（1–3650）。已有对象继续使用其原定到期日期。工作区和源码不在回收站清理范围。</value></data>
+  <data name="Execution_FontSizeLabel" xml:space="preserve"><value>界面字号（12–20）</value></data>
+  <data name="Execution_NotifyPending" xml:space="preserve"><value>提示新增待审批请求</value></data>
+  <data name="Execution_Save" xml:space="preserve"><value>保存</value></data>
+  <data name="Execution_RetentionInvalid" xml:space="preserve"><value>请输入 1–3650 天。</value></data>
+  <data name="Execution_RetentionInvalidTitle" xml:space="preserve"><value>保留期限无效</value></data>
+  <data name="Execution_StreamNotEvent" xml:space="preserve"><value>服务未返回执行记录事件流。</value></data>
+  <data name="Execution_StreamDisconnected" xml:space="preserve"><value>执行流已断开，正在按序号重连。</value></data>
+  <data name="Execution_EventTooLarge" xml:space="preserve"><value>执行事件超过大小限制。</value></data>
+  <data name="Execution_EventSequenceInvalid" xml:space="preserve"><value>执行事件序号无效。</value></data>
+  <data name="Execution_EventIdInvalid" xml:space="preserve"><value>执行事件 ID 无效。</value></data>
+  <data name="Execution_EventLineTooLarge" xml:space="preserve"><value>执行事件行超过大小限制。</value></data>
+  <data name="Execution_ActivitySummary" xml:space="preserve"><value>{0} 运行中 · {1} 待审批 · {2} 结果未知</value></data>
+  <data name="Execution_RuntimeRootRequired" xml:space="preserve"><value>--runtime-root requires an explicit directory.</value></data>
+  <data name="Execution_OutputBlock" xml:space="preserve"><value>{0}
+
+{1}
+{2}</value></data>
+  <data name="Execution_SourceDetails" xml:space="preserve"><value>{0}{1}{2}{3}{4}</value></data>
+  <data name="Execution_GoalWithNext" xml:space="preserve"><value>{0}
+{1}</value></data>
+  <data name="Execution_StepLine" xml:space="preserve"><value>{0}  {1}</value></data>
+  <data name="Execution_PublicStateBlock" xml:space="preserve"><value>{0}
+{1}</value></data>
+  <data name="Execution_IdMessage" xml:space="preserve"><value>{0}：{1}</value></data>
+  <data name="Execution_WarningWithDetails" xml:space="preserve"><value>{0}{1}</value></data>
+  <data name="Execution_EventSequenceMismatch" xml:space="preserve"><value>调用序号与事件序号不一致。</value></data>
+  <data name="Execution_TagSeparator" xml:space="preserve"><value>、</value></data>
 </root>
