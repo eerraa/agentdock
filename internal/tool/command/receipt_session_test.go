@@ -2,6 +2,9 @@ package command
 
 import (
 	"context"
+	"fmt"
+	"os"
+	"path/filepath"
 	"runtime"
 	"testing"
 	"time"
@@ -12,10 +15,11 @@ func TestReceiptSessionSurvivesStatusAndKillForLaterPeek(t *testing.T) {
 		t.Skip("test command uses POSIX shell syntax")
 	}
 	service, _ := newCommandTestService(t)
+	ready := filepath.Join(t.TempDir(), "ready")
 	started, err := service.execArgs(context.Background(), map[string]any{
-		"cmd":                  "printf 'kept-output'",
+		"cmd":                  fmt.Sprintf("while [ ! -f %q ]; do sleep 0.01; done; printf 'kept-output'", ready),
 		"execution_mode":       "async",
-		"timeout_ms":           2000,
+		"timeout_ms":           5000,
 		"execution_request_id": "0123456789abcdef0123456789abcdef.0123456789abcdef0123456789abcdef",
 	})
 	if err != nil {
@@ -26,9 +30,12 @@ func TestReceiptSessionSurvivesStatusAndKillForLaterPeek(t *testing.T) {
 	if !ok || !stored.Recoverable() {
 		t.Fatal("receipt session was not retained")
 	}
+	if err = os.WriteFile(ready, []byte("go"), 0o600); err != nil {
+		t.Fatal(err)
+	}
 	select {
 	case <-stored.Done:
-	case <-time.After(time.Second):
+	case <-time.After(2 * time.Second):
 		t.Fatal("command did not finish")
 	}
 	status, err := service.observeArgs(map[string]any{"action": "status", "session_id": sessionID})

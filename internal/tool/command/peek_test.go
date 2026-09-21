@@ -3,6 +3,9 @@ package command
 import (
 	"context"
 	"errors"
+	"fmt"
+	"os"
+	"path/filepath"
 	"runtime"
 	"testing"
 	"time"
@@ -90,10 +93,11 @@ func TestSessionObservePeekRejectsInvalidArgumentsAndPreservesLegacyReads(t *tes
 		})
 	}
 
+	ready := filepath.Join(t.TempDir(), "ready")
 	started, err := service.execArgs(context.Background(), map[string]any{
-		"cmd":            "printf 'legacy-status'",
+		"cmd":            fmt.Sprintf("while [ ! -f %q ]; do sleep 0.01; done; printf 'legacy-status'", ready),
 		"execution_mode": "async",
-		"timeout_ms":     2000,
+		"timeout_ms":     5000,
 	})
 	if err != nil {
 		t.Fatal(err)
@@ -103,9 +107,12 @@ func TestSessionObservePeekRejectsInvalidArgumentsAndPreservesLegacyReads(t *tes
 	if !ok {
 		t.Fatal("async session was not stored")
 	}
+	if err = os.WriteFile(ready, []byte("go"), 0o600); err != nil {
+		t.Fatal(err)
+	}
 	select {
 	case <-stored.Done:
-	case <-time.After(time.Second):
+	case <-time.After(2 * time.Second):
 		t.Fatal("command did not finish")
 	}
 
