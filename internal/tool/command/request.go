@@ -29,10 +29,14 @@ type ExecRequest struct {
 }
 
 // SessionObserveRequest 是 session_observe 的强类型输入。
+// peek 的绝对偏移使用指针，以便省略和显式 0 仍然可区分。
 type SessionObserveRequest struct {
-	Action         string `json:"action,omitempty"`
-	SessionID      string `json:"session_id,omitempty"`
-	MaxOutputBytes *int   `json:"max_output_bytes,omitempty"`
+	Action             string `json:"action,omitempty"`
+	SessionID          string `json:"session_id,omitempty"`
+	ExecutionRequestID string `json:"execution_request_id,omitempty"`
+	StdoutOffset       *int64 `json:"stdout_offset,omitempty"`
+	StderrOffset       *int64 `json:"stderr_offset,omitempty"`
+	MaxOutputBytes     *int   `json:"max_output_bytes,omitempty"`
 }
 
 // SessionActRequest 是 session_act 的强类型输入。
