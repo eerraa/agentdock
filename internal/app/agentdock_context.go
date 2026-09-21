@@ -74,7 +74,12 @@ func (r *Runtime) agentDockContext(ctx context.Context, nexusLocalOnly bool, wor
 			Version: buildinfo.Version, OS: runtime.GOOS, Arch: runtime.GOARCH,
 			AgentDockHome: r.cfg.AgentDockHome, AgentDockDefaultDir: r.cfg.AgentDockDefaultDir,
 			DefaultCWD: r.ws.DefaultDisplay(), PathModel: config.PathModel,
+			ExecutionEpoch: r.executionEpoch(),
+			CommandRecovery: &capabilityCommandRecovery{
+				Version: 1, RequestIDField: "execution_request_id", DeduplicationScope: "runtime_epoch", Peek: true, Durable: false,
+			},
 		}
+		contextResult.Rules = append(contextResult.Rules, "每次打算执行的 exec_command 使用新的 execution_request_id。响应丢失时用同一个 ID 调用 session_observe action=peek。epoch 不一致或请求未知时，先确认实际效果，不要自动开始新的执行。")
 		indexCtx, cancel := context.WithTimeout(ctx, 2*time.Second)
 		index, indexErr := r.taskTools.ContextIndex(indexCtx)
 		cancel()
@@ -183,13 +188,23 @@ type capabilityContext struct {
 }
 
 type capabilityRuntimeContext struct {
-	Version             string `json:"version"`
-	OS                  string `json:"os"`
-	Arch                string `json:"arch"`
-	AgentDockHome       string `json:"agentdock_home"`
-	AgentDockDefaultDir string `json:"agentdock_default_dir"`
-	DefaultCWD          string `json:"default_cwd"`
-	PathModel           string `json:"path_model"`
+	Version             string                     `json:"version"`
+	OS                  string                     `json:"os"`
+	Arch                string                     `json:"arch"`
+	AgentDockHome       string                     `json:"agentdock_home"`
+	AgentDockDefaultDir string                     `json:"agentdock_default_dir"`
+	DefaultCWD          string                     `json:"default_cwd"`
+	PathModel           string                     `json:"path_model"`
+	ExecutionEpoch      string                     `json:"execution_epoch,omitempty"`
+	CommandRecovery     *capabilityCommandRecovery `json:"command_recovery,omitempty"`
+}
+
+type capabilityCommandRecovery struct {
+	Version            int    `json:"version"`
+	RequestIDField     string `json:"request_id_field"`
+	DeduplicationScope string `json:"deduplication_scope"`
+	Peek               bool   `json:"peek"`
+	Durable            bool   `json:"durable"`
 }
 
 type capabilitySkillItem struct {

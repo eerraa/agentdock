@@ -79,6 +79,9 @@ func (s *Session) ReadOutputAt(stdoutOffset, stderrOffset int64, maxBytes int) (
 	if s.completed {
 		finished = s.FinishedAt
 		status = "exited"
+		if s.terminationRequested {
+			status = "killed"
+		}
 		if s.TimedOut {
 			status = "timeout"
 		}

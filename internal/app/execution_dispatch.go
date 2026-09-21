@@ -33,9 +33,22 @@ type preparedExecution struct {
 }
 
 func (r *Runtime) callObserved(ctx context.Context, spec ToolSpec, original map[string]any) (Result, error) {
-	callID, err := activity.NewExecutionID("call_")
-	if err != nil {
-		return nil, err
+	if spec.Name == "exec_command" {
+		if _, present := original["execution_request_id"]; present {
+			return r.callExecReceipt(ctx, spec, original)
+		}
+	}
+	return r.dispatchObservedCall(ctx, spec, original, "")
+}
+
+func (r *Runtime) dispatchObservedCall(ctx context.Context, spec ToolSpec, original map[string]any, reservedCallID string) (Result, error) {
+	callID := reservedCallID
+	var err error
+	if callID == "" {
+		callID, err = activity.NewExecutionID("call_")
+		if err != nil {
+			return nil, err
+		}
 	}
 	parent := activity.FromContext(ctx)
 	snapshot, resolveErr := r.resolveExecutionScope(ctx)
@@ -45,9 +58,11 @@ func (r *Runtime) callObserved(ctx context.Context, spec ToolSpec, original map[
 	initial.TaskID, initial.ThreadID, initial.StepID, initial.WorkspaceID = "", "", "", ""
 	state := executionObservation{binding: snapshot, entryBinding: snapshot, started: time.Now(), originals: map[string]string{}}
 	if err = r.appendExecution(activity.Event{Binding: initial, Kind: "call.created", Status: "created", ToolName: spec.Name, Title: spec.Title}); err != nil {
+		r.markReceiptFailed(callID)
 		return nil, toolError("AUDIT_UNAVAILABLE", "The execution journal is unavailable; the tool was not dispatched.", "runtime")
 	}
 	fail := func(failure error) (Result, error) {
+		r.markReceiptFailed(callID)
 		event := activity.Event{Binding: state.binding, Kind: "call.completed", Status: "failed", ToolName: spec.Name, Title: spec.Title, ElapsedMS: time.Since(state.started).Milliseconds(), Summary: r.executionRedactor(original).Text(failure.Error(), 4096)}
 		if event.Binding.Validate() != nil {
 			event.Binding = initial
@@ -113,6 +128,7 @@ func (r *Runtime) callObserved(ctx context.Context, spec ToolSpec, original map[
 	if state.binding.Label == "" {
 		state.binding.Label = spec.Title
 	}
+	r.markReceiptPrepared(callID, state.binding)
 	if err = r.validateSessionOwnership(ctx, spec.Name, args, state.binding); err != nil {
 		return fail(err)
 	}
@@ -180,10 +196,13 @@ func (r *Runtime) callObserved(ctx context.Context, spec ToolSpec, original map[
 			_, _ = r.permissions.Settle(ctx, approval.ID, "expired", "执行日志不可写，原操作未派发。")
 		}
 		r.executionMu.Unlock()
+		r.noteReceiptApproval(callID, approval.ID)
 		if err != nil {
 			return fail(err)
 		}
-		return r.decorateExecution(Result{"status": "pending_approval", "executed": false, "approval_id": approval.ID, "approval": approval, "next_required_action": "Wait for the local user to approve or reject this fixed request. Do not change arguments or retry to bypass approval."}, prepared), nil
+		pending := Result{"status": "pending_approval", "executed": false, "approval_id": approval.ID, "approval": approval, "next_required_action": "Wait for the local user to approve or reject this fixed request. Do not change arguments or retry to bypass approval."}
+		r.annotateReceiptResult(pending, callID, false)
+		return r.decorateExecution(pending, prepared), nil
 	}
 	runCtx, cancel := context.WithCancel(ctx)
 	r.activeCalls[callID] = &liveExecution{binding: state.binding, cancel: cancel, source: prepared.source}
@@ -229,6 +248,12 @@ func (r *Runtime) executionError(err error, state executionObservation) error {
 	copy.Details["call_id"] = state.binding.CallID
 	if state.binding.ConversationID != "" {
 		copy.Details["conversation_id"] = state.binding.ConversationID
+	}
+	if item, ok := r.receiptByCall(state.binding.CallID); ok {
+		copy.Details["execution_request_id"] = item.requestID
+		if epoch := r.executionEpoch(); epoch != "" {
+			copy.Details["execution_epoch"] = epoch
+		}
 	}
 	if toolErr.Category != "validation" || state.binding.TaskID != "" || state.binding.WorkspaceID != "" {
 		copy.Details["agentdock_guidance"] = r.executionGuidance("", state, nil, true)
@@ -403,6 +428,10 @@ func (r *Runtime) validateSessionOwnership(ctx context.Context, name string, arg
 	if !found {
 		return nil
 	}
+	return r.authorizeSessionBinding(ctx, original, binding)
+}
+
+func (r *Runtime) authorizeSessionBinding(ctx context.Context, original, current activity.Binding) error {
 	if original.SourceOwnerKey != "" && original.SourceOwnerKey != activity.SourceOwnerKey(ctx) {
 		return toolError("SESSION_OWNER_MISMATCH", "This command belongs to another authenticated client.", "permission")
 	}
@@ -412,7 +441,7 @@ func (r *Runtime) validateSessionOwnership(ctx context.Context, name string, arg
 	if err := r.conversations.Owns(ctx, original.ConversationID); err != nil {
 		return toolError("SESSION_OWNER_MISMATCH", "This command belongs to another authenticated client.", "permission")
 	}
-	if binding.ConversationID == original.ConversationID || binding.TaskID != "" && binding.TaskID == original.TaskID {
+	if current.ConversationID == original.ConversationID || current.TaskID != "" && current.TaskID == original.TaskID {
 		return nil
 	}
 	return toolError("SESSION_CONVERSATION_MISMATCH", "Resume the owning task before accessing this command from another conversation. UI selection never redirects command sessions.", "permission")
@@ -479,10 +508,15 @@ func (r *Runtime) executePrepared(ctx context.Context, p *preparedExecution) (re
 	if p.spec.Name == "exec_command" && err == nil && stringArg(result, "session_id") != "" {
 		// Command activity owns stdout/stderr and completion, including asynchronous
 		// exit. Do not produce a second success event when the process is still running.
+		r.noteReceiptSession(state.binding.CallID, stringArg(result, "session_id"))
+		r.annotateReceiptResult(result, state.binding.CallID, stringArg(p.args, "execution_request_id") != "")
 		if p.approvalID != "" {
 			r.watchApprovalCommand(p.approvalID, state.binding.CallID, stringArg(result, "session_id"))
 		}
 		return r.decorateExecution(result, p), nil
+	}
+	if err != nil {
+		r.markReceiptFailed(state.binding.CallID)
 	}
 	status := "succeeded"
 	if err != nil || resultReportsFailure(result) {

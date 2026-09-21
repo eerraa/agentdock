@@ -65,6 +65,8 @@ type Session struct {
 	stderrDroppedBytes int
 	stdoutCursor       int
 	stderrCursor       int
+	recoverable        bool
+	executionRequestID string
 }
 
 type Snapshot struct {
@@ -471,6 +473,25 @@ func StartCommandWithTTY(ctx context.Context, build CommandFactory, timeout time
 		close(s.Done)
 	}()
 	return s, status, nil
+}
+
+func (s *Session) CallID() string {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	return s.activityBinding.CallID
+}
+
+func (s *Session) MarkRecoverable(requestID string) {
+	s.mu.Lock()
+	s.recoverable = true
+	s.executionRequestID = requestID
+	s.mu.Unlock()
+}
+
+func (s *Session) Recoverable() bool {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	return s.recoverable
 }
 
 func (s *Session) SetExecutionContext(execution ExecutionContext) {

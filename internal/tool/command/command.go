@@ -97,8 +97,19 @@ func (svc *Service) Exec(ctx context.Context, request ExecRequest) (Result, erro
 	}
 	s.SetExecutionContext(invocation.execution)
 	s.SetActivityBinding(request.Binding)
+	if request.ExecutionRequestID != "" {
+		s.MarkRecoverable(request.ExecutionRequestID)
+	}
 	activityDone := svc.trackCommandActivity(s, request)
 	svc.sessions.FinishStart()
+	receiptStored := false
+	if request.ExecutionRequestID != "" {
+		// Register before stdin and the foreground wait so a later write or
+		// response loss can still find the process that already started.
+		svc.storeReservedSession(s)
+		reservationActive = false
+		receiptStored = true
+	}
 	if request.Stdin != "" {
 		if err := s.Write(request.Stdin); err != nil {
 			s.Kill()
@@ -115,8 +126,10 @@ func (svc *Service) Exec(ctx context.Context, request ExecRequest) (Result, erro
 	}
 
 	storeSession := func(reason string) Result {
-		svc.storeReservedSession(s)
-		reservationActive = false
+		if !receiptStored {
+			svc.storeReservedSession(s)
+			reservationActive = false
+		}
 		result := snapshotResult(s.Snapshot("running", maxBytes))
 		result["sandbox"] = preparationStatusResult(sandboxStatus)
 		result["session_reason"] = reason
@@ -280,7 +293,7 @@ func (svc *Service) writeStdin(request SessionActRequest) (Result, error) {
 func (svc *Service) consumeCompletedSession(s *session.Session, maxBytes int) Result {
 	err := s.WaitError()
 	s.Cancel()
-	svc.sessions.Delete(s.ID)
+	svc.releaseSession(s)
 	result := snapshotResult(s.Snapshot("exited", maxBytes))
 	if s.TimedOut {
 		result["status"] = "timeout"
@@ -319,7 +332,7 @@ func (svc *Service) killSession(request SessionActRequest) (Result, error) {
 			map[string]any{"session_id": s.ID, "wait_ms": sessionKillWait.Milliseconds()},
 		)
 	}
-	svc.sessions.Delete(s.ID)
+	svc.releaseSession(s)
 	result := snapshotResult(s.Snapshot("killed", commandOutputLimit(request.MaxOutputBytes)))
 	if err := s.WaitError(); err != nil {
 		result["command_error"] = err.Error()
@@ -338,7 +351,7 @@ func (svc *Service) killAll() (Result, error) {
 		case <-s.Done:
 			summary := s.Summary()
 			s.Cancel()
-			svc.sessions.Delete(s.ID)
+			svc.releaseSession(s)
 			items = append(items, map[string]any{"session_id": s.ID, "status": summary.Status})
 		default:
 			_, killErr := s.Kill()
@@ -350,7 +363,7 @@ func (svc *Service) killAll() (Result, error) {
 	}
 	completed, timedOut := waitForSessionsCompletion(running, sessionKillWait)
 	for _, s := range completed {
-		svc.sessions.Delete(s.ID)
+		svc.releaseSession(s)
 		items = append(items, map[string]any{"session_id": s.ID, "status": "killed"})
 	}
 	if len(killFailures) > 0 {
@@ -421,6 +434,31 @@ func (svc *Service) sessionStatus(request SessionObserveRequest) (Result, error)
 	default:
 		return snapshotResult(s.Snapshot("running", maxBytes)), nil
 	}
+}
+
+func (svc *Service) releaseSession(s *session.Session) {
+	if s != nil && s.Recoverable() {
+		return
+	}
+	if s != nil {
+		svc.sessions.Delete(s.ID)
+	}
+}
+
+func (svc *Service) SessionForCall(callID string) (*session.Session, bool) {
+	if callID == "" {
+		return nil, false
+	}
+	for _, candidate := range svc.sessions.List() {
+		if candidate.CallID() == callID {
+			return candidate, true
+		}
+	}
+	return nil, false
+}
+
+func (svc *Service) PruneCompletedBefore(cutoff time.Time) int {
+	return svc.sessions.PruneCompletedBefore(cutoff)
 }
 
 func (svc *Service) storeReservedSession(s *session.Session) {

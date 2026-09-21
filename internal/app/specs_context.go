@@ -35,12 +35,42 @@ func contextToolContract(name string, cfg config.Config) (ToolContract, bool) {
 	contract.InputSchema["properties"] = input
 	contract.OutputSchema = maps.Clone(contract.OutputSchema)
 	output := maps.Clone(contract.OutputSchema["properties"].(map[string]any))
+	extendContextRuntimeSchema(output)
 	output["instruction_files"] = instructionFilesSchema()
 	output["plugins"] = pluginIndexSchema()
 	output["tasks"] = taskIndexSchema()
 	output["workspace"] = map[string]any{"type": "object", "additionalProperties": true, "required": []string{"workspace_id", "root", "runtime", "rules_revision"}}
 	contract.OutputSchema["properties"] = output
 	return contract, true
+}
+
+func extendContextRuntimeSchema(properties map[string]any) {
+	runtimeSchema, _ := properties["runtime"].(map[string]any)
+	if runtimeSchema == nil {
+		return
+	}
+	runtimeCopy := maps.Clone(runtimeSchema)
+	runtimeProperties := maps.Clone(runtimeSchema["properties"].(map[string]any))
+	runtimeProperties["execution_epoch"] = map[string]any{
+		"type": "string", "pattern": "^[a-f0-9]{32}$",
+		"description": "Epoch of this running AgentDock process. It scopes execution_request_id and is not a device identity.",
+	}
+	runtimeProperties["command_recovery"] = map[string]any{
+		"type": "object", "additionalProperties": false,
+		"required": []string{"version", "request_id_field", "deduplication_scope", "peek", "durable"},
+		"properties": map[string]any{
+			"version":             map[string]any{"type": "integer"},
+			"request_id_field":    map[string]any{"type": "string"},
+			"deduplication_scope": map[string]any{"type": "string"},
+			"peek":                map[string]any{"type": "boolean"},
+			"durable":             map[string]any{"type": "boolean"},
+		},
+		"description": "In-memory command response recovery. durable=false means a restart does not keep claims.",
+	}
+	required, _ := runtimeSchema["required"].([]string)
+	runtimeCopy["required"] = append(append([]string{}, required...), "execution_epoch", "command_recovery")
+	runtimeCopy["properties"] = runtimeProperties
+	properties["runtime"] = runtimeCopy
 }
 
 func instructionFilesSchema() map[string]any {

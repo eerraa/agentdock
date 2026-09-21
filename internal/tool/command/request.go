@@ -15,17 +15,18 @@ type ExecRequest struct {
 	ExternalPath     string `json:"external_path,omitempty"`
 	activity.Binding `json:"-"`
 	RuntimeOptions
-	Cmd            string            `json:"cmd"`
-	Workdir        string            `json:"workdir,omitempty"`
-	Skill          string            `json:"skill,omitempty"`
-	SkillEnv       string            `json:"skill_env,omitempty"`
-	Env            map[string]string `json:"env,omitempty"`
-	TimeoutMS      *int              `json:"timeout_ms,omitempty"`
-	ExecutionMode  string            `json:"execution_mode,omitempty"`
-	YieldTimeMS    *int              `json:"yield_time_ms,omitempty"`
-	MaxOutputBytes *int              `json:"max_output_bytes,omitempty"`
-	Stdin          string            `json:"stdin,omitempty"`
-	TTY            bool              `json:"tty,omitempty"`
+	Cmd                string            `json:"cmd"`
+	Workdir            string            `json:"workdir,omitempty"`
+	Skill              string            `json:"skill,omitempty"`
+	SkillEnv           string            `json:"skill_env,omitempty"`
+	Env                map[string]string `json:"env,omitempty"`
+	TimeoutMS          *int              `json:"timeout_ms,omitempty"`
+	ExecutionMode      string            `json:"execution_mode,omitempty"`
+	YieldTimeMS        *int              `json:"yield_time_ms,omitempty"`
+	MaxOutputBytes     *int              `json:"max_output_bytes,omitempty"`
+	Stdin              string            `json:"stdin,omitempty"`
+	TTY                bool              `json:"tty,omitempty"`
+	ExecutionRequestID string            `json:"execution_request_id,omitempty"`
 }
 
 // SessionObserveRequest 是 session_observe 的强类型输入。
