@@ -48,19 +48,12 @@ func platformServiceAction(ctx context.Context, runtimeRoot, action string) erro
 	case "stop":
 		return stopCore(ctx, manifest, root)
 	case "restart":
-		coreBinary := ActiveCoreBinary(root, manifest)
-		supervisorBefore, supervisorErr := activeTunnelSupervisorPID(root, coreBinary)
-		if supervisorErr != nil {
-			return fmt.Errorf("识别 Tunnel supervisor 失败: %w", supervisorErr)
-		}
+		// 所有者进程结束后 Job 会带走 Core 和 cloudflared。新所有者读取
+		// tunnel-owner.txt，因此用户已经停下的 Tunnel 不会被重新拉起。
 		if err := stopCore(ctx, manifest, root); err != nil {
 			return err
 		}
-		if err := startCore(ctx, manifest, root); err != nil {
-			return err
-		}
-		// 只补回这次重启弄丢的 Named/Quick 监督进程。用户已经停掉的 Tunnel 保持停止。
-		return restorePublicTunnelAfterCoreRestart(ctx, root, supervisorBefore)
+		return startCore(ctx, manifest, root)
 	default:
 		return fmt.Errorf("不支持的 Windows 服务操作：%s", action)
 	}
@@ -97,44 +90,36 @@ func startCore(ctx context.Context, manifest Manifest, runtimeRoot string) error
 }
 
 func stopCore(ctx context.Context, manifest Manifest, runtimeRoot string) error {
-	coreBinary := ActiveCoreBinary(runtimeRoot, manifest)
-	excluded := map[uint32]struct{}{}
-	ancestorPIDs, err := ancestorProcessIDsAtPath(coreBinary)
-	if err != nil {
-		return fmt.Errorf("识别 AgentDock Core 调用链失败: %w", err)
-	}
-	for processID := range ancestorPIDs {
-		excluded[processID] = struct{}{}
-	}
-	// HTTP Core 与 `tunnel launch` 共用 agentdock-core.exe。命令行是准据；
-	// mutex 暂时读不到时也不能把监督进程当成 Core 杀掉。
-	if err := excludeTunnelSupervisors(runtimeRoot, coreBinary, excluded); err != nil {
-		return err
-	}
-
-	if manifest.UsesScheduledTask() {
-		// 先让任务计划程序正常结束最高权限进程，避免普通托盘立即申请 PROCESS_TERMINATE。
-		_ = runScheduledTaskCommand(ctx, "/End", "/TN", scheduledTaskPath(manifest.AgentDockTaskName))
-		stopped, waitErr := waitBinaryStoppedExcept(ctx, coreBinary, excluded, 5*time.Second)
-		if waitErr != nil {
-			return waitErr
-		}
-		if stopped {
-			return nil
-		}
-	}
-	if err := stopBinaryProcessesExcept(ctx, coreBinary, excluded, 15*time.Second); err != nil {
+	if err := stopOwnedService(ctx, manifest, runtimeRoot); err != nil {
 		return fmt.Errorf("停止 AgentDock 核心失败: %w", err)
 	}
 	return nil
 }
 
-func startDetachedCore(manifest Manifest, runtimeRoot string) error {
+func serviceHostBinary(manifest Manifest, runtimeRoot string) (string, error) {
+	shim := strings.TrimSpace(manifest.AgentDockBinary)
+	if shim != "" {
+		if info, err := os.Stat(shim); err == nil && !info.IsDir() {
+			return shim, nil
+		}
+	}
 	coreBinary := ActiveCoreBinary(runtimeRoot, manifest)
 	if info, err := os.Stat(coreBinary); err != nil || info.IsDir() {
-		return fmt.Errorf("找不到 AgentDock 核心程序: %s", coreBinary)
+		if shim != "" {
+			return "", fmt.Errorf("找不到 AgentDock 核心程序: %s", shim)
+		}
+		return "", fmt.Errorf("找不到 AgentDock 核心程序: %s", coreBinary)
 	}
-	command := exec.Command(coreBinary, "service", "launch-core", "--runtime-root", runtimeRoot)
+	return coreBinary, nil
+}
+
+func startDetachedCore(manifest Manifest, runtimeRoot string) error {
+	// 标准权限也走稳定 shim。shim 才是 Job 所有者；直接拉起 generation Core 会让 Tunnel 再次脱离。
+	binary, err := serviceHostBinary(manifest, runtimeRoot)
+	if err != nil {
+		return err
+	}
+	command := exec.Command(binary, "service", "launch-core", "--runtime-root", runtimeRoot)
 	// launch-core 会自行把运行日志写入受限轮转文件；父进程不再持有同一路径的追加句柄。
 	command.Dir = manifest.AgentDockDefaultDir
 	if command.Dir == "" {

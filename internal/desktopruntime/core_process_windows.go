@@ -158,36 +158,16 @@ func coreServerProcessRunning(runtimeRoot, binaryPath string) (bool, error) {
 }
 
 func ensureCoreStopPermitted(runtimeRoot string, manifest Manifest) error {
-	targets, err := coreStopTargets(runtimeRoot, ActiveCoreBinary(runtimeRoot, manifest))
+	owners, err := serviceOwnerProcessIDs(runtimeRoot, manifest)
 	if err != nil {
 		return err
 	}
-	for _, processID := range targets {
-		handle, openErr := windows.OpenProcess(windows.PROCESS_TERMINATE, false, processID)
-		if openErr != nil {
-			return fmt.Errorf("当前权限无法停止 AgentDock Core (PID %d)，已保留 Tunnel: %w", processID, openErr)
+	for _, processID := range owners {
+		if !processCanTerminate(processID) {
+			return fmt.Errorf("当前权限无法停止 AgentDock 服务所有者 (PID %d)，已保留 Tunnel", processID)
 		}
-		windows.CloseHandle(handle)
 	}
 	return nil
-}
-
-func restorePublicTunnelAfterCoreRestart(ctx context.Context, runtimeRoot string, supervisorBefore uint32) error {
-	if supervisorBefore == 0 {
-		return nil
-	}
-	runtime, err := loadTunnelRuntime(runtimeRoot)
-	if err != nil {
-		return err
-	}
-	supervisorPID, err := activeTunnelSupervisorPID(runtimeRoot, ActiveCoreBinary(runtimeRoot, runtime.manifest))
-	if err != nil {
-		return fmt.Errorf("识别 Tunnel supervisor 失败: %w", err)
-	}
-	if !shouldRestorePublicTunnelAfterRestart(runtime.mode, supervisorBefore, supervisorPID) {
-		return nil
-	}
-	return startCloudflareTunnel(ctx, runtime)
 }
 
 func coreHealthy(ctx context.Context, runtimeRoot string) bool {

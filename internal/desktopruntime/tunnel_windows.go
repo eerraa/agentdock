@@ -276,6 +276,9 @@ func startCloudflareTunnel(ctx context.Context, runtime tunnelRuntime) error {
 	if info, err := os.Stat(runtime.manifest.CloudflaredBinary); err != nil || info.IsDir() {
 		return fmt.Errorf("找不到 cloudflared.exe，请运行 Setup.exe 修复安装: %s", runtime.manifest.CloudflaredBinary)
 	}
+	if err := setTunnelDesired(runtime.root, true); err != nil {
+		return err
+	}
 
 	running, err := processRunningAtPath(runtime.manifest.CloudflaredBinary)
 	if err != nil {
@@ -285,26 +288,29 @@ func startCloudflareTunnel(ctx context.Context, runtime tunnelRuntime) error {
 	if err != nil {
 		return err
 	}
-	if running && supervisorPID != 0 {
+	ownerRunning, err := serviceOwnerRunning(runtime.root)
+	if err != nil {
+		return err
+	}
+	if ownerRunning && supervisorPID != 0 {
+		if err := signalOwnerWake(runtime.root); err != nil {
+			return err
+		}
+		if !running {
+			if err := waitCloudflaredRunning(ctx, runtime.manifest.CloudflaredBinary, 20*time.Second); err != nil {
+				return err
+			}
+		}
 		if runtime.mode == "quick" {
 			return waitQuickTunnelReady(ctx, runtime, quickTunnelStartTimeout)
 		}
 		return nil
 	}
 
-	if running {
+	if running && supervisorPID == 0 {
 		// 升级或旧版本可能留下没有 supervisor 的孤立 cloudflared；重新纳入统一生命周期。
 		if err := StopBinaryProcesses(ctx, runtime.manifest.CloudflaredBinary, 15*time.Second); err != nil {
 			return fmt.Errorf("停止未受管 cloudflared 失败: %w", err)
-		}
-	}
-	if supervisorPID != 0 {
-		// supervisor 可能正处于退避期。显式 start 应立即重试，而不是继续等待旧退避计时。
-		if err := signalTunnelSupervisorStop(runtime.root); err != nil {
-			return err
-		}
-		if err := waitTunnelSupervisorStopped(ctx, runtime.root, 10*time.Second); err != nil {
-			return err
 		}
 	}
 
@@ -325,8 +331,8 @@ func startCloudflareTunnel(ctx context.Context, runtime tunnelRuntime) error {
 			return err
 		}
 	}
-	if err := launchCloudflared(runtime); err != nil {
-		return err
+	if err := ensureServiceOwner(ctx, runtime); err != nil {
+		return fmt.Errorf("启动 cloudflared 监督进程失败: %w", err)
 	}
 	if err := waitCloudflaredRunning(ctx, runtime.manifest.CloudflaredBinary, 20*time.Second); err != nil {
 		return err
@@ -338,6 +344,22 @@ func startCloudflareTunnel(ctx context.Context, runtime tunnelRuntime) error {
 }
 
 func stopCloudflareTunnel(ctx context.Context, runtime tunnelRuntime) error {
+	if err := setTunnelDesired(runtime.root, false); err != nil {
+		return err
+	}
+	ownerRunning, err := serviceOwnerRunning(runtime.root)
+	if err != nil {
+		return err
+	}
+	if ownerRunning {
+		if err := signalOwnerWake(runtime.root); err != nil {
+			return err
+		}
+		if err := waitCloudflaredStopped(ctx, runtime.manifest.CloudflaredBinary, 15*time.Second); err != nil {
+			return err
+		}
+		return waitTunnelSupervisorStopped(ctx, runtime.root, 15*time.Second)
+	}
 	if err := signalTunnelSupervisorStop(runtime.root); err != nil {
 		return err
 	}
@@ -348,6 +370,24 @@ func stopCloudflareTunnel(ctx context.Context, runtime tunnelRuntime) error {
 		return err
 	}
 	return nil
+}
+
+func ensureServiceOwner(ctx context.Context, runtime tunnelRuntime) error {
+	running, err := serviceOwnerRunning(runtime.root)
+	if err != nil {
+		return err
+	}
+	if running {
+		return signalOwnerWake(runtime.root)
+	}
+	// 已经在服务、但没有所有者 PID 的 Core 是旧进程模型。先整次替换，避免再拉起一个脱离 Job 的 supervisor。
+	if testHealth(ctx, runtime.manifest.HealthURL()) {
+		return platformServiceAction(ctx, runtime.root, "restart")
+	}
+	if err := startCore(ctx, runtime.manifest, runtime.root); err != nil {
+		return err
+	}
+	return signalOwnerWake(runtime.root)
 }
 
 func regenerateQuickTunnel(ctx context.Context, runtime tunnelRuntime) error {
@@ -367,25 +407,32 @@ func regenerateQuickTunnel(ctx context.Context, runtime tunnelRuntime) error {
 	return startTunnel(ctx, runtime)
 }
 
-func launchCloudflared(runtime tunnelRuntime) error {
-	// Windows 不能把轮转 writer 直接交给脱离父进程的 cloudflared；因此先启动一个
-	// 长驻的 AgentDock tunnel launch 监督进程，由它持有 cloudflared 并实时轮转日志。
-	// Installer trial 期间 stable shim 会拒绝未提交 generation，因此和 Core 启动一样，
-	// 直接绑定当前 active generation，避免 supervisor 在 commit 前绕回 shim 失败。
-	supervisorBinary := ActiveCoreBinary(runtime.root, runtime.manifest)
-	command := exec.Command(supervisorBinary, "tunnel", "launch", "--runtime-root", runtime.root)
-	command.Dir = runtime.root
-	command.SysProcAttr = &syscall.SysProcAttr{
-		HideWindow:    true,
-		CreationFlags: windows.CREATE_NEW_PROCESS_GROUP | windows.DETACHED_PROCESS,
+func waitCloudflaredStopped(ctx context.Context, binaryPath string, timeout time.Duration) error {
+	if strings.TrimSpace(binaryPath) == "" {
+		return nil
 	}
-	if err := command.Start(); err != nil {
-		return fmt.Errorf("启动 cloudflared 监督进程失败: %w", err)
+	info, err := os.Stat(binaryPath)
+	if err != nil || info.IsDir() {
+		return nil
 	}
-	if err := command.Process.Release(); err != nil {
-		return fmt.Errorf("释放 cloudflared 监督进程句柄失败: %w", err)
+	deadline := time.Now().Add(timeout)
+	for {
+		running, err := processRunningAtPath(binaryPath)
+		if err != nil {
+			return err
+		}
+		if !running {
+			return nil
+		}
+		if time.Now().After(deadline) {
+			return fmt.Errorf("cloudflared 未在 %s 内退出", timeout)
+		}
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		case <-time.After(200 * time.Millisecond):
+		}
 	}
-	return nil
 }
 
 func cloudflaredCommand(ctx context.Context, runtime tunnelRuntime) (*exec.Cmd, error) {

@@ -25,25 +25,35 @@ func TestCommandArgsAreTunnelSupervisor(t *testing.T) {
 	}
 }
 
-func TestShouldRestorePublicTunnelOnlyWhenSupervisorIsGone(t *testing.T) {
-	if shouldRestorePublicTunnel("named", 0) != true || shouldRestorePublicTunnel("quick", 0) != true {
-		t.Fatal("named and quick tunnels must be restored when the supervisor pid is missing")
+func TestCommandArgsAreCoreOwner(t *testing.T) {
+	cases := []struct {
+		name string
+		args []string
+		want bool
+	}{
+		{name: "shim", args: []string{`C:\AgentDock\agentdock.exe`, "service", "launch-core", "--runtime-root", `C:\AgentDock`}, want: true},
+		{name: "flags before subcommand", args: []string{`core.exe`, "-test.run=Helper", "service", "launch-core"}, want: true},
+		{name: "tunnel supervisor", args: []string{`C:\AgentDock\agentdock-core.exe`, "tunnel", "launch", "--runtime-root", `C:\AgentDock`}, want: false},
+		{name: "service stop", args: []string{`C:\AgentDock\agentdock.exe`, "service", "stop"}, want: false},
 	}
-	if shouldRestorePublicTunnel("named", 42) || shouldRestorePublicTunnel("quick", 7) {
-		t.Fatal("a live supervisor must be left running across a core restart")
+	for _, test := range cases {
+		t.Run(test.name, func(t *testing.T) {
+			if got := commandArgsAreCoreOwner(test.args); got != test.want {
+				t.Fatalf("commandArgsAreCoreOwner(%q)=%v, want %v", test.args, got, test.want)
+			}
+		})
 	}
-	for _, mode := range []string{"none", "funnel", "local", ""} {
-		if shouldRestorePublicTunnel(mode, 0) {
-			t.Fatalf("mode %q must not start a cloudflared supervisor", mode)
-		}
+}
+
+func TestCommandArgsMatchRuntimeRoot(t *testing.T) {
+	args := []string{`agentdock.exe`, "service", "launch-core", "--runtime-root", `C:\AgentDock`}
+	if !commandArgsMatchRuntimeRoot(args, `c:\agentdock`) {
+		t.Fatal("expected case-insensitive runtime root match")
 	}
-	if !shouldRestorePublicTunnelAfterRestart("named", 10, 0) {
-		t.Fatal("a supervisor removed by core restart must be restored")
+	if commandArgsMatchRuntimeRoot(args, `C:\Other`) {
+		t.Fatal("a different runtime root must not match")
 	}
-	if shouldRestorePublicTunnelAfterRestart("named", 0, 0) {
-		t.Fatal("a tunnel that was already stopped must stay stopped")
-	}
-	if shouldRestorePublicTunnelAfterRestart("named", 10, 10) {
-		t.Fatal("a supervisor that survived core restart must be left alone")
+	if !commandArgsMatchRuntimeRoot([]string{`agentdock.exe`, "service", "launch-core"}, `C:\AgentDock`) {
+		t.Fatal("a command without --runtime-root stays install-scoped by executable path")
 	}
 }

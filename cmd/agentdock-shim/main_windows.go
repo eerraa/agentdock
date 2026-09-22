@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"os/signal"
 	"path/filepath"
 	"strings"
 	"syscall"
@@ -19,7 +20,6 @@ import (
 
 	"github.com/uvwt/agentdock/internal/desktopruntime"
 	"github.com/uvwt/agentdock/internal/fs/processlock"
-	processctl "github.com/uvwt/agentdock/internal/process"
 	"github.com/uvwt/agentdock/internal/updateengine"
 )
 
@@ -79,6 +79,20 @@ func run() error {
 		}
 	}
 
+	if coreLaunchRequiresParentLifetime(os.Args[1:]) {
+		// The scheduled task owns this shim. The shim owns Core and cloudflared in one
+		// job and is not itself a member, so closing the control panel does not kill them.
+		ownerCtx, stopOwner := signal.NotifyContext(context.Background(), os.Interrupt)
+		defer stopOwner()
+		if err := desktopruntime.RunServiceOwner(ownerCtx, desktopruntime.ServiceOwnerRequest{
+			RuntimeRoot: root,
+			CoreBinary:  target,
+		}); err != nil {
+			return err
+		}
+		return nil
+	}
+
 	command := exec.Command(target, os.Args[1:]...)
 	command.Dir = root
 	if !tray || trayRequiresWait(os.Args[1:]) {
@@ -86,27 +100,7 @@ func run() error {
 		command.Stdout = os.Stdout
 		command.Stderr = os.Stderr
 
-		var runErr error
-		if coreLaunchRequiresParentLifetime(os.Args[1:]) {
-			// Scheduled Task owns the stable shim, not the generation Core. Keep the Core
-			// in a kill-on-close Job owned by this shim so ending the task cannot orphan it.
-			if err := command.Start(); err != nil {
-				return fmt.Errorf("start AgentDock active generation: %w", err)
-			}
-			controller, err := processctl.Attach(command)
-			if err != nil {
-				_ = command.Process.Kill()
-				_ = command.Wait()
-				return fmt.Errorf("supervise AgentDock active generation: %w", err)
-			}
-			runErr = command.Wait()
-			closeErr := controller.Close()
-			if runErr == nil && closeErr != nil {
-				return fmt.Errorf("release AgentDock active generation supervisor: %w", closeErr)
-			}
-		} else {
-			runErr = command.Run()
-		}
+		runErr := command.Run()
 		if runErr != nil {
 			var exitErr *exec.ExitError
 			if errors.As(runErr, &exitErr) {
