@@ -361,7 +361,16 @@ try {
     if ($resultText -notmatch 'ErrorLine=[1-9][0-9]*') {
         throw 'Install result did not capture the PowerShell script line'
     }
-    if ($resultText -notmatch 'ErrorStack=.+Invoke-DiagnosticProbe') {
+    # Localized PowerShell stacks may start directly with the function name.
+    # Keep matching inside ErrorStack; a name in another INI field is not evidence.
+    $stackPattern = '(?m)^ErrorStack=[^\r\n]*Invoke-DiagnosticProbe'
+    foreach ($stackSample in @('ErrorStack=Invoke-DiagnosticProbe, line 4', 'ErrorStack=at Invoke-DiagnosticProbe, line 4')) {
+        if ($stackSample -notmatch $stackPattern) { throw 'Stack assertion rejected a valid function frame' }
+    }
+    foreach ($stackSample in @('ErrorStack=', 'ErrorStack=AnotherFunction', "ErrorStack=`nMessage=Invoke-DiagnosticProbe")) {
+        if ($stackSample -match $stackPattern) { throw 'Stack assertion accepted a missing function frame' }
+    }
+    if ($resultText -notmatch $stackPattern) {
         throw 'Install result did not capture a useful PowerShell script stack'
     }
     if ($resultText.Contains($diagnosticSecret)) {
