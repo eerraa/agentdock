@@ -10,6 +10,7 @@ internal static class UiText
     internal const string SystemPreference = "system";
     internal const string EnglishPreference = "en";
     internal const string SimplifiedChinesePreference = "zh-CN";
+    internal const string KoreanPreference = "ko-KR";
 
     private static readonly string SystemLocale = NormalizeCultureName(CultureInfo.CurrentUICulture.Name);
     private static readonly ResourceManager Resources = new(
@@ -66,6 +67,7 @@ internal static class UiText
         {
             EnglishPreference => EnglishPreference,
             SimplifiedChinesePreference => SimplifiedChinesePreference,
+            KoreanPreference => KoreanPreference,
             _ => SystemPreference
         };
     }
@@ -76,6 +78,7 @@ internal static class UiText
         {
             EnglishPreference => EnglishPreference,
             SimplifiedChinesePreference => SimplifiedChinesePreference,
+            KoreanPreference => KoreanPreference,
             _ => NormalizeCultureName(systemCultureName)
         };
     }
@@ -86,6 +89,10 @@ internal static class UiText
         if (string.IsNullOrEmpty(locale))
         {
             return EnglishPreference;
+        }
+        if (locale == "ko" || locale.StartsWith("ko-", StringComparison.Ordinal))
+        {
+            return KoreanPreference;
         }
         if (locale is "zh" or "zh-cn" or "zh-sg" or "zh-hans" || locale.StartsWith("zh-hans-", StringComparison.Ordinal))
         {
