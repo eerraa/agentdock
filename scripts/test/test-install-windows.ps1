@@ -601,4 +601,6 @@ foreach ($required in @(
     }
 }
 
+& (Join-Path $PSScriptRoot 'test-windows-installer-task-ownership.ps1') -InstallerPath $resolvedInstaller
+
 Write-Host 'Windows installer validation passed.'
