@@ -24,7 +24,7 @@ func platformServiceStatus(ctx context.Context, runtimeRoot string) (ServiceStat
 		return ServiceStatus{}, err
 	}
 	coreBinary := ActiveCoreBinary(runtimeRoot, manifest)
-	running, err := processRunningAtPath(coreBinary)
+	running, err := coreServerProcessRunning(runtimeRoot, coreBinary)
 	if err != nil {
 		return ServiceStatus{}, err
 	}
@@ -48,10 +48,19 @@ func platformServiceAction(ctx context.Context, runtimeRoot, action string) erro
 	case "stop":
 		return stopCore(ctx, manifest, root)
 	case "restart":
+		coreBinary := ActiveCoreBinary(root, manifest)
+		supervisorBefore, supervisorErr := activeTunnelSupervisorPID(root, coreBinary)
+		if supervisorErr != nil {
+			return fmt.Errorf("识别 Tunnel supervisor 失败: %w", supervisorErr)
+		}
 		if err := stopCore(ctx, manifest, root); err != nil {
 			return err
 		}
-		return startCore(ctx, manifest, root)
+		if err := startCore(ctx, manifest, root); err != nil {
+			return err
+		}
+		// 只补回这次重启弄丢的 Named/Quick 监督进程。用户已经停掉的 Tunnel 保持停止。
+		return restorePublicTunnelAfterCoreRestart(ctx, root, supervisorBefore)
 	default:
 		return fmt.Errorf("不支持的 Windows 服务操作：%s", action)
 	}
@@ -97,14 +106,10 @@ func stopCore(ctx context.Context, manifest Manifest, runtimeRoot string) error 
 	for processID := range ancestorPIDs {
 		excluded[processID] = struct{}{}
 	}
-	supervisorPID, err := activeTunnelSupervisorPID(runtimeRoot, coreBinary)
-	if err != nil {
-		return fmt.Errorf("识别 Tunnel supervisor 失败: %w", err)
-	}
-	if supervisorPID != 0 {
-		// Core 与 Tunnel supervisor 共用 agentdock.exe。停止 Core 时必须保留 supervisor，
-		// 否则一次普通 Core 重启就会悄悄丢失 Tunnel 的后续自恢复能力。
-		excluded[supervisorPID] = struct{}{}
+	// HTTP Core 与 `tunnel launch` 共用 agentdock-core.exe。命令行是准据；
+	// mutex 暂时读不到时也不能把监督进程当成 Core 杀掉。
+	if err := excludeTunnelSupervisors(runtimeRoot, coreBinary, excluded); err != nil {
+		return err
 	}
 
 	if manifest.UsesScheduledTask() {
