@@ -86,6 +86,11 @@ try {
 } finally {
     $archive.Dispose()
 }
+if ($Architecture -eq 'amd64') {
+    & (Join-Path $PSScriptRoot 'fetch-ripgrep.ps1') -AssertReleaseArchive $archivePath
+} else {
+    & (Join-Path $PSScriptRoot 'fetch-ripgrep.ps1') -AssertReleaseOmitsArchive $archivePath
+}
 
 $cloudflaredSignature = Get-AuthenticodeSignature -LiteralPath $cloudflaredPath
 if ($cloudflaredSignature.Status -ne [Management.Automation.SignatureStatus]::Valid) {

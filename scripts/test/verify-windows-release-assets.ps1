@@ -99,6 +99,18 @@ if ([string]$report.agentdock_authenticode -ne $ExpectedAuthenticode) {
 if ([string]$report.cloudflared_authenticode -ne 'valid') {
     throw 'cloudflared Authenticode verification was not recorded as valid.'
 }
+$repository = (Resolve-Path (Join-Path $PSScriptRoot '..\..')).Path
+$ripgrepManifest = Get-Content -LiteralPath (Join-Path $repository 'packaging\windows\third_party\ripgrep\manifest.json') -Raw | ConvertFrom-Json
+if ([string]$report.ripgrep.version -ne [string]$ripgrepManifest.version) {
+    throw "Build report ripgrep version mismatch: $($report.ripgrep.version)"
+}
+if ([string]$report.ripgrep.target -ne [string]$ripgrepManifest.target) {
+    throw "Build report ripgrep target mismatch: $($report.ripgrep.target)"
+}
+if ([string]$report.ripgrep.executable_sha256 -ne [string]$ripgrepManifest.executable_sha256) {
+    throw "Build report ripgrep SHA-256 mismatch: $($report.ripgrep.executable_sha256)"
+}
+& (Join-Path $repository 'packaging\windows\fetch-ripgrep.ps1') -AssertReleaseArchive (Join-Path $releaseRoot 'agentdock_windows_amd64.zip')
 
 $temporaryRoot = Join-Path ([IO.Path]::GetTempPath()) ('agentdock-release-verify-' + [Guid]::NewGuid().ToString('N'))
 New-Item -ItemType Directory -Path $temporaryRoot | Out-Null
@@ -138,6 +150,8 @@ if ($setupVersion -ne $ExpectedVersion) {
     platform = 'windows/amd64'
     agentdock_authenticode = $ExpectedAuthenticode
     cloudflared_authenticode = 'valid'
+    ripgrep_version = [string]$ripgrepManifest.version
+    ripgrep_executable_sha256 = [string]$ripgrepManifest.executable_sha256
     assets = $digests
     verified_at = [DateTime]::UtcNow.ToString('yyyy-MM-ddTHH:mm:ssZ')
 } | ConvertTo-Json -Depth 5

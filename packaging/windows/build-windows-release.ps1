@@ -57,6 +57,14 @@ try {
 
     $helperRoot = Join-Path $outputRoot 'wsl-helper'
     & (Join-Path $PSScriptRoot 'build-wsl-helper-payload.ps1') -OutputDirectory $helperRoot
+    $ripgrepPayloadRoot = ''
+    if (@($Architectures) -contains 'amd64') {
+        $ripgrepPayloadRoot = Join-Path $outputRoot 'third_party\ripgrep'
+        & (Join-Path $PSScriptRoot 'fetch-ripgrep.ps1') -OutputDirectory $ripgrepPayloadRoot
+        if (-not (Test-Path -LiteralPath (Join-Path $ripgrepPayloadRoot 'rg.exe') -PathType Leaf)) {
+            throw 'Ripgrep payload was not staged.'
+        }
+    }
     foreach ($architecture in $Architectures | Select-Object -Unique) {
         $payload = Join-Path $outputRoot "payload-$architecture"
         $panel = Join-Path $outputRoot "control-panel-$architecture"
@@ -79,13 +87,26 @@ try {
         Assert-NativeExit 'Core Skill bundle'
         if (Test-Path -LiteralPath (Join-Path $payload 'wsl-helper')) { Remove-Item -LiteralPath (Join-Path $payload 'wsl-helper') -Recurse -Force }
         Copy-Item -LiteralPath $helperRoot -Destination (Join-Path $payload 'wsl-helper') -Recurse
+        if ($architecture -eq 'amd64') {
+            $ripgrepDestination = Join-Path $payload 'third_party\ripgrep'
+            if (Test-Path -LiteralPath $ripgrepDestination) { Remove-Item -LiteralPath $ripgrepDestination -Recurse -Force }
+            New-Item -ItemType Directory -Force -Path (Split-Path -Parent $ripgrepDestination) | Out-Null
+            Copy-Item -LiteralPath $ripgrepPayloadRoot -Destination $ripgrepDestination -Recurse
+        }
         if ($SignedBuild) {
             & (Join-Path $PSScriptRoot 'sign-windows.ps1') -Path @('agentdock.exe','agentdock-tray.exe','agentdock-arbiter.exe','agentdock-shim.exe','agentdock-tray-shim.exe').ForEach({ Join-Path $payload $_ })
         }
         $archive = Join-Path $releaseRoot "agentdock_windows_$architecture.zip"
-        $paths = @('agentdock.exe','agentdock-tray.exe','agentdock-arbiter.exe','agentdock-shim.exe','agentdock-tray-shim.exe','agentdock.ico','share','wsl-helper').ForEach({ Join-Path $payload $_ })
+        $entryNames = @('agentdock.exe','agentdock-tray.exe','agentdock-arbiter.exe','agentdock-shim.exe','agentdock-tray-shim.exe','agentdock.ico','share','wsl-helper')
+        if ($architecture -eq 'amd64') { $entryNames += 'third_party' }
+        $paths = $entryNames.ForEach({ Join-Path $payload $_ })
         Compress-Archive -LiteralPath $paths -DestinationPath $archive -Force
         Write-Checksum $archive
+        if ($architecture -eq 'amd64') {
+            & (Join-Path $PSScriptRoot 'fetch-ripgrep.ps1') -AssertReleaseArchive $archive
+        } else {
+            & (Join-Path $PSScriptRoot 'fetch-ripgrep.ps1') -AssertReleaseOmitsArchive $archive
+        }
         $parameters = @{
             Version=$version; Architecture=$architecture; AgentDockArchive=$archive
             AgentDockChecksumFile="$archive.sha256"; CloudflaredBinary=$CloudflaredBinary; OutputDirectory=$releaseRoot
@@ -99,11 +120,20 @@ try {
     }
     Copy-Item -LiteralPath (Join-Path $repository 'scripts\install\install.ps1') -Destination (Join-Path $releaseRoot 'install.ps1') -Force
     Write-Checksum (Join-Path $releaseRoot 'install.ps1')
-    [ordered]@{
+    $report = [ordered]@{
         version=$version; channel=$(if($Candidate){'candidate-not-released'}else{'release'}); source_dirty=($sourceChanges.Count -gt 0); changed_paths=$sourceChanges; commit=$commit; build_date=$buildDate; platforms=@($Architectures | ForEach-Object {"windows/$_"})
         agentdock_authenticode=$(if($SignedBuild){'signed'}else{'unsigned'}); cloudflared_authenticode='valid'
         wsl_helpers='Windows feature payload only; no separate Linux release'
-    } | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $outputRoot 'build-report.json') -Encoding utf8NoBOM
+    }
+    if ($ripgrepPayloadRoot) {
+        $ripgrepManifest = Get-Content -LiteralPath (Join-Path $PSScriptRoot 'third_party\ripgrep\manifest.json') -Raw | ConvertFrom-Json
+        $report['ripgrep'] = [ordered]@{
+            version=[string]$ripgrepManifest.version
+            target=[string]$ripgrepManifest.target
+            executable_sha256=[string]$ripgrepManifest.executable_sha256
+        }
+    }
+    $report | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath (Join-Path $outputRoot 'build-report.json') -Encoding utf8NoBOM
 } finally {
     $env:GOOS=$originalGoOS; $env:GOARCH=$originalGoArch; $env:CGO_ENABLED=$originalCGO
     Pop-Location

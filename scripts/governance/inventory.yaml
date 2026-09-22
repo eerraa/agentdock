@@ -249,6 +249,13 @@ scripts:
     public_contract: false
     deletable: false
 
+  - path: packaging/windows/fetch-ripgrep.ps1
+    class: packaging
+    owner: release
+    public_contract: false
+    deletable: false
+    notes: 按固定版本和 SHA-256 下载官方 Windows amd64 ripgrep，校验后写入 release 载荷。不修改二进制。
+
   - path: packaging/windows/sign-windows.ps1
     class: packaging
     owner: release
