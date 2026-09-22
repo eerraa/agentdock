@@ -116,7 +116,8 @@ func (svc *Service) searchTextRG(ctx context.Context, p workspace.Path, opts Sea
 	if opts.ContextLines > 0 {
 		args = append(args, "--context", strconv.Itoa(opts.ContextLines))
 	}
-	args = append(args, opts.Query, p.Abs)
+	// Keep patterns (including leading hyphens) distinct from flags and paths.
+	args = append(args, "-e", opts.Query, "--", p.Abs)
 
 	ctx, cancel := context.WithTimeout(ctx, 30*time.Second)
 	defer cancel()
