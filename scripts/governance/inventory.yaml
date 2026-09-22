@@ -359,3 +359,10 @@ scripts:
     public_contract: false
     deletable: true
     notes: 在真实 Inno 父进程下验证原生执行器的最小安装器夹具。
+
+  - path: scripts/test/test-windows-installer-task-ownership.ps1
+    class: test
+    owner: installer
+    public_contract: false
+    deletable: false
+    notes: Replays the actual rollback guard with mock task adapters; verifies foreign-task preflight rejection never stops a real scheduled task.
