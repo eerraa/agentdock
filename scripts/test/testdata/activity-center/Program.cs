@@ -25,6 +25,7 @@ internal static partial class Program
             TestExecutionParserAsync().GetAwaiter().GetResult();
             TestExecutionRendering(Path.Combine(args[0], "execution-render"));
             var executionScale = TestExecutionLargeLists(Path.Combine(args[0], "execution-scale"));
+            TestKoreanLocalization(Path.Combine(args[0], "localization"));
             File.WriteAllText(Path.Combine(args[0], "result.json"), JsonSerializer.Serialize(new
             {
                 passed = true, elapsed_ms = started.ElapsedMilliseconds,
