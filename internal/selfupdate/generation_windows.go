@@ -202,6 +202,9 @@ func stageWindowsGeneration(ctx context.Context, layout updateengine.WindowsLayo
 			return fmt.Errorf("Windows generation WSL helper 文件缺失: %s", relative)
 		}
 	}
+	if err := copyOptionalWindowsRipgrep(request.DesktopStagedPath, stagingDir); err != nil {
+		return fmt.Errorf("暂存 Windows ripgrep 载荷失败: %w", err)
+	}
 	if err := verifyBinaryVersion(ctx, filepath.Join(stagingDir, updateengine.GenerationCoreName), targetVersion); err != nil {
 		return fmt.Errorf("Windows generation 核心版本验证失败: %w", err)
 	}
@@ -234,6 +237,53 @@ func windowsTunnelRunning(ctx context.Context, runtimeRoot string) (bool, error)
 		return false, fmt.Errorf("解析 Tunnel 状态失败: %w", err)
 	}
 	return status.Running, nil
+}
+
+func copyOptionalWindowsRipgrep(desktopStaged, stagingDir string) error {
+	source := filepath.Join(desktopStaged, "third_party", "ripgrep")
+	info, err := os.Lstat(filepath.Join(source, "rg.exe"))
+	if err != nil {
+		if os.IsNotExist(err) {
+			return nil
+		}
+		return err
+	}
+	if !info.Mode().IsRegular() || info.Mode()&os.ModeSymlink != 0 {
+		return errors.New("Windows ripgrep 载荷不是普通文件")
+	}
+	allowed := map[string]struct{}{
+		"rg.exe":      {},
+		"COPYING":     {},
+		"LICENSE-MIT": {},
+		"UNLICENSE":   {},
+		"NOTICE":      {},
+	}
+	entries, err := os.ReadDir(source)
+	if err != nil {
+		return err
+	}
+	seen := make(map[string]bool, len(entries))
+	for _, entry := range entries {
+		if _, ok := allowed[entry.Name()]; !ok || entry.IsDir() || entry.Type()&os.ModeSymlink != 0 || !entry.Type().IsRegular() {
+			return fmt.Errorf("Windows ripgrep 载荷包含未允许的文件: %s", entry.Name())
+		}
+		seen[entry.Name()] = true
+	}
+	for name := range allowed {
+		if !seen[name] {
+			return fmt.Errorf("Windows ripgrep 载荷缺少 %s", name)
+		}
+	}
+	target := filepath.Join(stagingDir, "third_party", "ripgrep")
+	if err := os.MkdirAll(target, 0o700); err != nil {
+		return err
+	}
+	for name := range allowed {
+		if err := copyFileWindows(filepath.Join(source, name), filepath.Join(target, name)); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func garbageCollectWindowsGenerations(layout updateengine.WindowsLayout, keepVersions ...string) {

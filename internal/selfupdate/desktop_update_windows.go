@@ -36,6 +36,21 @@ var windowsGenerationArchiveFiles = map[string]os.FileMode{
 	"wsl-helper/manifest.json":                    0o644,
 	"wsl-helper/agentdock-wsl-helper-linux-amd64": 0o755,
 	"wsl-helper/agentdock-wsl-helper-linux-arm64": 0o755,
+	"third_party/ripgrep/rg.exe":                  0o755,
+	"third_party/ripgrep/COPYING":                 0o644,
+	"third_party/ripgrep/LICENSE-MIT":             0o644,
+	"third_party/ripgrep/UNLICENSE":               0o644,
+	"third_party/ripgrep/NOTICE":                  0o644,
+}
+
+// windowsRipgrepArchiveFiles 对没有 ripgrep 的旧 Release 保持可选。
+// 一旦 ZIP 带上 rg.exe，许可和 NOTICE 必须同时存在。
+var windowsRipgrepArchiveFiles = []string{
+	"third_party/ripgrep/rg.exe",
+	"third_party/ripgrep/COPYING",
+	"third_party/ripgrep/LICENSE-MIT",
+	"third_party/ripgrep/UNLICENSE",
+	"third_party/ripgrep/NOTICE",
 }
 
 func detectDesktopUpdateTarget() string {
@@ -128,6 +143,13 @@ func extractDesktopUpdateArchive(_ context.Context, archiveData []byte, tempDir,
 			return "", fmt.Errorf("写入 Windows 桌面组件 %s 失败: %w", name, err)
 		}
 		found[name] = true
+	}
+	if found["third_party/ripgrep/rg.exe"] {
+		for _, name := range windowsRipgrepArchiveFiles {
+			if !found[name] {
+				return "", fmt.Errorf("Windows Release ZIP 的 ripgrep 载荷不完整，缺少 %s", name)
+			}
+		}
 	}
 	for name := range windowsDesktopArchiveFiles {
 		if !found[name] {

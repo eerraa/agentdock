@@ -96,8 +96,8 @@ func (svc *Service) SearchText(ctx context.Context, request SearchRequest) (Resu
 }
 
 func (svc *Service) searchTextRG(ctx context.Context, p workspace.Path, opts SearchOptions) (Result, bool, error) {
-	rg, err := exec.LookPath("rg")
-	if err != nil {
+	rg, ok := resolveSearchRipgrep()
+	if !ok {
 		return nil, false, nil
 	}
 	args := []string{"--json", "--line-number", "--column", "--color", "never"}

@@ -677,6 +677,51 @@ func copyWindowsGenerationPayload(payload, staging string) error {
 			return err
 		}
 	}
+	return copyBundledRipgrepPayload(payload, staging)
+}
+
+// copyBundledRipgrepPayload 把可选的官方 Windows amd64 ripgrep 目录拷进 generation。
+// 目录不存在时保持旧载荷可安装；目录存在时必须正好是 rg.exe 与上游许可/NOTICE，避免把额外 DLL 发布进去。
+func copyBundledRipgrepPayload(payload, staging string) error {
+	source := filepath.Join(payload, "third_party", "ripgrep")
+	info, err := os.Lstat(source)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return nil
+		}
+		return err
+	}
+	if !info.IsDir() || info.Mode()&os.ModeSymlink != 0 {
+		return errors.New("payload ripgrep 必须是普通目录")
+	}
+	allowed := map[string]os.FileMode{
+		"rg.exe":      0o755,
+		"COPYING":     0o644,
+		"LICENSE-MIT": 0o644,
+		"UNLICENSE":   0o644,
+		"NOTICE":      0o644,
+	}
+	entries, err := os.ReadDir(source)
+	if err != nil {
+		return err
+	}
+	if len(entries) != len(allowed) {
+		return errors.New("payload ripgrep 包含未允许的文件或缺少许可文件")
+	}
+	for _, entry := range entries {
+		if _, ok := allowed[entry.Name()]; !ok || entry.IsDir() || entry.Type()&os.ModeSymlink != 0 || !entry.Type().IsRegular() {
+			return fmt.Errorf("payload ripgrep 文件不允许: %s", entry.Name())
+		}
+	}
+	target := filepath.Join(staging, "third_party", "ripgrep")
+	if err := os.MkdirAll(target, 0o755); err != nil {
+		return err
+	}
+	for name, mode := range allowed {
+		if err := copyTree(filepath.Join(source, name), filepath.Join(target, name), mode); err != nil {
+			return err
+		}
+	}
 	return nil
 }
 
