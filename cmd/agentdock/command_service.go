@@ -32,6 +32,17 @@ func runServiceCommand(ctx context.Context, args []string, stdout, stderr io.Wri
 			defer logOutput.Close()
 			stderr = logOutput
 		}
+		releaseCore, holdErr := desktopruntime.HoldCoreServer(ctx, *runtimeRoot)
+		if errors.Is(holdErr, desktopruntime.ErrCoreAlreadyServing) {
+			return nil
+		}
+		if holdErr != nil {
+			if logOutput != nil {
+				fmt.Fprintf(stderr, "agentdock: %v\n", holdErr)
+			}
+			return holdErr
+		}
+		defer releaseCore()
 		if err := desktopruntime.PrepareCoreEnvironment(*runtimeRoot); err != nil {
 			if logOutput != nil {
 				fmt.Fprintf(stderr, "agentdock: %v\n", err)

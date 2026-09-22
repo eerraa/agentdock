@@ -154,6 +154,11 @@ func platformUpdateConfig(ctx context.Context, request ConfigUpdateRequest) erro
 		snapshots = append(snapshots, snapshot)
 	}
 
+	// 普通权限停不掉已提升的 Core 时，先失败并把整次保存交给提权重试。
+	// 不能在那之前拆掉 Tunnel，否则重试前公网会一直 502。
+	if err := ensureCoreStopPermitted(runtime.root, runtime.manifest); err != nil {
+		return err
+	}
 	if err := stopTunnel(ctx, runtime); err != nil {
 		return err
 	}
