@@ -64,6 +64,10 @@ internal static partial class Program
             Apply("ko-KR");
             Require(CultureInfo.CurrentCulture.Name == "en-US", "Language selection changed number/date formatting culture.");
             Require(UiText.Get("MainWindowTitle") == "AgentDock 제어판", "Selected Korean resource was not used.");
+            var offlineUpdate = new UpdateCheckResult { Code = "online-updates-disabled", Message = "raw technical message" };
+            Require(offlineUpdate.DisplayMessage == UiText.Get("OfflineUpdatesOnly") && offlineUpdate.DisplayMessage.Contains("수동 업데이트"), "Stable offline update code did not select Korean guidance.");
+            var unknownUpdate = new UpdateCheckResult { Code = "future-code", Message = "unrecognized diagnostic" };
+            Require(unknownUpdate.DisplayMessage == unknownUpdate.Message, "Unknown update diagnostics were discarded.");
             Require((string)new LocExtension("Overview").ProvideValue(null!) == "개요", "XAML localization did not use Korean.");
             Require(UiText.Get("MissingLocalizationTestKey") == "MissingLocalizationTestKey", "Missing-key fallback changed.");
             Require(UiText.Format("LastRefresh", new DateTime(2026, 9, 22, 13, 2, 3)).Contains("13:02:03"), "Date placeholder formatting changed.");

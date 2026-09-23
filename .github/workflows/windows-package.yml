@@ -4,6 +4,8 @@ on:
   push:
     tags:
       - 'v*'
+    branches:
+      - main
   workflow_dispatch:
     inputs:
       ref:
@@ -22,7 +24,7 @@ on:
         default: ''
         type: string
       prerelease:
-        description: 'Publish as a prerelease; version-tag pushes default to prerelease'
+        description: 'Publish as a prerelease; pushes never publish'
         required: true
         default: true
         type: boolean
@@ -36,7 +38,7 @@ concurrency:
 
 jobs:
   build:
-    if: github.repository == 'A-m-o-r-F-a-t-i/agentdock'
+    if: github.repository == 'eerraa/agentdock'
     name: Build verified unsigned Windows x64 package
     runs-on: windows-latest
     timeout-minutes: 45
@@ -81,6 +83,7 @@ jobs:
           MANUAL_PUBLISH: ${{ inputs.publish }}
           MANUAL_PRERELEASE: ${{ inputs.prerelease }}
           MANUAL_TAG: ${{ inputs.tag }}
+          RELEASE_AUTHORIZED: ${{ vars.EERRAA_ENABLE_PUBLIC_RELEASE }}
         run: |
           $ErrorActionPreference = 'Stop'
           $version = (& go run ./tools/release version).Trim()
@@ -99,13 +102,16 @@ jobs:
           $publish = $false
           $prerelease = $true
           $tag = ''
+          # Pushes create non-published candidates only. Release credentials are
+          # unavailable in this job, and tags alone never authorize publication.
           if ($env:EVENT_NAME -eq 'push') {
-            if ($env:GITHUB_REF -notlike 'refs/tags/v*') {
-              throw 'Automatic publication is only supported for v* tags.'
+            if ($env:GITHUB_REF -like 'refs/tags/v*') {
+              $tag = $env:EVENT_TAG.Trim()
             }
-            $publish = $true
-            $tag = $env:EVENT_TAG.Trim()
           } else {
+            if ($env:MANUAL_PUBLISH -eq 'true' -and $env:RELEASE_AUTHORIZED -ne 'true') {
+              throw 'Public release publication is not authorized for this downstream channel.'
+            }
             $publish = $env:MANUAL_PUBLISH -eq 'true'
             $prerelease = $env:MANUAL_PRERELEASE -eq 'true'
             $tag = $env:MANUAL_TAG.Trim()
@@ -216,7 +222,7 @@ jobs:
           "@ | Add-Content $env:GITHUB_STEP_SUMMARY
 
   publish:
-    if: needs.build.outputs.publish == 'true'
+    if: github.repository == 'eerraa/agentdock' && github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main' && inputs.publish && vars.EERRAA_ENABLE_PUBLIC_RELEASE == 'true' && needs.build.outputs.publish == 'true'
     needs: build
     name: Publish verified Windows x64 Release
     runs-on: windows-latest

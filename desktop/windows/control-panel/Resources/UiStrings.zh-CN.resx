@@ -969,4 +969,5 @@
   <data name="ThemeSaveFailed" xml:space="preserve">
     <value>主题未保存：{0}</value>
   </data>
+  <data name="OfflineUpdatesOnly" xml:space="preserve"><value>AgentDock Eerraa 仅通过已验证的离线 Setup.exe 手动更新。在线检查和更新暂不可用，不会回退到上游安装包。</value></data>
 </root>

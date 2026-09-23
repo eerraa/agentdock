@@ -1037,4 +1037,5 @@
   <data name="ThemeSaveFailed" xml:space="preserve">
     <value>테마를 저장하지 못했습니다: {0}</value>
   </data>
+  <data name="OfflineUpdatesOnly" xml:space="preserve"><value>AgentDock Eerraa는 검증된 오프라인 Setup.exe로 수동 업데이트합니다. 온라인 확인과 업데이트는 아직 사용할 수 없으며, upstream 설치파일로 자동 전환하지 않습니다.</value></data>
 </root>

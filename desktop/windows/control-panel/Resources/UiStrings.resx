@@ -969,4 +969,5 @@ Update now?</value>
   <data name="ThemeSaveFailed" xml:space="preserve">
     <value>Theme was not saved: {0}</value>
   </data>
+  <data name="OfflineUpdatesOnly" xml:space="preserve"><value>AgentDock Eerraa uses verified offline Setup.exe packages for manual updates. Online checks and updates are unavailable. Upstream packages are never used as a fallback.</value></data>
 </root>

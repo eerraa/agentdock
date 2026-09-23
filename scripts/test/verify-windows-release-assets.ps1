@@ -122,6 +122,14 @@ try {
     if ([string]$core.platform -ne 'windows/amd64') {
         throw "Packaged Core platform mismatch: $($core.platform)"
     }
+    if ([string]$core.source_commit -ne $ExpectedCommit.ToLowerInvariant() -or [string]$core.distribution -ne 'eerraa') {
+        throw 'Packaged Core source/distribution identity does not match the downstream build.'
+    }
+    $trayPath = Resolve-RequiredFile -Path (Join-Path $temporaryRoot 'agentdock-tray.exe') -Description 'Packaged WPF tray'
+    $trayVersion = (Get-Item -LiteralPath $trayPath).VersionInfo.ProductVersion.Trim()
+    if ($trayVersion -ne ($ExpectedVersion + '+' + $ExpectedCommit.ToLowerInvariant())) {
+        throw "Packaged WPF version/source identity mismatch: $trayVersion"
+    }
 } finally {
     Remove-Item -LiteralPath $temporaryRoot -Recurse -Force -ErrorAction SilentlyContinue
 }

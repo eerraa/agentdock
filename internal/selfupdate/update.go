@@ -26,7 +26,7 @@ import (
 )
 
 const (
-	defaultReleaseAPI        = "https://api.github.com/repos/A-m-o-r-F-a-t-i/agentdock/releases/latest"
+	defaultReleaseAPI        = "https://api.github.com/repos/eerraa/agentdock/releases/latest"
 	maxReleaseArchiveBytes   = 256 << 20
 	maxDesktopArchiveBytes   = 512 << 20
 	maxExtractedPayloadBytes = 64 << 20
@@ -45,6 +45,8 @@ type releaseAsset struct {
 }
 
 type CheckResult struct {
+	Code                   string `json:"code,omitempty"`
+	Channel                string `json:"channel,omitempty"`
 	CurrentVersion         string `json:"current_version"`
 	LatestVersion          string `json:"latest_version"`
 	DesktopCurrentVersion  string `json:"desktop_current_version,omitempty"`
@@ -64,6 +66,7 @@ type updateInspection struct {
 }
 
 type options struct {
+	OfflineOnly           bool
 	CurrentVersion        string
 	ExecutablePath        string
 	DesktopTargetPath     string
@@ -149,6 +152,7 @@ func runtimeOptions(output io.Writer) (options, error) {
 	}
 	desktopTarget := detectDesktopUpdateTarget()
 	return options{
+		OfflineOnly:           true,
 		CurrentVersion:        buildinfo.Version,
 		ExecutablePath:        executable,
 		DesktopTargetPath:     desktopTarget,
@@ -166,6 +170,12 @@ func runtimeOptions(output io.Writer) (options, error) {
 }
 
 func run(ctx context.Context, opts options) error {
+	if opts.OfflineOnly {
+		if err := ctx.Err(); err != nil {
+			return err
+		}
+		return ErrOnlineUpdatesDisabled
+	}
 	if opts.HTTPClient == nil {
 		return errors.New("更新 HTTP 客户端不能为空")
 	}
@@ -370,6 +380,12 @@ func runDesktopOnlyUpdate(ctx context.Context, opts options, inspection updateIn
 }
 
 func inspectUpdate(ctx context.Context, opts options) (updateInspection, error) {
+	if opts.OfflineOnly {
+		if err := ctx.Err(); err != nil {
+			return updateInspection{}, err
+		}
+		return updateInspection{Result: offlineCheckResult(opts.CurrentVersion)}, nil
+	}
 	if opts.HTTPClient == nil {
 		return updateInspection{}, errors.New("更新 HTTP 客户端不能为空")
 	}

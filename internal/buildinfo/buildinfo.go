@@ -8,7 +8,12 @@ import (
 	"github.com/uvwt/agentdock/internal/executioncompat"
 )
 
-const Version = "1.1.4"
+// Numeric patch = upstream patch * 1000 + downstream revision (1..999).
+// Keep three numeric components for Windows resources and the existing updater.
+const Version = "1.1.4001"
+const Distribution = "eerraa"
+const UpstreamVersion = "1.1.4"
+const DownstreamRevision = 1
 
 var (
 	Commit    string
@@ -16,6 +21,10 @@ var (
 )
 
 type Info struct {
+	Distribution           string `json:"distribution"`
+	UpstreamVersion        string `json:"upstream_version"`
+	DownstreamRevision     int    `json:"downstream_revision"`
+	SourceCommit           string `json:"source_commit"`
 	ExecutionPolicyVersion int    `json:"execution_policy_version"`
 	Version                string `json:"version"`
 	Commit                 string `json:"commit"`
@@ -26,6 +35,9 @@ type Info struct {
 
 func Current() Info {
 	info := Info{
+		Distribution:           Distribution,
+		UpstreamVersion:        UpstreamVersion,
+		DownstreamRevision:     DownstreamRevision,
 		ExecutionPolicyVersion: executioncompat.PolicyVersion,
 		Version:                strings.TrimSpace(Version),
 		Commit:                 strings.TrimSpace(Commit),
@@ -47,6 +59,10 @@ func Current() Info {
 				}
 			}
 		}
+	}
+	info.SourceCommit = info.Commit
+	if info.SourceCommit == "" {
+		info.SourceCommit = "unknown"
 	}
 	if len(info.Commit) > 12 {
 		info.Commit = info.Commit[:12]

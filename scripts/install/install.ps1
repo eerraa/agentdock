@@ -112,14 +112,14 @@ function Get-ReleaseBaseUrl {
     }
 
     if ($RequestedVersion -eq 'latest') {
-        return 'https://github.com/A-m-o-r-F-a-t-i/agentdock/releases/latest/download'
+        return 'https://github.com/eerraa/agentdock/releases/latest/download'
     }
 
     $normalizedVersion = $RequestedVersion
     if (-not $normalizedVersion.StartsWith('v')) {
         $normalizedVersion = "v$normalizedVersion"
     }
-    return "https://github.com/A-m-o-r-F-a-t-i/agentdock/releases/download/$normalizedVersion"
+    return "https://github.com/eerraa/agentdock/releases/download/$normalizedVersion"
 }
 
 function Get-CloudflaredReleaseBaseUrl {
@@ -1258,6 +1258,10 @@ $managedRuntimeFiles = @(
 )
 
 try {
+    if ([string]::IsNullOrWhiteSpace($OfflineArchive)) {
+        $installErrorCode = 'online-updates-disabled'
+        throw 'AgentDock Eerraa requires its verified offline Setup.exe. Online installation and upstream fallback are disabled.'
+    }
     $existingInstallDetected =
         (Test-Path -LiteralPath $destinationBinary -PathType Leaf) -or
         (Test-Path -LiteralPath $runtimeManifestPath -PathType Leaf) -or

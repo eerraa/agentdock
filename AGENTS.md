@@ -41,7 +41,7 @@ Use injected time for activity boundaries. Verify concurrent conversations, call
 without tasks, old records, rejected writes and asynchronous command completion.
 
 Build the final Windows package with `.github/workflows/windows-package.yml` in
-`A-m-o-r-F-a-t-i/agentdock`. Source, tests, package construction, installation tests
+`eerraa/agentdock`. Main pushes build candidates only; publication requires a separate explicit approval and a gated manual dispatch. Source, tests, package construction, installation tests
 and publication are separate delivery states. Report unexecuted checks honestly.
 
 Implementation map: `docs/implementation-1.1.4.md`.

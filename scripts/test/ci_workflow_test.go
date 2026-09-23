@@ -126,7 +126,7 @@ func TestWindowsReleaseKeepsBoundedCompleteValidation(t *testing.T) {
 	}
 }
 
-func TestWindowsPackageOwnsAutomaticVersionTagRelease(t *testing.T) {
+func TestWindowsPackageSeparatesCandidateBuildAndAuthorizedPublication(t *testing.T) {
 	workflow := readWorkflow(t, "windows-package.yml")
 	for _, want := range []string{
 		"push:\n    tags:\n      - 'v*'",
@@ -164,5 +164,28 @@ func TestFunnelFixtureRequiresExplicitTargetVersion(t *testing.T) {
 	}
 	if !strings.Contains(string(source), "[Parameter(Mandatory=$true)][string] $ExpectedVersion") {
 		t.Fatal("Funnel lifecycle must not silently inherit an older hardcoded target version")
+	}
+}
+
+func TestEerraaPackagePolicyKeepsRepositoryAndPublicationGuards(t *testing.T) {
+	workflow := readWorkflow(t, "windows-package.yml")
+	for _, want := range []string{
+		"branches:\n      - main",
+		"if: github.repository == 'eerraa/agentdock'",
+		"github.event_name == 'workflow_dispatch'",
+		"github.ref == 'refs/heads/main'",
+		"vars.EERRAA_ENABLE_PUBLIC_RELEASE == 'true'",
+		"contents: read", "contents: write", "candidate-not-released",
+		"Public release publication is not authorized for this downstream channel.",
+	} {
+		if !strings.Contains(workflow, want) {
+			t.Fatalf("unsafe downstream package policy: missing %q", want)
+		}
+	}
+	if strings.Contains(workflow, "A-m-o-r-F-a-t-i/agentdock") {
+		t.Fatal("candidate workflow still depends on upstream ownership")
+	}
+	if strings.Contains(workflow, "$publish = $true") {
+		t.Fatal("automatic publication must not be inferred from a push")
 	}
 }

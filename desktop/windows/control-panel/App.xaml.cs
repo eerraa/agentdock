@@ -526,10 +526,10 @@ public partial class App : System.Windows.Application
         try
         {
             var check = await Runtime.CheckForUpdatesAsync();
-            ControlPanelWindow.SetUpdateStatus(check.Message);
+            ControlPanelWindow.SetUpdateStatus(check.DisplayMessage);
             if (!check.UpdateAvailable)
             {
-                ShowUpdateMessage(owner, check.Message, MessageBoxButton.OK, MessageBoxImage.Information);
+                ShowUpdateMessage(owner, check.DisplayMessage, MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
 
