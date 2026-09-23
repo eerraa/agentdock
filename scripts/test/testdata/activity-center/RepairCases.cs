@@ -13,7 +13,7 @@ internal static partial class Program
 {
     private static void TestPresentation()
     {
-        CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo("zh-CN");
+        ApplyTestUiLanguage("zh-CN");
         var task = new ActivityTask { Id = "tsk_fixture", Status = "completed", Outcome = "cancelled", CancelReason = "设备断开", ArchivedAt = DateTimeOffset.Now };
         Require(task.StateLabel.Contains("已取消") && task.StateLabel.Contains("已归档"), "Archiving overwrote the cancellation result.");
         var thread = new ActivityThread { Id = "main", Status = "closed", Summary = "1" };

@@ -13,6 +13,10 @@ using AgentDock.ControlPanel;
 
 internal static partial class Program
 {
+    private static void ApplyTestUiLanguage(string preference) => typeof(UiText)
+        .GetMethod("ApplyPreference", BindingFlags.Static | BindingFlags.NonPublic)!
+        .Invoke(null, new object[] { preference });
+
     private static void TestKoreanLocalization(string root)
     {
         Directory.CreateDirectory(root);
@@ -69,6 +73,12 @@ internal static partial class Program
             var unknownUpdate = new UpdateCheckResult { Code = "future-code", Message = "unrecognized diagnostic" };
             Require(unknownUpdate.DisplayMessage == unknownUpdate.Message, "Unknown update diagnostics were discarded.");
             Require((string)new LocExtension("Overview").ProvideValue(null!) == "개요", "XAML localization did not use Korean.");
+            Require(ActivityText.Get("Title") == "AgentDock · 작업 활동 센터", "Activity text ignored the selected Korean locale.");
+            Require(ActivityText.State("cancelled") == "취소됨" && ActivityText.Kind("command.started") == "명령", "Activity state/kind was not localized.");
+            Require(ActivityText.State("future-state") == "future-state" && ActivityText.Kind("future.event") == "future.event" && ActivityText.Get("missing") == "missing", "Activity fallback changed protocol values.");
+            Require(UiText.Format("ActivityCancelConfirmation", 2).Contains("중지하지 않습니다"), "Task cancellation was confused with process stopping.");
+            var asyncActivity = Task.Run(async () => { CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo("en-US"); await Task.Yield(); return ActivityText.Get("Title"); }).GetAwaiter().GetResult();
+            Require(asyncActivity == "AgentDock · 작업 활동 센터", "Async activity rendering lost the explicit language.");
             Require(UiText.Get("MissingLocalizationTestKey") == "MissingLocalizationTestKey", "Missing-key fallback changed.");
             Require(UiText.Format("LastRefresh", new DateTime(2026, 9, 22, 13, 2, 3)).Contains("13:02:03"), "Date placeholder formatting changed.");
             var resumed = Task.Run(async () =>

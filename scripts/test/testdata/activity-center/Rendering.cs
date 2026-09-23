@@ -33,7 +33,7 @@ internal static partial class Program
         PresentationTraceSources.DataBindingSource.Listeners.Add(trace);
         PresentationTraceSources.DataBindingSource.Switch.Level = SourceLevels.Error;
         using var runtime = new RuntimeService(root);
-        CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo("zh-CN");
+        ApplyTestUiLanguage("zh-CN");
         CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.CurrentUICulture;
         var window = new ActivityWindow(runtime) { ShowActivated = false, ShowInTaskbar = false, WindowStartupLocation = WindowStartupLocation.Manual, Left = -12000, Top = -12000 };
         window.Show();
@@ -73,7 +73,7 @@ internal static partial class Program
         Require(cancellation.IsCancellationRequested, "Closing the activity window retained its subscription.");
         PumpUntil(() => fixture.ActiveStreams == 0, TimeSpan.FromSeconds(4));
 
-        CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo("en-US");
+        ApplyTestUiLanguage("en");
         CultureInfo.DefaultThreadCurrentUICulture = CultureInfo.CurrentUICulture;
         var english = new ActivityWindow(runtime) { ShowActivated = false, ShowInTaskbar = false, WindowStartupLocation = WindowStartupLocation.Manual, Left = -12000, Top = -12000 };
         english.Show();
@@ -85,6 +85,21 @@ internal static partial class Program
         Capture(english, root, "activity-en-1180x800-200.png", 1180, 800, 2.0);
         english.Close();
         PumpUntil(() => fixture.ActiveStreams == 0, TimeSpan.FromSeconds(4));
+
+        ApplyTestUiLanguage("ko-KR");
+        var korean = new ActivityWindow(runtime) { ShowActivated = false, ShowInTaskbar = false, WindowStartupLocation = WindowStartupLocation.Manual, Left = -12000, Top = -12000 };
+        korean.Show();
+        var koreanTimeline = (ActivityTimeline)typeof(ActivityWindow).GetField("_timeline", BindingFlags.Instance | BindingFlags.NonPublic)!.GetValue(korean)!;
+        PumpUntil(() => ((ComboBox)korean.FindName("ThreadSelector")).Items.Count == 2 && koreanTimeline.Rows.Count > 0, TimeSpan.FromSeconds(10));
+        Require(korean.Title == "AgentDock · 작업 활동 센터", "Loaded Korean activity title was not localized.");
+        Require(((TextBox)korean.FindName("ThreadInfo")).Text.Contains("다음 동작"), "Loaded checkpoint labels were not Korean.");
+        PopulateTimeline(koreanTimeline, root);
+        foreach (var scale in new[] { 1.0, 1.25, 1.5, 2.0 })
+            Capture(korean, root, "activity-ko-840x560-" + (scale * 100).ToString("0") + ".png", 840, 560, scale);
+        Capture(korean, root, "activity-ko-1180x800-100.png", 1180, 800, 1.0);
+        korean.Close();
+        PumpUntil(() => fixture.ActiveStreams == 0, TimeSpan.FromSeconds(4));
+        ApplyTestUiLanguage("en");
         Require(trace.Messages.Count == 0, "WPF binding errors: " + string.Join("\n", trace.Messages));
         PresentationTraceSources.DataBindingSource.Listeners.Remove(trace);
     }

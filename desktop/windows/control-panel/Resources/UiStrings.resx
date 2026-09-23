@@ -970,4 +970,147 @@ Update now?</value>
     <value>Theme was not saved: {0}</value>
   </data>
   <data name="OfflineUpdatesOnly" xml:space="preserve"><value>AgentDock Eerraa uses verified offline Setup.exe packages for manual updates. Online checks and updates are unavailable. Upstream packages are never used as a fallback.</value></data>
+  <data name="ActivityNeedsAttention" xml:space="preserve"><value>Needs attention</value></data>
+  <data name="ActivityInProgressTasks" xml:space="preserve"><value>In progress</value></data>
+  <data name="ActivityEndedTasks" xml:space="preserve"><value>Ended</value></data>
+  <data name="ActivityRecords" xml:space="preserve"><value>Activity records</value></data>
+  <data name="ActivityNoStep" xml:space="preserve"><value>No current step recorded</value></data>
+  <data name="ActivityNoReason" xml:space="preserve"><value>No reason recorded</value></data>
+  <data name="ActivityNoNext" xml:space="preserve"><value>No next action recorded</value></data>
+  <data name="ActivityCancelReason" xml:space="preserve"><value>Cancellation reason</value></data>
+  <data name="ActivityTaskBlockReason" xml:space="preserve"><value>Task blocked</value></data>
+  <data name="ActivityThreadBlockReason" xml:space="preserve"><value>Branch blocked</value></data>
+  <data name="ActivityNoWorkspace" xml:space="preserve"><value>No workspace bound</value></data>
+  <data name="ActivityWorkspaceMissing" xml:space="preserve"><value>Bound workspace is missing</value></data>
+  <data name="ActivityWorkspaceButton" xml:space="preserve"><value>Open workspace</value></data>
+  <data name="ActivitySummary" xml:space="preserve"><value>Checkpoint summary</value></data>
+  <data name="ActivityCommandDirectory" xml:space="preserve"><value>Command directory</value></data>
+  <data name="ActivityRunningNow" xml:space="preserve"><value>Running at latest check</value></data>
+  <data name="ActivityTaskCancelledEvent" xml:space="preserve"><value>Task cancelled</value></data>
+  <data name="ActivityContinue" xml:space="preserve"><value>Copy continuation instruction</value></data>
+  <data name="ActivityRetry" xml:space="preserve"><value>Copy retry instruction</value></data>
+  <data name="ActivityContinueInstruction" xml:space="preserve"><value>Read this task and branch checkpoint, confirm its workspace, then continue the unfinished work. This instruction does not itself start execution.</value></data>
+  <data name="ActivityRetryInstruction" xml:space="preserve"><value>Keep the original task cancelled. Read its goal and cancellation reason, then create a new task for a retry.</value></data>
+  <data name="ActivityResumeTask" xml:space="preserve"><value>Unblock task state</value></data>
+  <data name="ActivityResumeHint" xml:space="preserve"><value>The state is restored. Continue from the connected client; no model was started.</value></data>
+  <data name="ActivityLiveCommands" xml:space="preserve"><value>Live command sessions · all branches of this task</value></data>
+  <data name="ActivityLiveUnavailable" xml:space="preserve"><value>Live session state unavailable; stopping is disabled until checked.</value></data>
+  <data name="ActivityNoRunning" xml:space="preserve"><value>No running commands at the latest check. Task progress does not indicate client execution.</value></data>
+  <data name="ActivityRunningAfterCancel" xml:space="preserve"><value>The task has ended, but its command processes are still running.</value></data>
+  <data name="ActivityUnknownCommand" xml:space="preserve"><value>Command session · command text not retained</value></data>
+  <data name="ActivityTechnical" xml:space="preserve"><value>Technical details</value></data>
+  <data name="ActivityProgress" xml:space="preserve"><value>Step progress</value></data>
+  <data name="ActivityTaskSteps" xml:space="preserve"><value>Task steps</value></data>
+  <data name="ActivityBranchSteps" xml:space="preserve"><value>Selected branch steps</value></data>
+  <data name="ActivityHistory" xml:space="preserve"><value>Activity history</value></data>
+  <data name="ActivityReturnLatest" xml:space="preserve"><value>Return to latest activity</value></data>
+  <data name="ActivityNoResults" xml:space="preserve"><value>No matching tasks</value></data>
+  <data name="ActivityCategoryAll" xml:space="preserve"><value>All activity types</value></data>
+  <data name="ActivityCategoryCommand" xml:space="preserve"><value>Commands</value></data>
+  <data name="ActivityCategoryFile" xml:space="preserve"><value>File changes</value></data>
+  <data name="ActivityCategoryCheckpoint" xml:space="preserve"><value>Checkpoints and review</value></data>
+  <data name="ActivityCategoryLifecycle" xml:space="preserve"><value>Lifecycle and other events</value></data>
+  <data name="ActivityLastChecked" xml:space="preserve"><value>Last check</value></data>
+  <data name="ActivityClipboardReady" xml:space="preserve"><value>Continuation instruction copied.</value></data>
+  <data name="ActivityDiffCurrentHint" xml:space="preserve"><value>This compares the current working tree, not the file contents at event time.</value></data>
+  <data name="ActivityTitle" xml:space="preserve"><value>AgentDock · Task activity</value></data>
+  <data name="ActivityOpen" xml:space="preserve"><value>Task activity center</value></data>
+  <data name="ActivityFacts" xml:space="preserve"><value>Recorded AgentDock execution only. Threads are recoverable contexts, not background AI workers.</value></data>
+  <data name="ActivityTasks" xml:space="preserve"><value>Tasks</value></data>
+  <data name="ActivitySearch" xml:space="preserve"><value>Filter by title, project, workspace or task ID</value></data>
+  <data name="ActivityAll" xml:space="preserve"><value>All states</value></data>
+  <data name="ActivityRefresh" xml:space="preserve"><value>Refresh</value></data>
+  <data name="ActivityArchived" xml:space="preserve"><value>Include archived</value></data>
+  <data name="ActivityThread" xml:space="preserve"><value>Execution branch</value></data>
+  <data name="ActivityThreadActions" xml:space="preserve"><value>Branch actions ▾</value></data>
+  <data name="ActivityTaskActions" xml:space="preserve"><value>Task actions ▾</value></data>
+  <data name="ActivitySetActive" xml:space="preserve"><value>Use as default continuation branch</value></data>
+  <data name="ActivityCreate" xml:space="preserve"><value>Create thread</value></data>
+  <data name="ActivityFork" xml:space="preserve"><value>Fork checkpoint</value></data>
+  <data name="ActivityBlock" xml:space="preserve"><value>Block thread</value></data>
+  <data name="ActivityResume" xml:space="preserve"><value>Unblock branch state</value></data>
+  <data name="ActivityClose" xml:space="preserve"><value>Close thread</value></data>
+  <data name="ActivityCancelTask" xml:space="preserve"><value>Cancel task</value></data>
+  <data name="ActivityArchive" xml:space="preserve"><value>Archive task</value></data>
+  <data name="ActivityUnarchive" xml:space="preserve"><value>Restore from archive</value></data>
+  <data name="ActivityCleanup" xml:space="preserve"><value>Clean activity older than 30 days</value></data>
+  <data name="ActivityStop" xml:space="preserve"><value>Stop command</value></data>
+  <data name="ActivityCopy" xml:space="preserve"><value>Copy redacted command</value></data>
+  <data name="ActivityDirectory" xml:space="preserve"><value>Open command directory</value></data>
+  <data name="ActivityFile" xml:space="preserve"><value>Locate modified file</value></data>
+  <data name="ActivityDiff" xml:space="preserve"><value>View current diff</value></data>
+  <data name="ActivityFollow" xml:space="preserve"><value>Follow latest</value></data>
+  <data name="ActivityOutput" xml:space="preserve"><value>Show output</value></data>
+  <data name="ActivityOutputTruncated" xml:space="preserve"><value>Show output · bounded preview, truncated</value></data>
+  <data name="ActivityDetails" xml:space="preserve"><value>Steps and acceptance</value></data>
+  <data name="ActivityConditions" xml:space="preserve"><value>Acceptance conditions</value></data>
+  <data name="ActivityReview" xml:space="preserve"><value>Final review</value></data>
+  <data name="ActivityRisks" xml:space="preserve"><value>Open risks / missing checks</value></data>
+  <data name="ActivityWorkspace" xml:space="preserve"><value>Workspace</value></data>
+  <data name="ActivityStep" xml:space="preserve"><value>Current step</value></data>
+  <data name="ActivityNext" xml:space="preserve"><value>Next action</value></data>
+  <data name="ActivityDefaultThread" xml:space="preserve"><value>Continuation thread</value></data>
+  <data name="ActivityNoTask" xml:space="preserve"><value>Select a task to view its execution timeline.</value></data>
+  <data name="ActivityNoEvents" xml:space="preserve"><value>No activity recorded for this thread yet.</value></data>
+  <data name="ActivityUnassigned" xml:space="preserve"><value>Unassigned legacy activity</value></data>
+  <data name="ActivityAllActivity" xml:space="preserve"><value>All recorded activity</value></data>
+  <data name="ActivityAllActivityDetail" xml:space="preserve"><value>All tasks and legacy unassigned operations</value></data>
+  <data name="ActivityCancelConfirmation" xml:space="preserve"><value>There are {0} running commands in this task. Cancelling changes the task state only and will not stop these processes. Cancel this task?</value></data>
+  <data name="ActivityLoading" xml:space="preserve"><value>Loading local activity…</value></data>
+  <data name="ActivityLive" xml:space="preserve"><value>Connected · live events</value></data>
+  <data name="ActivityReconnecting" xml:space="preserve"><value>Disconnected. Reconnecting to the local service…</value></data>
+  <data name="ActivityUnavailable" xml:space="preserve"><value>Local activity is unavailable. Check the service connection.</value></data>
+  <data name="ActivityGap" xml:space="preserve"><value>Some older activity was removed by retention. Remaining records are still available.</value></data>
+  <data name="ActivityReset" xml:space="preserve"><value>The local journal changed; the replay cursor has been reset.</value></data>
+  <data name="ActivityWarning" xml:space="preserve"><value>Activity warning</value></data>
+  <data name="ActivityRecentOnly" xml:space="preserve"><value>Only the latest 1,000 timeline entries are retained in this window.</value></data>
+  <data name="ActivityMoreTasks" xml:space="preserve"><value>Showing at most 200 recent tasks. Narrow the server-side state filter to see older tasks.</value></data>
+  <data name="ActivityConfirm" xml:space="preserve"><value>Confirm operation</value></data>
+  <data name="ActivityConfirmAction" xml:space="preserve"><value>Apply this operation to the selected task/thread? Existing history will be retained.</value></data>
+  <data name="ActivityConfirmStop" xml:space="preserve"><value>Stop this command session? Unsaved work in that process may be lost.</value></data>
+  <data name="ActivityConfirmCleanup" xml:space="preserve"><value>Remove complete activity segments older than 30 days? Task checkpoints and current output are retained.</value></data>
+  <data name="ActivityName" xml:space="preserve"><value>Thread title</value></data>
+  <data name="ActivityReason" xml:space="preserve"><value>Reason</value></data>
+  <data name="ActivityRequired" xml:space="preserve"><value>Enter a non-empty value (at most 512 characters).</value></data>
+  <data name="ActivityOK" xml:space="preserve"><value>OK</value></data>
+  <data name="ActivityDismiss" xml:space="preserve"><value>Cancel</value></data>
+  <data name="ActivityOperationFailed" xml:space="preserve"><value>The operation did not complete.</value></data>
+  <data name="ActivityInvalidPath" xml:space="preserve"><value>The recorded path is missing, redacted, remote, or not a local filesystem path.</value></data>
+  <data name="ActivityDiffTitle" xml:space="preserve"><value>Current repository diff</value></data>
+  <data name="ActivityDiffEmpty" xml:space="preserve"><value>No current tracked diff for this file.</value></data>
+  <data name="ActivityInterrupted" xml:space="preserve"><value>Last recorded running · not confirmed live</value></data>
+  <data name="ActivityLabelActive" xml:space="preserve"><value>Active</value></data>
+  <data name="ActivityLabelBlocked" xml:space="preserve"><value>Blocked</value></data>
+  <data name="ActivityLabelCompleted" xml:space="preserve"><value>Completed</value></data>
+  <data name="ActivityLabelCancelled" xml:space="preserve"><value>Cancelled</value></data>
+  <data name="ActivityLabelArchived" xml:space="preserve"><value>Archived</value></data>
+  <data name="ActivityLabelOpen" xml:space="preserve"><value>Open</value></data>
+  <data name="ActivityLabelClosed" xml:space="preserve"><value>Closed</value></data>
+  <data name="ActivityLabelSucceeded" xml:space="preserve"><value>Succeeded</value></data>
+  <data name="ActivityLabelFailed" xml:space="preserve"><value>Failed</value></data>
+  <data name="ActivityLabelRunningLastObserved" xml:space="preserve"><value>Running · last observed</value></data>
+  <data name="ActivityLabelTimedOut" xml:space="preserve"><value>Timed out</value></data>
+  <data name="ActivityLabelStopped" xml:space="preserve"><value>Stopped</value></data>
+  <data name="ActivityLabelPending" xml:space="preserve"><value>Pending</value></data>
+  <data name="ActivityLabelInProgress" xml:space="preserve"><value>In progress</value></data>
+  <data name="ActivityLabelPartial" xml:space="preserve"><value>Partial</value></data>
+  <data name="ActivityLabelExited" xml:space="preserve"><value>Exited</value></data>
+  <data name="ActivityLabelCommand" xml:space="preserve"><value>Command</value></data>
+  <data name="ActivityLabelTaskCreated" xml:space="preserve"><value>Task created</value></data>
+  <data name="ActivityLabelTaskCompleted" xml:space="preserve"><value>Task completed</value></data>
+  <data name="ActivityLabelTaskBlocked" xml:space="preserve"><value>Task blocked</value></data>
+  <data name="ActivityLabelTaskUnblocked" xml:space="preserve"><value>Task unblocked</value></data>
+  <data name="ActivityLabelTaskArchived" xml:space="preserve"><value>Task archived</value></data>
+  <data name="ActivityLabelTaskRestoredFromArchive" xml:space="preserve"><value>Task restored from archive</value></data>
+  <data name="ActivityLabelBranchCreated" xml:space="preserve"><value>Branch created</value></data>
+  <data name="ActivityLabelContinuationBranchChanged" xml:space="preserve"><value>Continuation branch changed</value></data>
+  <data name="ActivityLabelBranchBlocked" xml:space="preserve"><value>Branch blocked</value></data>
+  <data name="ActivityLabelBranchUnblocked" xml:space="preserve"><value>Branch unblocked</value></data>
+  <data name="ActivityLabelBranchClosed" xml:space="preserve"><value>Branch closed</value></data>
+  <data name="ActivityLabelHistoryCleaned" xml:space="preserve"><value>History cleaned</value></data>
+  <data name="ActivityLabelFileChanged" xml:space="preserve"><value>File changed</value></data>
+  <data name="ActivityLabelStepStarted" xml:space="preserve"><value>Step started</value></data>
+  <data name="ActivityLabelCheckpoint" xml:space="preserve"><value>Checkpoint</value></data>
+  <data name="ActivityLabelToolCall" xml:space="preserve"><value>Tool call</value></data>
+  <data name="ActivityLabelFinalReview" xml:space="preserve"><value>Final review</value></data>
 </root>

@@ -970,4 +970,147 @@
     <value>主题未保存：{0}</value>
   </data>
   <data name="OfflineUpdatesOnly" xml:space="preserve"><value>AgentDock Eerraa 仅通过已验证的离线 Setup.exe 手动更新。在线检查和更新暂不可用，不会回退到上游安装包。</value></data>
+  <data name="ActivityNeedsAttention" xml:space="preserve"><value>待处理任务</value></data>
+  <data name="ActivityInProgressTasks" xml:space="preserve"><value>进行中任务</value></data>
+  <data name="ActivityEndedTasks" xml:space="preserve"><value>已结束任务</value></data>
+  <data name="ActivityRecords" xml:space="preserve"><value>活动记录</value></data>
+  <data name="ActivityNoStep" xml:space="preserve"><value>尚未记录当前步骤</value></data>
+  <data name="ActivityNoReason" xml:space="preserve"><value>尚未记录原因</value></data>
+  <data name="ActivityNoNext" xml:space="preserve"><value>尚未记录下一动作</value></data>
+  <data name="ActivityCancelReason" xml:space="preserve"><value>取消原因</value></data>
+  <data name="ActivityTaskBlockReason" xml:space="preserve"><value>任务阻塞原因</value></data>
+  <data name="ActivityThreadBlockReason" xml:space="preserve"><value>分支阻塞原因</value></data>
+  <data name="ActivityNoWorkspace" xml:space="preserve"><value>未绑定工作区</value></data>
+  <data name="ActivityWorkspaceMissing" xml:space="preserve"><value>绑定的工作区记录已缺失</value></data>
+  <data name="ActivityWorkspaceButton" xml:space="preserve"><value>打开工作区</value></data>
+  <data name="ActivitySummary" xml:space="preserve"><value>阶段摘要</value></data>
+  <data name="ActivityCommandDirectory" xml:space="preserve"><value>命令目录</value></data>
+  <data name="ActivityRunningNow" xml:space="preserve"><value>最近检查：运行中</value></data>
+  <data name="ActivityTaskCancelledEvent" xml:space="preserve"><value>任务已取消</value></data>
+  <data name="ActivityContinue" xml:space="preserve"><value>复制继续指令</value></data>
+  <data name="ActivityRetry" xml:space="preserve"><value>复制重试指令</value></data>
+  <data name="ActivityContinueInstruction" xml:space="preserve"><value>读取此任务与分支的检查点，确认绑定工作区后继续未完成工作。复制本指令不会自动启动执行。</value></data>
+  <data name="ActivityRetryInstruction" xml:space="preserve"><value>保留原任务的已取消状态。读取其目标和取消原因，另建新任务重试。</value></data>
+  <data name="ActivityResumeTask" xml:space="preserve"><value>解除任务阻塞</value></data>
+  <data name="ActivityResumeHint" xml:space="preserve"><value>状态已恢复，请在已连接的客户端继续执行。此操作不会启动模型。</value></data>
+  <data name="ActivityLiveCommands" xml:space="preserve"><value>实时命令会话 · 当前任务所有分支</value></data>
+  <data name="ActivityLiveUnavailable" xml:space="preserve"><value>实时会话状态不可用，重新检查前无法停止命令。</value></data>
+  <data name="ActivityNoRunning" xml:space="preserve"><value>最近检查没有运行命令。任务进度不代表客户端当前执行状态。</value></data>
+  <data name="ActivityRunningAfterCancel" xml:space="preserve"><value>任务已结束，但其命令进程仍在运行。</value></data>
+  <data name="ActivityUnknownCommand" xml:space="preserve"><value>命令会话 · 命令正文未保留</value></data>
+  <data name="ActivityTechnical" xml:space="preserve"><value>技术详情</value></data>
+  <data name="ActivityProgress" xml:space="preserve"><value>步骤进度</value></data>
+  <data name="ActivityTaskSteps" xml:space="preserve"><value>任务步骤</value></data>
+  <data name="ActivityBranchSteps" xml:space="preserve"><value>当前查看分支步骤</value></data>
+  <data name="ActivityHistory" xml:space="preserve"><value>活动记录</value></data>
+  <data name="ActivityReturnLatest" xml:space="preserve"><value>返回最新活动</value></data>
+  <data name="ActivityNoResults" xml:space="preserve"><value>没有符合筛选条件的任务</value></data>
+  <data name="ActivityCategoryAll" xml:space="preserve"><value>全部活动类型</value></data>
+  <data name="ActivityCategoryCommand" xml:space="preserve"><value>命令</value></data>
+  <data name="ActivityCategoryFile" xml:space="preserve"><value>文件修改</value></data>
+  <data name="ActivityCategoryCheckpoint" xml:space="preserve"><value>阶段摘要与验收</value></data>
+  <data name="ActivityCategoryLifecycle" xml:space="preserve"><value>生命周期及其他活动</value></data>
+  <data name="ActivityLastChecked" xml:space="preserve"><value>最近检查</value></data>
+  <data name="ActivityClipboardReady" xml:space="preserve"><value>继续指令已复制。</value></data>
+  <data name="ActivityDiffCurrentHint" xml:space="preserve"><value>此处比较当前工作树，不代表事件发生时的历史文件内容。</value></data>
+  <data name="ActivityTitle" xml:space="preserve"><value>AgentDock · 任务活动中心</value></data>
+  <data name="ActivityOpen" xml:space="preserve"><value>任务活动中心</value></data>
+  <data name="ActivityFacts" xml:space="preserve"><value>仅展示 AgentDock 已记录的执行事实。线程用于恢复任务，不表示后台 AI 工作进程。</value></data>
+  <data name="ActivityTasks" xml:space="preserve"><value>任务</value></data>
+  <data name="ActivitySearch" xml:space="preserve"><value>按标题、项目、工作区或任务 ID 筛选</value></data>
+  <data name="ActivityAll" xml:space="preserve"><value>全部状态</value></data>
+  <data name="ActivityRefresh" xml:space="preserve"><value>刷新</value></data>
+  <data name="ActivityArchived" xml:space="preserve"><value>显示归档任务</value></data>
+  <data name="ActivityThread" xml:space="preserve"><value>执行分支</value></data>
+  <data name="ActivityThreadActions" xml:space="preserve"><value>分支操作 ▾</value></data>
+  <data name="ActivityTaskActions" xml:space="preserve"><value>任务操作 ▾</value></data>
+  <data name="ActivitySetActive" xml:space="preserve"><value>设为默认继续分支</value></data>
+  <data name="ActivityCreate" xml:space="preserve"><value>新建线程</value></data>
+  <data name="ActivityFork" xml:space="preserve"><value>从检查点分叉</value></data>
+  <data name="ActivityBlock" xml:space="preserve"><value>阻塞线程</value></data>
+  <data name="ActivityResume" xml:space="preserve"><value>解除分支阻塞</value></data>
+  <data name="ActivityClose" xml:space="preserve"><value>关闭线程</value></data>
+  <data name="ActivityCancelTask" xml:space="preserve"><value>取消任务</value></data>
+  <data name="ActivityArchive" xml:space="preserve"><value>归档任务</value></data>
+  <data name="ActivityUnarchive" xml:space="preserve"><value>解除归档</value></data>
+  <data name="ActivityCleanup" xml:space="preserve"><value>清理 30 天前的活动日志</value></data>
+  <data name="ActivityStop" xml:space="preserve"><value>停止命令</value></data>
+  <data name="ActivityCopy" xml:space="preserve"><value>复制脱敏命令</value></data>
+  <data name="ActivityDirectory" xml:space="preserve"><value>打开命令目录</value></data>
+  <data name="ActivityFile" xml:space="preserve"><value>定位修改文件</value></data>
+  <data name="ActivityDiff" xml:space="preserve"><value>查看当前差异</value></data>
+  <data name="ActivityFollow" xml:space="preserve"><value>跟随最新活动</value></data>
+  <data name="ActivityOutput" xml:space="preserve"><value>展开输出</value></data>
+  <data name="ActivityOutputTruncated" xml:space="preserve"><value>展开输出 · 有界预览，已截断</value></data>
+  <data name="ActivityDetails" xml:space="preserve"><value>步骤与验收</value></data>
+  <data name="ActivityConditions" xml:space="preserve"><value>验收条件</value></data>
+  <data name="ActivityReview" xml:space="preserve"><value>最终复核</value></data>
+  <data name="ActivityRisks" xml:space="preserve"><value>剩余风险与未完成检查</value></data>
+  <data name="ActivityWorkspace" xml:space="preserve"><value>工作区</value></data>
+  <data name="ActivityStep" xml:space="preserve"><value>当前步骤</value></data>
+  <data name="ActivityNext" xml:space="preserve"><value>下一动作</value></data>
+  <data name="ActivityDefaultThread" xml:space="preserve"><value>默认继续线程</value></data>
+  <data name="ActivityNoTask" xml:space="preserve"><value>选择任务后查看执行时间线。</value></data>
+  <data name="ActivityNoEvents" xml:space="preserve"><value>该线程尚无活动记录。</value></data>
+  <data name="ActivityUnassigned" xml:space="preserve"><value>未绑定任务的历史活动</value></data>
+  <data name="ActivityAllActivity" xml:space="preserve"><value>全部执行记录</value></data>
+  <data name="ActivityAllActivityDetail" xml:space="preserve"><value>所有任务及旧版未绑定操作</value></data>
+  <data name="ActivityCancelConfirmation" xml:space="preserve"><value>该任务当前有 {0} 条运行中的命令。取消任务只修改任务状态，不会停止这些进程。是否取消任务？</value></data>
+  <data name="ActivityLoading" xml:space="preserve"><value>正在加载本地活动…</value></data>
+  <data name="ActivityLive" xml:space="preserve"><value>已连接 · 实时活动</value></data>
+  <data name="ActivityReconnecting" xml:space="preserve"><value>连接中断，正在重连本地服务…</value></data>
+  <data name="ActivityUnavailable" xml:space="preserve"><value>本地活动暂不可用，请检查服务连接。</value></data>
+  <data name="ActivityGap" xml:space="preserve"><value>较早的活动已按保留策略清理，其余记录仍可查看。</value></data>
+  <data name="ActivityReset" xml:space="preserve"><value>本地活动日志已变化，已重置重放位置。</value></data>
+  <data name="ActivityWarning" xml:space="preserve"><value>活动记录提示</value></data>
+  <data name="ActivityRecentOnly" xml:space="preserve"><value>窗口只保留最近 1,000 条时间线记录。</value></data>
+  <data name="ActivityMoreTasks" xml:space="preserve"><value>最多显示最近 200 个任务，可按状态缩小范围查看较早任务。</value></data>
+  <data name="ActivityConfirm" xml:space="preserve"><value>确认操作</value></data>
+  <data name="ActivityConfirmAction" xml:space="preserve"><value>将此操作应用于所选任务或线程？已有历史记录将保留。</value></data>
+  <data name="ActivityConfirmStop" xml:space="preserve"><value>停止当前命令会话？该进程中尚未保存的工作可能丢失。</value></data>
+  <data name="ActivityConfirmCleanup" xml:space="preserve"><value>删除 30 天前的完整活动日志分段？任务检查点与当前输出会保留。</value></data>
+  <data name="ActivityName" xml:space="preserve"><value>线程名称</value></data>
+  <data name="ActivityReason" xml:space="preserve"><value>原因</value></data>
+  <data name="ActivityRequired" xml:space="preserve"><value>请填写非空内容，最多 512 个字符。</value></data>
+  <data name="ActivityOK" xml:space="preserve"><value>确定</value></data>
+  <data name="ActivityDismiss" xml:space="preserve"><value>取消</value></data>
+  <data name="ActivityOperationFailed" xml:space="preserve"><value>操作未完成。</value></data>
+  <data name="ActivityInvalidPath" xml:space="preserve"><value>记录中的路径不存在、已脱敏、属于远端环境，或不是本地文件系统路径。</value></data>
+  <data name="ActivityDiffTitle" xml:space="preserve"><value>当前仓库差异</value></data>
+  <data name="ActivityDiffEmpty" xml:space="preserve"><value>该文件当前没有已跟踪差异。</value></data>
+  <data name="ActivityInterrupted" xml:space="preserve"><value>历史记录为运行中 · 实时状态未确认</value></data>
+  <data name="ActivityLabelActive" xml:space="preserve"><value>进行中</value></data>
+  <data name="ActivityLabelBlocked" xml:space="preserve"><value>已阻塞</value></data>
+  <data name="ActivityLabelCompleted" xml:space="preserve"><value>已完成</value></data>
+  <data name="ActivityLabelCancelled" xml:space="preserve"><value>已取消</value></data>
+  <data name="ActivityLabelArchived" xml:space="preserve"><value>已归档</value></data>
+  <data name="ActivityLabelOpen" xml:space="preserve"><value>开放</value></data>
+  <data name="ActivityLabelClosed" xml:space="preserve"><value>已关闭</value></data>
+  <data name="ActivityLabelSucceeded" xml:space="preserve"><value>成功</value></data>
+  <data name="ActivityLabelFailed" xml:space="preserve"><value>失败</value></data>
+  <data name="ActivityLabelRunningLastObserved" xml:space="preserve"><value>运行中 · 最后记录</value></data>
+  <data name="ActivityLabelTimedOut" xml:space="preserve"><value>已超时</value></data>
+  <data name="ActivityLabelStopped" xml:space="preserve"><value>已停止</value></data>
+  <data name="ActivityLabelPending" xml:space="preserve"><value>待执行</value></data>
+  <data name="ActivityLabelInProgress" xml:space="preserve"><value>执行中</value></data>
+  <data name="ActivityLabelPartial" xml:space="preserve"><value>部分完成</value></data>
+  <data name="ActivityLabelExited" xml:space="preserve"><value>已退出</value></data>
+  <data name="ActivityLabelCommand" xml:space="preserve"><value>命令</value></data>
+  <data name="ActivityLabelTaskCreated" xml:space="preserve"><value>任务已创建</value></data>
+  <data name="ActivityLabelTaskCompleted" xml:space="preserve"><value>任务已完成</value></data>
+  <data name="ActivityLabelTaskBlocked" xml:space="preserve"><value>任务已阻塞</value></data>
+  <data name="ActivityLabelTaskUnblocked" xml:space="preserve"><value>任务已解除阻塞</value></data>
+  <data name="ActivityLabelTaskArchived" xml:space="preserve"><value>任务已归档</value></data>
+  <data name="ActivityLabelTaskRestoredFromArchive" xml:space="preserve"><value>任务已解除归档</value></data>
+  <data name="ActivityLabelBranchCreated" xml:space="preserve"><value>分支已创建</value></data>
+  <data name="ActivityLabelContinuationBranchChanged" xml:space="preserve"><value>默认继续分支已更改</value></data>
+  <data name="ActivityLabelBranchBlocked" xml:space="preserve"><value>分支已阻塞</value></data>
+  <data name="ActivityLabelBranchUnblocked" xml:space="preserve"><value>分支已解除阻塞</value></data>
+  <data name="ActivityLabelBranchClosed" xml:space="preserve"><value>分支已关闭</value></data>
+  <data name="ActivityLabelHistoryCleaned" xml:space="preserve"><value>历史活动已清理</value></data>
+  <data name="ActivityLabelFileChanged" xml:space="preserve"><value>文件修改</value></data>
+  <data name="ActivityLabelStepStarted" xml:space="preserve"><value>步骤开始</value></data>
+  <data name="ActivityLabelCheckpoint" xml:space="preserve"><value>阶段检查点</value></data>
+  <data name="ActivityLabelToolCall" xml:space="preserve"><value>工具调用</value></data>
+  <data name="ActivityLabelFinalReview" xml:space="preserve"><value>最终复核</value></data>
 </root>

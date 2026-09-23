@@ -1038,4 +1038,147 @@
     <value>테마를 저장하지 못했습니다: {0}</value>
   </data>
   <data name="OfflineUpdatesOnly" xml:space="preserve"><value>AgentDock Eerraa는 검증된 오프라인 Setup.exe로 수동 업데이트합니다. 온라인 확인과 업데이트는 아직 사용할 수 없으며, upstream 설치파일로 자동 전환하지 않습니다.</value></data>
+  <data name="ActivityNeedsAttention" xml:space="preserve"><value>확인이 필요한 작업</value></data>
+  <data name="ActivityInProgressTasks" xml:space="preserve"><value>진행 중 작업</value></data>
+  <data name="ActivityEndedTasks" xml:space="preserve"><value>종료된 작업</value></data>
+  <data name="ActivityRecords" xml:space="preserve"><value>활동 기록</value></data>
+  <data name="ActivityNoStep" xml:space="preserve"><value>현재 단계가 기록되지 않았습니다</value></data>
+  <data name="ActivityNoReason" xml:space="preserve"><value>사유가 기록되지 않았습니다</value></data>
+  <data name="ActivityNoNext" xml:space="preserve"><value>다음 동작이 기록되지 않았습니다</value></data>
+  <data name="ActivityCancelReason" xml:space="preserve"><value>취소 사유</value></data>
+  <data name="ActivityTaskBlockReason" xml:space="preserve"><value>작업 차단 사유</value></data>
+  <data name="ActivityThreadBlockReason" xml:space="preserve"><value>분기 차단 사유</value></data>
+  <data name="ActivityNoWorkspace" xml:space="preserve"><value>연결된 작업 공간 없음</value></data>
+  <data name="ActivityWorkspaceMissing" xml:space="preserve"><value>연결된 작업 공간 기록을 찾을 수 없습니다</value></data>
+  <data name="ActivityWorkspaceButton" xml:space="preserve"><value>작업 공간 열기</value></data>
+  <data name="ActivitySummary" xml:space="preserve"><value>체크포인트 요약</value></data>
+  <data name="ActivityCommandDirectory" xml:space="preserve"><value>명령 실행 디렉터리</value></data>
+  <data name="ActivityRunningNow" xml:space="preserve"><value>최근 확인 시 실행 중</value></data>
+  <data name="ActivityTaskCancelledEvent" xml:space="preserve"><value>작업이 취소되었습니다</value></data>
+  <data name="ActivityContinue" xml:space="preserve"><value>계속하기 지시 복사</value></data>
+  <data name="ActivityRetry" xml:space="preserve"><value>재시도 지시 복사</value></data>
+  <data name="ActivityContinueInstruction" xml:space="preserve"><value>이 작업과 분기의 체크포인트를 읽고 연결된 작업 공간을 확인한 뒤 미완료 작업을 계속하세요. 이 지시를 복사하는 것만으로 실행이 시작되지는 않습니다.</value></data>
+  <data name="ActivityRetryInstruction" xml:space="preserve"><value>원래 작업은 취소된 상태로 유지하세요. 목표와 취소 사유를 확인한 뒤 새 작업을 만들어 재시도하세요.</value></data>
+  <data name="ActivityResumeTask" xml:space="preserve"><value>작업 차단 해제</value></data>
+  <data name="ActivityResumeHint" xml:space="preserve"><value>상태가 복원되었습니다. 연결된 클라이언트에서 계속하세요. 모델이 새로 시작된 것은 아닙니다.</value></data>
+  <data name="ActivityLiveCommands" xml:space="preserve"><value>실시간 명령 세션 · 이 작업의 모든 분기</value></data>
+  <data name="ActivityLiveUnavailable" xml:space="preserve"><value>실시간 세션 상태를 확인할 수 없습니다. 다시 확인하기 전에는 명령을 중지할 수 없습니다.</value></data>
+  <data name="ActivityNoRunning" xml:space="preserve"><value>최근 확인 시 실행 중인 명령이 없습니다. 작업 진행 상태는 클라이언트가 현재 실행 중임을 뜻하지 않습니다.</value></data>
+  <data name="ActivityRunningAfterCancel" xml:space="preserve"><value>작업은 종료됐지만 해당 명령 프로세스는 아직 실행 중입니다.</value></data>
+  <data name="ActivityUnknownCommand" xml:space="preserve"><value>명령 세션 · 명령 내용이 보존되지 않았습니다</value></data>
+  <data name="ActivityTechnical" xml:space="preserve"><value>기술 상세 정보</value></data>
+  <data name="ActivityProgress" xml:space="preserve"><value>단계 진행 상태</value></data>
+  <data name="ActivityTaskSteps" xml:space="preserve"><value>작업 단계</value></data>
+  <data name="ActivityBranchSteps" xml:space="preserve"><value>선택한 분기의 단계</value></data>
+  <data name="ActivityHistory" xml:space="preserve"><value>활동 기록</value></data>
+  <data name="ActivityReturnLatest" xml:space="preserve"><value>최신 활동으로 돌아가기</value></data>
+  <data name="ActivityNoResults" xml:space="preserve"><value>조건에 맞는 작업 없음</value></data>
+  <data name="ActivityCategoryAll" xml:space="preserve"><value>모든 활동 유형</value></data>
+  <data name="ActivityCategoryCommand" xml:space="preserve"><value>명령</value></data>
+  <data name="ActivityCategoryFile" xml:space="preserve"><value>파일 변경</value></data>
+  <data name="ActivityCategoryCheckpoint" xml:space="preserve"><value>체크포인트 및 검토</value></data>
+  <data name="ActivityCategoryLifecycle" xml:space="preserve"><value>수명 주기 및 기타 이벤트</value></data>
+  <data name="ActivityLastChecked" xml:space="preserve"><value>최근 확인</value></data>
+  <data name="ActivityClipboardReady" xml:space="preserve"><value>계속하기 지시를 복사했습니다.</value></data>
+  <data name="ActivityDiffCurrentHint" xml:space="preserve"><value>현재 작업 트리를 비교한 결과이며, 이벤트 발생 당시의 파일 내용은 아닙니다.</value></data>
+  <data name="ActivityTitle" xml:space="preserve"><value>AgentDock · 작업 활동 센터</value></data>
+  <data name="ActivityOpen" xml:space="preserve"><value>작업 활동 센터</value></data>
+  <data name="ActivityFacts" xml:space="preserve"><value>AgentDock에 기록된 실행 사실만 표시합니다. 스레드는 복원 가능한 작업 문맥이며, 백그라운드 AI 작업자가 아닙니다.</value></data>
+  <data name="ActivityTasks" xml:space="preserve"><value>작업</value></data>
+  <data name="ActivitySearch" xml:space="preserve"><value>제목, 프로젝트, 작업 공간 또는 작업 ID로 검색</value></data>
+  <data name="ActivityAll" xml:space="preserve"><value>모든 상태</value></data>
+  <data name="ActivityRefresh" xml:space="preserve"><value>새로 고침</value></data>
+  <data name="ActivityArchived" xml:space="preserve"><value>보관된 작업 포함</value></data>
+  <data name="ActivityThread" xml:space="preserve"><value>실행 분기</value></data>
+  <data name="ActivityThreadActions" xml:space="preserve"><value>분기 작업 ▾</value></data>
+  <data name="ActivityTaskActions" xml:space="preserve"><value>작업 관리 ▾</value></data>
+  <data name="ActivitySetActive" xml:space="preserve"><value>기본 계속하기 분기로 설정</value></data>
+  <data name="ActivityCreate" xml:space="preserve"><value>스레드 만들기</value></data>
+  <data name="ActivityFork" xml:space="preserve"><value>체크포인트에서 분기</value></data>
+  <data name="ActivityBlock" xml:space="preserve"><value>스레드 차단</value></data>
+  <data name="ActivityResume" xml:space="preserve"><value>분기 차단 해제</value></data>
+  <data name="ActivityClose" xml:space="preserve"><value>스레드 닫기</value></data>
+  <data name="ActivityCancelTask" xml:space="preserve"><value>작업 취소</value></data>
+  <data name="ActivityArchive" xml:space="preserve"><value>작업 보관</value></data>
+  <data name="ActivityUnarchive" xml:space="preserve"><value>보관 해제</value></data>
+  <data name="ActivityCleanup" xml:space="preserve"><value>30일이 지난 활동 기록 정리</value></data>
+  <data name="ActivityStop" xml:space="preserve"><value>명령 중지</value></data>
+  <data name="ActivityCopy" xml:space="preserve"><value>민감 정보가 제거된 명령 복사</value></data>
+  <data name="ActivityDirectory" xml:space="preserve"><value>명령 실행 디렉터리 열기</value></data>
+  <data name="ActivityFile" xml:space="preserve"><value>변경된 파일 위치 열기</value></data>
+  <data name="ActivityDiff" xml:space="preserve"><value>현재 변경 사항 보기</value></data>
+  <data name="ActivityFollow" xml:space="preserve"><value>최신 활동 따라가기</value></data>
+  <data name="ActivityOutput" xml:space="preserve"><value>출력 펼치기</value></data>
+  <data name="ActivityOutputTruncated" xml:space="preserve"><value>출력 펼치기 · 크기 제한으로 일부 생략됨</value></data>
+  <data name="ActivityDetails" xml:space="preserve"><value>단계 및 수용 조건</value></data>
+  <data name="ActivityConditions" xml:space="preserve"><value>수용 조건</value></data>
+  <data name="ActivityReview" xml:space="preserve"><value>최종 검토</value></data>
+  <data name="ActivityRisks" xml:space="preserve"><value>남은 위험 및 미완료 검사</value></data>
+  <data name="ActivityWorkspace" xml:space="preserve"><value>작업 공간</value></data>
+  <data name="ActivityStep" xml:space="preserve"><value>현재 단계</value></data>
+  <data name="ActivityNext" xml:space="preserve"><value>다음 동작</value></data>
+  <data name="ActivityDefaultThread" xml:space="preserve"><value>계속하기 스레드</value></data>
+  <data name="ActivityNoTask" xml:space="preserve"><value>작업을 선택하면 실행 시간순 기록을 볼 수 있습니다.</value></data>
+  <data name="ActivityNoEvents" xml:space="preserve"><value>이 스레드에 아직 활동 기록이 없습니다.</value></data>
+  <data name="ActivityUnassigned" xml:space="preserve"><value>작업에 연결되지 않은 이전 활동</value></data>
+  <data name="ActivityAllActivity" xml:space="preserve"><value>전체 실행 기록</value></data>
+  <data name="ActivityAllActivityDetail" xml:space="preserve"><value>모든 작업과 이전의 미연결 작업</value></data>
+  <data name="ActivityCancelConfirmation" xml:space="preserve"><value>이 작업에서 현재 실행 중인 명령이 {0}개 있습니다. 작업 취소는 작업 상태만 변경하며 이 프로세스들을 중지하지 않습니다. 작업을 취소하시겠습니까?</value></data>
+  <data name="ActivityLoading" xml:space="preserve"><value>로컬 활동을 불러오는 중…</value></data>
+  <data name="ActivityLive" xml:space="preserve"><value>연결됨 · 실시간 활동</value></data>
+  <data name="ActivityReconnecting" xml:space="preserve"><value>연결이 끊어졌습니다. 로컬 서비스에 다시 연결하는 중…</value></data>
+  <data name="ActivityUnavailable" xml:space="preserve"><value>로컬 활동을 확인할 수 없습니다. 서비스 연결을 확인하세요.</value></data>
+  <data name="ActivityGap" xml:space="preserve"><value>일부 이전 활동은 보존 정책에 따라 정리됐습니다. 남아 있는 기록은 계속 볼 수 있습니다.</value></data>
+  <data name="ActivityReset" xml:space="preserve"><value>로컬 활동 로그가 변경되어 재생 위치를 초기화했습니다.</value></data>
+  <data name="ActivityWarning" xml:space="preserve"><value>활동 기록 안내</value></data>
+  <data name="ActivityRecentOnly" xml:space="preserve"><value>이 창에는 최근 시간순 기록 1,000개만 유지됩니다.</value></data>
+  <data name="ActivityMoreTasks" xml:space="preserve"><value>최근 작업을 최대 200개까지 표시합니다. 이전 작업을 보려면 서버 측 상태 필터로 범위를 좁히세요.</value></data>
+  <data name="ActivityConfirm" xml:space="preserve"><value>작업 확인</value></data>
+  <data name="ActivityConfirmAction" xml:space="preserve"><value>선택한 작업 또는 스레드에 이 동작을 적용하시겠습니까? 기존 기록은 유지됩니다.</value></data>
+  <data name="ActivityConfirmStop" xml:space="preserve"><value>이 명령 세션을 중지하시겠습니까? 해당 프로세스에서 저장하지 않은 작업은 손실될 수 있습니다.</value></data>
+  <data name="ActivityConfirmCleanup" xml:space="preserve"><value>30일이 지난 완결된 활동 로그 구간을 삭제하시겠습니까? 작업 체크포인트와 현재 출력은 유지됩니다.</value></data>
+  <data name="ActivityName" xml:space="preserve"><value>스레드 제목</value></data>
+  <data name="ActivityReason" xml:space="preserve"><value>사유</value></data>
+  <data name="ActivityRequired" xml:space="preserve"><value>비어 있지 않은 내용을 입력하세요. 최대 512자까지 가능합니다.</value></data>
+  <data name="ActivityOK" xml:space="preserve"><value>확인</value></data>
+  <data name="ActivityDismiss" xml:space="preserve"><value>취소</value></data>
+  <data name="ActivityOperationFailed" xml:space="preserve"><value>작업이 완료되지 않았습니다.</value></data>
+  <data name="ActivityInvalidPath" xml:space="preserve"><value>기록된 경로가 없거나, 민감 정보 제거로 숨겨졌거나, 원격 환경에 속하거나, 로컬 파일 시스템 경로가 아닙니다.</value></data>
+  <data name="ActivityDiffTitle" xml:space="preserve"><value>현재 저장소 변경 사항</value></data>
+  <data name="ActivityDiffEmpty" xml:space="preserve"><value>이 파일에 현재 추적 중인 변경 사항이 없습니다.</value></data>
+  <data name="ActivityInterrupted" xml:space="preserve"><value>마지막 기록은 실행 중 · 현재 실행 여부는 확인되지 않음</value></data>
+  <data name="ActivityLabelActive" xml:space="preserve"><value>진행 중</value></data>
+  <data name="ActivityLabelBlocked" xml:space="preserve"><value>차단됨</value></data>
+  <data name="ActivityLabelCompleted" xml:space="preserve"><value>완료됨</value></data>
+  <data name="ActivityLabelCancelled" xml:space="preserve"><value>취소됨</value></data>
+  <data name="ActivityLabelArchived" xml:space="preserve"><value>보관됨</value></data>
+  <data name="ActivityLabelOpen" xml:space="preserve"><value>열림</value></data>
+  <data name="ActivityLabelClosed" xml:space="preserve"><value>닫힘</value></data>
+  <data name="ActivityLabelSucceeded" xml:space="preserve"><value>성공</value></data>
+  <data name="ActivityLabelFailed" xml:space="preserve"><value>실패</value></data>
+  <data name="ActivityLabelRunningLastObserved" xml:space="preserve"><value>실행 중 · 마지막 기록</value></data>
+  <data name="ActivityLabelTimedOut" xml:space="preserve"><value>시간 초과</value></data>
+  <data name="ActivityLabelStopped" xml:space="preserve"><value>중지됨</value></data>
+  <data name="ActivityLabelPending" xml:space="preserve"><value>실행 대기</value></data>
+  <data name="ActivityLabelInProgress" xml:space="preserve"><value>실행 중</value></data>
+  <data name="ActivityLabelPartial" xml:space="preserve"><value>일부 완료</value></data>
+  <data name="ActivityLabelExited" xml:space="preserve"><value>종료됨</value></data>
+  <data name="ActivityLabelCommand" xml:space="preserve"><value>명령</value></data>
+  <data name="ActivityLabelTaskCreated" xml:space="preserve"><value>작업 생성됨</value></data>
+  <data name="ActivityLabelTaskCompleted" xml:space="preserve"><value>작업 완료됨</value></data>
+  <data name="ActivityLabelTaskBlocked" xml:space="preserve"><value>작업 차단됨</value></data>
+  <data name="ActivityLabelTaskUnblocked" xml:space="preserve"><value>작업 차단 해제됨</value></data>
+  <data name="ActivityLabelTaskArchived" xml:space="preserve"><value>작업 보관됨</value></data>
+  <data name="ActivityLabelTaskRestoredFromArchive" xml:space="preserve"><value>작업 보관 해제됨</value></data>
+  <data name="ActivityLabelBranchCreated" xml:space="preserve"><value>분기 생성됨</value></data>
+  <data name="ActivityLabelContinuationBranchChanged" xml:space="preserve"><value>계속하기 분기 변경됨</value></data>
+  <data name="ActivityLabelBranchBlocked" xml:space="preserve"><value>분기 차단됨</value></data>
+  <data name="ActivityLabelBranchUnblocked" xml:space="preserve"><value>분기 차단 해제됨</value></data>
+  <data name="ActivityLabelBranchClosed" xml:space="preserve"><value>분기 닫힘</value></data>
+  <data name="ActivityLabelHistoryCleaned" xml:space="preserve"><value>활동 기록 정리됨</value></data>
+  <data name="ActivityLabelFileChanged" xml:space="preserve"><value>파일 변경됨</value></data>
+  <data name="ActivityLabelStepStarted" xml:space="preserve"><value>단계 시작됨</value></data>
+  <data name="ActivityLabelCheckpoint" xml:space="preserve"><value>체크포인트</value></data>
+  <data name="ActivityLabelToolCall" xml:space="preserve"><value>도구 호출</value></data>
+  <data name="ActivityLabelFinalReview" xml:space="preserve"><value>최종 검토</value></data>
 </root>
