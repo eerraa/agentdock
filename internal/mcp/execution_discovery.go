@@ -3,6 +3,8 @@ package mcp
 import (
 	"context"
 	"fmt"
+	"reflect"
+
 	mcpsdk "github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/uvwt/agentdock/internal/activity"
 	"github.com/uvwt/agentdock/internal/app"
@@ -30,8 +32,8 @@ func (s *Server) observeDiscovery(next mcpsdk.MethodHandler) mcpsdk.MethodHandle
 		default:
 			return next(ctx, method, request)
 		}
-		if params := request.GetParams(); params != nil {
-			if host, ok := params.GetMeta()["openai/session"].(string); ok && host != "" && len(host) <= 1024 {
+		if meta := discoveryMeta(request.GetParams()); meta != nil {
+			if host, ok := meta["openai/session"].(string); ok && host != "" && len(host) <= 1024 {
 				source := activity.SourceFromContext(ctx)
 				source.Provider = "openai"
 				source.HostConversationID = host
@@ -43,11 +45,24 @@ func (s *Server) observeDiscovery(next mcpsdk.MethodHandler) mcpsdk.MethodHandle
 			var err error
 			result, err = next(observed, method, request)
 			summary := app.Result{}
-			if listed, ok := result.(*mcpsdk.ListToolsResult); ok {
+			if listed, ok := result.(*mcpsdk.ListToolsResult); ok && listed != nil {
 				summary["count"] = fmt.Sprint(len(listed.Tools))
 			}
 			return summary, err
 		})
 		return result, err
 	}
+}
+
+// Optional HTTP params arrive through the SDK interface as typed nil pointers.
+// Their promoted GetMeta method dereferences the nil enclosing parameter struct.
+func discoveryMeta(params mcpsdk.Params) map[string]any {
+	if params == nil {
+		return nil
+	}
+	value := reflect.ValueOf(params)
+	if value.Kind() == reflect.Pointer && value.IsNil() {
+		return nil
+	}
+	return params.GetMeta()
 }
