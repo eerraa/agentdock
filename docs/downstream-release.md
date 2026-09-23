@@ -37,3 +37,40 @@ Package creation, complete installed-package acceptance and production replaceme
 are separate states. CI fixture upgrades do not replace testing the actual previous
 production version. An unsigned package must be labeled unsigned; checksums do not
 establish a verified publisher. Do not change global trust or bypass UAC/SmartScreen.
+
+## Bundled Windows search component
+
+Windows x64 contains `tools/rg/rg.exe` and the pinned official COPYING/licence
+notices in each generation. The authoritative build/runtime pins are in
+`internal/bundledrg/windows-amd64.json`; downloads never follow `latest`. The
+packager verifies the official ZIP and each extracted file, including licences,
+and rejects malformed/incomplete/duplicate payloads. The official binary is not
+re-signed as an AgentDock-authored executable.
+
+`search_text` chooses the verified sidecar of the actually running Core first,
+then an allowed PATH lookup, then the existing Go fallback. It never consults the
+active pointer to choose a different running generation's tool. Completely absent
+bundles (legacy/development layouts) permit fallback; present but partial, wrong-
+architecture, redirected or changed bundles fail with `BUNDLED_TOOL_INTEGRITY`.
+The Windows executable is held open without write/delete sharing until the search
+exits. Verification is bounded and cancellation-aware. Result metadata preserves
+`engine=rg` and adds `engine_source`, `engine_path`, and bundled `engine_version`.
+
+Structured searches use `--no-config`: an external `RIPGREP_CONFIG_PATH` with
+`--invert-match` was reproduced returning nonmatching lines instead of the user's
+query. Normal no-match exit 1 remains success; regex/other errors are not converted
+to Go fallback. Existing `-e <query> -- <path>` protection remains intact.
+
+Generation publish/upgrade/same-version repair and journal rollback carry the
+component with Core/tray. An old flat-layout local-archive updater refuses new
+bundled payloads before mutation and directs the user to offline Setup instead of
+silently dropping the component. Other OS/architectures keep their existing search
+behavior. System/user/ordinary command-session/WSL PATH is not changed; this is not
+a promise that typing `rg` in a normal shell will work.
+
+The mandatory real binary suite uses `-tags bundled_rg_integration` with
+`AGENTDOCK_TEST_RG_BUNDLE` pointing at the verified component. Missing fixtures fail,
+never skip. The package workflow prepares it before these tests. Its PATH fixture
+is confined to that disposable CI job for older PATH-specific regressions; tests
+of bundle selection explicitly remove PATH. Unit generation/journal fixtures are
+not evidence of an installed package; actual final Setup acceptance is separate.

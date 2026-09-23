@@ -15,6 +15,7 @@ import (
 	"time"
 	"unicode/utf8"
 
+	"github.com/uvwt/agentdock/internal/bundledrg"
 	processcontrol "github.com/uvwt/agentdock/internal/process"
 	"github.com/uvwt/agentdock/internal/workspace"
 )
@@ -96,11 +97,22 @@ func (svc *Service) SearchText(ctx context.Context, request SearchRequest) (Resu
 }
 
 func (svc *Service) searchTextRG(ctx context.Context, p workspace.Path, opts SearchOptions) (Result, bool, error) {
-	rg, err := exec.LookPath("rg")
+	selection, err := selectRG(ctx)
 	if err != nil {
+		if errors.Is(err, bundledrg.ErrIntegrity) {
+			return nil, true, toolErrorCause("BUNDLED_TOOL_INTEGRITY", "bundled ripgrep is incomplete or failed integrity verification; repair AgentDock using its verified offline Setup.exe", "runtime", map[string]any{"engine": "rg", "engine_source": "bundled"}, err)
+		}
+		return nil, true, searchExecutionError(ctx, "rg", err)
+	}
+	if selection.path == "" {
 		return nil, false, nil
 	}
-	args := []string{"--json", "--line-number", "--column", "--color", "never"}
+	defer selection.close()
+	return svc.searchTextSelectedRG(ctx, p, opts, selection)
+}
+
+func (svc *Service) searchTextSelectedRG(ctx context.Context, p workspace.Path, opts SearchOptions, selection rgSelection) (Result, bool, error) {
+	args := []string{"--no-config", "--json", "--line-number", "--column", "--color", "never"}
 	if !opts.Regex {
 		args = append(args, "--fixed-strings")
 	}
@@ -121,7 +133,7 @@ func (svc *Service) searchTextRG(ctx context.Context, p workspace.Path, opts Sea
 
 	ctx, cancel := context.WithTimeout(ctx, 30*time.Second)
 	defer cancel()
-	cmd := exec.CommandContext(ctx, rg, args...)
+	cmd := exec.CommandContext(ctx, selection.path, args...)
 	cmd.Dir = p.Abs
 	if info, statErr := os.Stat(p.Abs); statErr == nil && !info.IsDir() {
 		cmd.Dir = filepath.Dir(p.Abs)
@@ -130,7 +142,7 @@ func (svc *Service) searchTextRG(ctx context.Context, p workspace.Path, opts Sea
 	output, err := cmd.Output()
 	if err != nil {
 		if exit, ok := err.(*exec.ExitError); ok && exit.ExitCode() == 1 {
-			return Result{"query": opts.Query, "engine": "rg", "matches": []map[string]any{}, "total_matches": 0, "truncated": false}, true, nil
+			return selection.annotate(Result{"query": opts.Query, "engine": "rg", "matches": []map[string]any{}, "total_matches": 0, "truncated": false}), true, nil
 		}
 		return nil, true, searchExecutionError(ctx, "rg", err)
 	}
@@ -138,7 +150,7 @@ func (svc *Service) searchTextRG(ctx context.Context, p workspace.Path, opts Sea
 	if !ok {
 		return nil, true, toolError("SEARCH_FAILED", "failed to parse ripgrep search results", "runtime")
 	}
-	return Result{"query": opts.Query, "engine": "rg", "matches": matches, "total_matches": len(matches), "truncated": truncated}, true, nil
+	return selection.annotate(Result{"query": opts.Query, "engine": "rg", "matches": matches, "total_matches": len(matches), "truncated": truncated}), true, nil
 }
 
 func (svc *Service) parseRGJSON(output []byte, searchRoot string, opts SearchOptions) ([]map[string]any, bool, bool) {

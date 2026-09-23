@@ -366,3 +366,17 @@ scripts:
     public_contract: false
     deletable: false
     notes: Replays the actual rollback guard with mock task adapters; verifies foreign-task preflight rejection never stops a real scheduled task.
+
+  - path: packaging/windows/prepare-bundled-rg.ps1
+    class: packaging
+    owner: release
+    public_contract: false
+    deletable: false
+    notes: Downloads only the pinned official Windows x64 ripgrep archive and validates hashes, architecture and licence files without changing any PATH.
+
+  - path: scripts/test/test-bundled-rg-package.ps1
+    class: test
+    owner: release
+    public_contract: false
+    deletable: false
+    notes: Cache-only official rg packaging checks; missing real fixtures fail rather than skip, and network calls are forbidden in the fixture.
