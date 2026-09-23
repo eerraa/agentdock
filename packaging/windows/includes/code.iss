@@ -534,7 +534,7 @@ begin
     PurgeState := MsgBox(
       GetLocalizedMessage('PurgeStateQuestion'),
       mbConfirmation,
-      MB_YESNO
+      MB_YESNO or MB_DEFBUTTON2
     ) = IDYES;
   Result := True;
 end;
