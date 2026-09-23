@@ -19,15 +19,16 @@ public partial class MainWindow
         TailscaleTargetText.Text = status.LocalOrigin;
         TailscaleFunnelText.Text = status.Phase switch
         {
-            "CheckingLocal" => "检查本地配置", "NeedsApproval" => "需要首次授权",
-            "LocalReady" => "本地配置完成", "VerifyingPublic" => "公网验证中",
-            "Degraded" => "公网暂未就绪，本地配置保留", "Failed" => "验证失败",
-            "Ready" => "公网已验证",
-            _ => status.Ready ? "公网已验证" : status.Running ? UiText.Get("TailscalePending") : UiText.Get("Disabled")
+            "CheckingLocal" => UiText.Get("FunnelCheckingLocal"), "NeedsApproval" => UiText.Get("FunnelNeedsApproval"),
+            "LocalReady" => UiText.Get("FunnelLocalReady"), "VerifyingPublic" => UiText.Get("FunnelVerifyingPublic"),
+            "Degraded" => UiText.Get("FunnelDegraded"), "Failed" => UiText.Get("FunnelVerificationFailed"),
+            "Ready" => UiText.Get("FunnelReady"),
+            _ => status.Ready ? UiText.Get("FunnelReady") : status.Running ? UiText.Get("TailscalePending") : UiText.Get("Disabled")
         };
         TailscaleKeyExpiryText.Text = status.KeyExpiry is { Year: > 1 } expiry
             ? expiry.ToLocalTime().ToString("yyyy-MM-dd HH:mm") : UiText.Get("TailscaleNoKeyExpiry");
-        TailscaleDiagnosticText.Text = status.Diagnostic;
+        TailscaleDiagnosticText.Text = status.DisplayDiagnostic;
+        TailscaleDiagnosticText.ToolTip = status.OriginalDiagnostic;
         TailscaleAuthorizeButton.IsEnabled = status.DiagnosticCode == "funnel_permission_required";
     }
 
@@ -89,7 +90,7 @@ public partial class MainWindow
                     mode == "named" ? ServerUrlTextBox.Text.Trim() : "",
                     mode == "named" ? TunnelTokenPasswordBox.Password : ""), TunnelActionStatusText);
             FinishAccessApply(success, mode);
-            if (success && mode == "funnel") TunnelActionStatusText.Text = "本地配置已提交，公网验证在后台进行。";
+            if (success && mode == "funnel") TunnelActionStatusText.Text = UiText.Get("FunnelLocalSubmitted");
         }
         finally
         {

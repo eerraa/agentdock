@@ -1419,4 +1419,80 @@
   <data name="ExecutionResume" xml:space="preserve"><value>恢复</value></data>
   <data name="ExecutionCheckingPublicAccess" xml:space="preserve"><value>正在检查公网访问…</value></data>
   <data name="ExecutionCancelTaskReason" xml:space="preserve"><value>取消原因。此操作只取消任务状态，不会停止运行中的命令进程。</value></data>
+  <data name="ActivitySummaryCounts" xml:space="preserve"><value>{0} 运行中 · {1} 待审批 · {2} 结果未知</value></data>
+  <data name="FunnelCheckingLocal" xml:space="preserve"><value>检查本地配置</value></data>
+  <data name="FunnelNeedsApproval" xml:space="preserve"><value>需要首次授权</value></data>
+  <data name="FunnelLocalReady" xml:space="preserve"><value>本地配置完成</value></data>
+  <data name="FunnelVerifyingPublic" xml:space="preserve"><value>公网验证中</value></data>
+  <data name="FunnelDegraded" xml:space="preserve"><value>公网暂未就绪，本地配置保留</value></data>
+  <data name="FunnelVerificationFailed" xml:space="preserve"><value>验证失败</value></data>
+  <data name="FunnelLocalSubmitted" xml:space="preserve"><value>本地配置已提交，公网验证在后台进行。</value></data>
+  <data name="FunnelReady" xml:space="preserve"><value>公网已验证</value></data>
+  <data name="ExecutionStreamMissing" xml:space="preserve"><value>服务未返回执行记录事件流。</value></data>
+  <data name="ExecutionStreamDisconnected" xml:space="preserve"><value>执行流已断开，正在按序号重连。</value></data>
+  <data name="ExecutionStreamSequenceMismatch" xml:space="preserve"><value>调用序号与事件序号不一致。</value></data>
+  <data name="ExecutionEventTooLarge" xml:space="preserve"><value>执行事件超过大小限制。</value></data>
+  <data name="ExecutionEventSequenceInvalid" xml:space="preserve"><value>执行事件序号无效。</value></data>
+  <data name="ExecutionEventIdInvalid" xml:space="preserve"><value>执行事件 ID 无效。</value></data>
+  <data name="ExecutionEventLineTooLarge" xml:space="preserve"><value>执行事件行超过大小限制。</value></data>
+  <data name="ThemeLoadWarning" xml:space="preserve"><value>显示设置未加载，原文件已保留。原始诊断：{0}</value></data>
+  <data name="ThemeCleanupWarning" xml:space="preserve"><value>主题临时文件未清理。原始诊断：{0}</value></data>
+  <data name="ThemeSelectionInvalid" xml:space="preserve"><value>无效的主题选择。</value></data>
+  <data name="ThemeNotInitialized" xml:space="preserve"><value>主题设置尚未初始化。</value></data>
+  <data name="ThemePreferencesTooLarge" xml:space="preserve"><value>显示设置超过大小限制。</value></data>
+  <data name="ThemePreferencesObjectRequired" xml:space="preserve"><value>显示设置必须是 JSON 对象。</value></data>
+  <data name="UiPreferenceDirectoryUnavailable" xml:space="preserve"><value>AgentDock 界面偏好目录不可用。</value></data>
+  <data name="DisplayPreferenceInvalid" xml:space="preserve"><value>服务未返回有效的显示偏好。</value></data>
+  <data name="DisplayRefreshConnectionHint" xml:space="preserve"><value>设置仅控制 AgentDock 提供的内嵌界面。已渲染的历史卡片不会删除；请刷新 ChatGPT 连接并在新对话中验证。</value></data>
+  <data name="FunnelProbeDiagnostic" xml:space="preserve"><value>公网验证未完成。原始诊断：{0}</value></data>
+  <data name="FunnelLocalCheckingHint" xml:space="preserve"><value>正在核对本地配置，界面可继续使用。</value></data>
+  <data name="FunnelProbePreservedDiagnostic" xml:space="preserve"><value>公网验证暂未完成，本地配置未撤销。原始诊断：{0}</value></data>
+  <data name="TunnelDiagnostic_command_failed" xml:space="preserve"><value>Tailscale 命令失败，请查看原始诊断。</value></data>
+  <data name="TunnelDiagnostic_command_timeout" xml:space="preserve"><value>Tailscale 命令超时，请先核对状态再重试。</value></data>
+  <data name="TunnelDiagnostic_configuration_changed" xml:space="preserve"><value>操作期间配置已变化，请重新读取当前状态。</value></data>
+  <data name="TunnelDiagnostic_core_unhealthy" xml:space="preserve"><value>映射已配置，但 AgentDock 本机健康检查未通过。</value></data>
+  <data name="TunnelDiagnostic_device_changed" xml:space="preserve"><value>Tailscale 设备身份已变化，请核对现有所有权。</value></data>
+  <data name="TunnelDiagnostic_disabled" xml:space="preserve"><value>AgentDock Funnel 已停用。</value></data>
+  <data name="TunnelDiagnostic_funnel_permission_required" xml:space="preserve"><value>请在 Tailscale 管理页授权当前设备的 HTTPS 443 Funnel 后重新检测。</value></data>
+  <data name="TunnelDiagnostic_initialize_failed" xml:space="preserve"><value>MCP 初始化未返回有效的服务端或协议信息。</value></data>
+  <data name="TunnelDiagnostic_initialized_failed" xml:space="preserve"><value>MCP 初始化完成通知未被接受。</value></data>
+  <data name="TunnelDiagnostic_invalid_binary" xml:space="preserve"><value>Tailscale 程序无效，请使用经验证的官方安装。</value></data>
+  <data name="TunnelDiagnostic_invalid_dns" xml:space="preserve"><value>设备 DNS 名无效或不属于当前 tailnet。</value></data>
+  <data name="TunnelDiagnostic_invalid_funnel_json" xml:space="preserve"><value>Serve/Funnel 配置结构无效或不兼容，已拒绝修改。</value></data>
+  <data name="TunnelDiagnostic_invalid_oauth_metadata" xml:space="preserve"><value>OAuth 元数据无效，公网认证未通过验证。</value></data>
+  <data name="TunnelDiagnostic_invalid_ownership" xml:space="preserve"><value>Funnel 所有权记录无效，不得接管现有映射。</value></data>
+  <data name="TunnelDiagnostic_invalid_server_metadata" xml:space="preserve"><value>MCP 服务端描述无效。</value></data>
+  <data name="TunnelDiagnostic_invalid_status_json" xml:space="preserve"><value>Tailscale 返回了不兼容或不完整的设备状态。</value></data>
+  <data name="TunnelDiagnostic_key_expired" xml:space="preserve"><value>Tailscale 设备密钥已到期，请在官方客户端重新认证。</value></data>
+  <data name="TunnelDiagnostic_key_expiring" xml:space="preserve"><value>Tailscale 设备密钥将在 14 天内到期，请安排重新认证。</value></data>
+  <data name="TunnelDiagnostic_mapping_changed" xml:space="preserve"><value>验证期间本地映射已变化，未确认就绪。</value></data>
+  <data name="TunnelDiagnostic_mapping_conflict" xml:space="preserve"><value>HTTPS 443 与现有映射冲突，AgentDock 拒绝覆盖。</value></data>
+  <data name="TunnelDiagnostic_mapping_missing" xml:space="preserve"><value>AgentDock Funnel 映射缺失或本机目标已变化。</value></data>
+  <data name="TunnelDiagnostic_mcp_protocol_failed" xml:space="preserve"><value>MCP 协议验证失败，请查看原始诊断中的失败阶段。</value></data>
+  <data name="TunnelDiagnostic_missing_identity" xml:space="preserve"><value>Tailscale 未提供设备 ID 或 DNS 名。</value></data>
+  <data name="TunnelDiagnostic_mode_changed" xml:space="preserve"><value>访问模式已变化，旧验证结果不再适用。</value></data>
+  <data name="TunnelDiagnostic_needs_login" xml:space="preserve"><value>请在 Tailscale 官方客户端完成登录或设备授权。</value></data>
+  <data name="TunnelDiagnostic_not_installed" xml:space="preserve"><value>尚未安装 Tailscale，请安装官方客户端后使用此可选功能。</value></data>
+  <data name="TunnelDiagnostic_not_running" xml:space="preserve"><value>Tailscale 未运行，请检查官方客户端。</value></data>
+  <data name="TunnelDiagnostic_oauth_origin_mismatch" xml:space="preserve"><value>认证元数据或 MCP challenge 与当前公网 Origin 不一致。</value></data>
+  <data name="TunnelDiagnostic_offline" xml:space="preserve"><value>当前 Tailscale 设备离线。</value></data>
+  <data name="TunnelDiagnostic_origin_mismatch" xml:space="preserve"><value>映射与 AgentDock Origin 不一致，请核对生效的访问配置。</value></data>
+  <data name="TunnelDiagnostic_output_limit" xml:space="preserve"><value>Tailscale 输出超过大小上限。</value></data>
+  <data name="TunnelDiagnostic_ownership_conflict" xml:space="preserve"><value>Funnel 所有权与其他配置冲突，已拒绝接管。</value></data>
+  <data name="TunnelDiagnostic_ownership_required" xml:space="preserve"><value>修改此映射前必须验证 AgentDock 所有权。</value></data>
+  <data name="TunnelDiagnostic_pending_migration" xml:space="preserve"><value>旧 Funnel 映射需要先完成经验证的迁移。</value></data>
+  <data name="TunnelDiagnostic_private_serve_conflict" xml:space="preserve"><value>现有私有 Serve 映射与请求的公网映射冲突。</value></data>
+  <data name="TunnelDiagnostic_public_protocol_failed" xml:space="preserve"><value>公网端点返回了非预期的 HTTP 结果。</value></data>
+  <data name="TunnelDiagnostic_public_unreachable" xml:space="preserve"><value>公网 DNS、TLS 或 HTTP 尚未就绪，重试前请核对本地状态。</value></data>
+  <data name="TunnelDiagnostic_response_limit" xml:space="preserve"><value>公网协议响应超过大小上限。</value></data>
+  <data name="TunnelDiagnostic_rollback_conflict" xml:space="preserve"><value>恢复与已变化的映射所有权冲突，请先核对状态。</value></data>
+  <data name="TunnelDiagnostic_tools_list_failed" xml:space="preserve"><value>MCP 工具发现返回的定义缺失或无效。</value></data>
+  <data name="TunnelDiagnostic_verification_failed" xml:space="preserve"><value>Funnel 验证失败，请查看原始诊断和当前状态。</value></data>
+  <data name="TunnelDiagnostic_verification_pending" xml:space="preserve"><value>本地配置已完成，公网验证中，无需重建映射。</value></data>
+  <data name="TunnelDiagnostic_write_state_unknown" xml:space="preserve"><value>映射写入结果未知，重试前请读取实际状态。</value></data>
+  <data name="TunnelDiagnostic_not_configured" xml:space="preserve"><value>AgentDock Funnel 尚未配置。</value></data>
+  <data name="TunnelDiagnostic_probe_failed" xml:space="preserve"><value>公网验证未完成，本地配置就绪不代表公网可达。</value></data>
+  <data name="TunnelDiagnostic_tailscale_error" xml:space="preserve"><value>Tailscale 遇到错误，请查看原始诊断。</value></data>
+  <data name="TunnelOriginalDiagnostic" xml:space="preserve"><value>AgentDock 原始诊断（{0}）：
+{1}</value></data>
 </root>

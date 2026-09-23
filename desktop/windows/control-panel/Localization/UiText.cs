@@ -55,7 +55,7 @@ internal static class UiText
         }
 
         var directory = Path.GetDirectoryName(PreferencePath)
-            ?? throw new InvalidOperationException("AgentDock UI preference directory is unavailable.");
+            ?? throw new InvalidOperationException(Get("UiPreferenceDirectoryUnavailable"));
         Directory.CreateDirectory(directory);
         File.WriteAllText(PreferencePath, normalized);
         ApplyPreference(normalized);

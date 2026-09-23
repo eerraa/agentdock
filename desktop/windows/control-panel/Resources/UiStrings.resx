@@ -1419,4 +1419,80 @@ Shortcuts: Ctrl+F searches conversations; F5 refreshes; Esc closes details; Shif
   <data name="ExecutionResume" xml:space="preserve"><value>Resume</value></data>
   <data name="ExecutionCheckingPublicAccess" xml:space="preserve"><value>Checking public access…</value></data>
   <data name="ExecutionCancelTaskReason" xml:space="preserve"><value>Cancellation reason. This changes task state only; running command processes are not stopped.</value></data>
+  <data name="ActivitySummaryCounts" xml:space="preserve"><value>{0} running · {1} awaiting approval · {2} unknown results</value></data>
+  <data name="FunnelCheckingLocal" xml:space="preserve"><value>Checking local configuration</value></data>
+  <data name="FunnelNeedsApproval" xml:space="preserve"><value>Initial authorization required</value></data>
+  <data name="FunnelLocalReady" xml:space="preserve"><value>Local configuration ready</value></data>
+  <data name="FunnelVerifyingPublic" xml:space="preserve"><value>Verifying public access</value></data>
+  <data name="FunnelDegraded" xml:space="preserve"><value>Public access is not ready; local configuration retained</value></data>
+  <data name="FunnelVerificationFailed" xml:space="preserve"><value>Verification failed</value></data>
+  <data name="FunnelLocalSubmitted" xml:space="preserve"><value>Local configuration committed; public verification is in progress.</value></data>
+  <data name="FunnelReady" xml:space="preserve"><value>Public access verified</value></data>
+  <data name="ExecutionStreamMissing" xml:space="preserve"><value>The service did not return an execution event stream.</value></data>
+  <data name="ExecutionStreamDisconnected" xml:space="preserve"><value>The execution stream disconnected; reconnecting from its sequence.</value></data>
+  <data name="ExecutionStreamSequenceMismatch" xml:space="preserve"><value>Call and event sequences do not match.</value></data>
+  <data name="ExecutionEventTooLarge" xml:space="preserve"><value>The execution event exceeds the size limit.</value></data>
+  <data name="ExecutionEventSequenceInvalid" xml:space="preserve"><value>The execution event sequence is invalid.</value></data>
+  <data name="ExecutionEventIdInvalid" xml:space="preserve"><value>The execution event ID is invalid.</value></data>
+  <data name="ExecutionEventLineTooLarge" xml:space="preserve"><value>The execution event line exceeds the size limit.</value></data>
+  <data name="ThemeLoadWarning" xml:space="preserve"><value>Display settings could not be loaded; the original file was preserved. Original diagnostic: {0}</value></data>
+  <data name="ThemeCleanupWarning" xml:space="preserve"><value>The temporary theme file could not be removed. Original diagnostic: {0}</value></data>
+  <data name="ThemeSelectionInvalid" xml:space="preserve"><value>The selected theme is invalid.</value></data>
+  <data name="ThemeNotInitialized" xml:space="preserve"><value>Theme settings have not been initialized.</value></data>
+  <data name="ThemePreferencesTooLarge" xml:space="preserve"><value>Display settings exceed the size limit.</value></data>
+  <data name="ThemePreferencesObjectRequired" xml:space="preserve"><value>Display settings must be a JSON object.</value></data>
+  <data name="UiPreferenceDirectoryUnavailable" xml:space="preserve"><value>The AgentDock UI preference directory is unavailable.</value></data>
+  <data name="DisplayPreferenceInvalid" xml:space="preserve"><value>The service did not return valid display preferences.</value></data>
+  <data name="DisplayRefreshConnectionHint" xml:space="preserve"><value>This controls only the interface provided by AgentDock. Previously rendered cards are retained. Refresh the ChatGPT connection and verify in a new conversation.</value></data>
+  <data name="FunnelProbeDiagnostic" xml:space="preserve"><value>Public verification did not complete. Original diagnostic: {0}</value></data>
+  <data name="FunnelLocalCheckingHint" xml:space="preserve"><value>Checking local configuration. You can continue using the interface.</value></data>
+  <data name="FunnelProbePreservedDiagnostic" xml:space="preserve"><value>Public verification is incomplete; local configuration was retained. Original diagnostic: {0}</value></data>
+  <data name="TunnelDiagnostic_command_failed" xml:space="preserve"><value>The Tailscale command failed. Inspect the original diagnostic.</value></data>
+  <data name="TunnelDiagnostic_command_timeout" xml:space="preserve"><value>The Tailscale command timed out. Verify its state before retrying.</value></data>
+  <data name="TunnelDiagnostic_configuration_changed" xml:space="preserve"><value>Configuration changed during this operation. Reload the current state.</value></data>
+  <data name="TunnelDiagnostic_core_unhealthy" xml:space="preserve"><value>The mapping is configured, but the local AgentDock health check failed.</value></data>
+  <data name="TunnelDiagnostic_device_changed" xml:space="preserve"><value>The Tailscale device identity changed. Existing ownership must be checked.</value></data>
+  <data name="TunnelDiagnostic_disabled" xml:space="preserve"><value>AgentDock Funnel is disabled.</value></data>
+  <data name="TunnelDiagnostic_funnel_permission_required" xml:space="preserve"><value>Authorize HTTPS 443 Funnel for this device in Tailscale, then detect again.</value></data>
+  <data name="TunnelDiagnostic_initialize_failed" xml:space="preserve"><value>MCP initialization did not return valid server or protocol information.</value></data>
+  <data name="TunnelDiagnostic_initialized_failed" xml:space="preserve"><value>The MCP initialized notification was not accepted.</value></data>
+  <data name="TunnelDiagnostic_invalid_binary" xml:space="preserve"><value>The Tailscale executable is invalid. Use a verified official installation.</value></data>
+  <data name="TunnelDiagnostic_invalid_dns" xml:space="preserve"><value>The device DNS name is invalid or does not belong to the current tailnet.</value></data>
+  <data name="TunnelDiagnostic_invalid_funnel_json" xml:space="preserve"><value>The Serve/Funnel configuration has an unsupported or invalid structure. Changes were refused.</value></data>
+  <data name="TunnelDiagnostic_invalid_oauth_metadata" xml:space="preserve"><value>OAuth metadata is invalid. Public authentication was not verified.</value></data>
+  <data name="TunnelDiagnostic_invalid_ownership" xml:space="preserve"><value>The Funnel ownership record is invalid. Existing mappings must not be taken over.</value></data>
+  <data name="TunnelDiagnostic_invalid_server_metadata" xml:space="preserve"><value>The MCP server description is invalid.</value></data>
+  <data name="TunnelDiagnostic_invalid_status_json" xml:space="preserve"><value>Tailscale returned an incompatible or incomplete device status.</value></data>
+  <data name="TunnelDiagnostic_key_expired" xml:space="preserve"><value>The Tailscale device key expired. Reauthenticate in the official client.</value></data>
+  <data name="TunnelDiagnostic_key_expiring" xml:space="preserve"><value>The Tailscale device key expires within 14 days. Arrange reauthentication.</value></data>
+  <data name="TunnelDiagnostic_mapping_changed" xml:space="preserve"><value>The local mapping changed during verification. Readiness was not confirmed.</value></data>
+  <data name="TunnelDiagnostic_mapping_conflict" xml:space="preserve"><value>HTTPS 443 conflicts with an existing mapping. AgentDock refuses to overwrite it.</value></data>
+  <data name="TunnelDiagnostic_mapping_missing" xml:space="preserve"><value>The AgentDock Funnel mapping is missing or its local target changed.</value></data>
+  <data name="TunnelDiagnostic_mcp_protocol_failed" xml:space="preserve"><value>MCP protocol verification failed. Inspect the original diagnostic for the failed stage.</value></data>
+  <data name="TunnelDiagnostic_missing_identity" xml:space="preserve"><value>Tailscale did not provide a device ID or DNS name.</value></data>
+  <data name="TunnelDiagnostic_mode_changed" xml:space="preserve"><value>The access mode changed; the previous verification is no longer current.</value></data>
+  <data name="TunnelDiagnostic_needs_login" xml:space="preserve"><value>Complete login or device authorization in the official Tailscale client.</value></data>
+  <data name="TunnelDiagnostic_not_installed" xml:space="preserve"><value>Tailscale is not installed. Install its official client to use this optional feature.</value></data>
+  <data name="TunnelDiagnostic_not_running" xml:space="preserve"><value>Tailscale is not running. Check the official client.</value></data>
+  <data name="TunnelDiagnostic_oauth_origin_mismatch" xml:space="preserve"><value>Authentication metadata or the MCP challenge does not match the current public origin.</value></data>
+  <data name="TunnelDiagnostic_offline" xml:space="preserve"><value>This Tailscale device is offline.</value></data>
+  <data name="TunnelDiagnostic_origin_mismatch" xml:space="preserve"><value>The mapping and AgentDock origin do not match. Recheck the effective access configuration.</value></data>
+  <data name="TunnelDiagnostic_output_limit" xml:space="preserve"><value>Tailscale output exceeded the size limit.</value></data>
+  <data name="TunnelDiagnostic_ownership_conflict" xml:space="preserve"><value>Funnel ownership conflicts with another configuration. Taking it over was refused.</value></data>
+  <data name="TunnelDiagnostic_ownership_required" xml:space="preserve"><value>Verified AgentDock ownership is required before changing this mapping.</value></data>
+  <data name="TunnelDiagnostic_pending_migration" xml:space="preserve"><value>The previous Funnel mapping needs a verified migration before it can be changed.</value></data>
+  <data name="TunnelDiagnostic_private_serve_conflict" xml:space="preserve"><value>An existing private Serve mapping conflicts with the requested public mapping.</value></data>
+  <data name="TunnelDiagnostic_public_protocol_failed" xml:space="preserve"><value>The public endpoint returned an unexpected HTTP result.</value></data>
+  <data name="TunnelDiagnostic_public_unreachable" xml:space="preserve"><value>The public DNS, TLS or HTTP endpoint is not ready. Verify local state before retrying.</value></data>
+  <data name="TunnelDiagnostic_response_limit" xml:space="preserve"><value>The public protocol response exceeded the size limit.</value></data>
+  <data name="TunnelDiagnostic_rollback_conflict" xml:space="preserve"><value>Recovery conflicts with changed mapping ownership. Verify state before attempting further changes.</value></data>
+  <data name="TunnelDiagnostic_tools_list_failed" xml:space="preserve"><value>MCP tool discovery returned missing or invalid definitions.</value></data>
+  <data name="TunnelDiagnostic_verification_failed" xml:space="preserve"><value>Funnel verification failed. Check the original diagnostic and current state.</value></data>
+  <data name="TunnelDiagnostic_verification_pending" xml:space="preserve"><value>Local configuration is ready; public verification is in progress. Do not rebuild the mapping.</value></data>
+  <data name="TunnelDiagnostic_write_state_unknown" xml:space="preserve"><value>The mapping write result is unknown. Read actual state before retrying.</value></data>
+  <data name="TunnelDiagnostic_not_configured" xml:space="preserve"><value>AgentDock Funnel is not configured.</value></data>
+  <data name="TunnelDiagnostic_probe_failed" xml:space="preserve"><value>Public verification did not complete. Local readiness and public reachability are separate.</value></data>
+  <data name="TunnelDiagnostic_tailscale_error" xml:space="preserve"><value>Tailscale encountered an error. Inspect the original diagnostic.</value></data>
+  <data name="TunnelOriginalDiagnostic" xml:space="preserve"><value>Original AgentDock diagnostic ({0}):
+{1}</value></data>
 </root>

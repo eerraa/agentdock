@@ -30,6 +30,8 @@ func (r *Runtime) RuntimeDisplaySettings(ctx context.Context) (Result, error) {
 func displayResult(settings config.DisplaySettings) Result {
 	return Result{"schema_version": settings.SchemaVersion, "revision": settings.Revision,
 		"chatgpt_mcp_ui_enabled": settings.ChatGPTMCPUIEnabled, "warning": settings.Warning,
+		"warning_code": settings.WarningCode, "warning_detail": settings.WarningDetail,
+		"refresh_hint_code":     "refresh_chatgpt_connection",
 		"server_policy_applied": true, "host_adoption": "unknown",
 		"refresh_hint": "设置仅控制 AgentDock 提供的内嵌界面。已渲染的历史卡片不会删除；请刷新 ChatGPT 连接并在新对话中验证。"}
 }

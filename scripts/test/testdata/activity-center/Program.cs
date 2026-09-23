@@ -27,6 +27,7 @@ internal static partial class Program
             var executionScale = TestExecutionLargeLists(Path.Combine(args[0], "execution-scale"));
             TestKoreanLocalization(Path.Combine(args[0], "localization"));
             TestLocalizedExecution(Path.Combine(args[0], "localized-execution"));
+            TestLocalizedProductGuidance(Path.Combine(args[0], "product-guidance"));
             File.WriteAllText(Path.Combine(args[0], "result.json"), JsonSerializer.Serialize(new
             {
                 passed = true, elapsed_ms = started.ElapsedMilliseconds,

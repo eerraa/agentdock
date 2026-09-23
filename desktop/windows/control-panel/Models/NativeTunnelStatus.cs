@@ -44,6 +44,21 @@ public sealed class NativeTunnelStatus
     public string Diagnostic { get; set; } = "";
     [JsonPropertyName("diagnostic_code")]
     public string DiagnosticCode { get; set; } = "";
+    // Display-only metadata; stable diagnostic codes keep authorization and status logic unchanged.
+    [JsonIgnore]
+    public string DisplayDiagnostic
+    {
+        get
+        {
+            var key = "TunnelDiagnostic_" + DiagnosticCode;
+            var translated = UiText.Get(key);
+            if (translated != key) return translated;
+            if (string.IsNullOrEmpty(DiagnosticCode) && Phase == "CheckingLocal") return UiText.Get("FunnelLocalCheckingHint");
+            return Diagnostic ?? "";
+        }
+    }
+    [JsonIgnore]
+    public string OriginalDiagnostic => string.IsNullOrEmpty(Diagnostic) ? "" : UiText.Format("TunnelOriginalDiagnostic", DiagnosticCode, Diagnostic);
     [JsonPropertyName("authorization_url")]
     public string AuthorizationUrl { get; set; } = "";
 }

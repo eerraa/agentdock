@@ -1487,4 +1487,80 @@
   <data name="ExecutionResume" xml:space="preserve"><value>재개</value></data>
   <data name="ExecutionCheckingPublicAccess" xml:space="preserve"><value>공개 경로 접근을 확인하는 중…</value></data>
   <data name="ExecutionCancelTaskReason" xml:space="preserve"><value>취소 사유를 입력하세요. 작업 상태만 취소하며 실행 중인 명령 프로세스는 중지하지 않습니다.</value></data>
+  <data name="ActivitySummaryCounts" xml:space="preserve"><value>실행 중 {0} · 승인 대기 {1} · 결과 미확인 {2}</value></data>
+  <data name="FunnelCheckingLocal" xml:space="preserve"><value>로컬 구성 확인 중</value></data>
+  <data name="FunnelNeedsApproval" xml:space="preserve"><value>최초 권한 부여 필요</value></data>
+  <data name="FunnelLocalReady" xml:space="preserve"><value>로컬 구성 완료</value></data>
+  <data name="FunnelVerifyingPublic" xml:space="preserve"><value>공개 경로 검증 중</value></data>
+  <data name="FunnelDegraded" xml:space="preserve"><value>공개 경로가 아직 준비되지 않았으며 로컬 구성은 유지됨</value></data>
+  <data name="FunnelVerificationFailed" xml:space="preserve"><value>검증 실패</value></data>
+  <data name="FunnelLocalSubmitted" xml:space="preserve"><value>로컬 구성이 적용됐으며 공개 경로를 검증하고 있습니다.</value></data>
+  <data name="FunnelReady" xml:space="preserve"><value>공개 경로 검증 완료</value></data>
+  <data name="ExecutionStreamMissing" xml:space="preserve"><value>서비스가 실행 기록 이벤트 스트림을 반환하지 않았습니다.</value></data>
+  <data name="ExecutionStreamDisconnected" xml:space="preserve"><value>실행 스트림이 끊어졌으며 기록 순번부터 다시 연결합니다.</value></data>
+  <data name="ExecutionStreamSequenceMismatch" xml:space="preserve"><value>호출 순번과 이벤트 순번이 일치하지 않습니다.</value></data>
+  <data name="ExecutionEventTooLarge" xml:space="preserve"><value>실행 이벤트가 크기 제한을 초과했습니다.</value></data>
+  <data name="ExecutionEventSequenceInvalid" xml:space="preserve"><value>실행 이벤트 순번이 올바르지 않습니다.</value></data>
+  <data name="ExecutionEventIdInvalid" xml:space="preserve"><value>실행 이벤트 ID가 올바르지 않습니다.</value></data>
+  <data name="ExecutionEventLineTooLarge" xml:space="preserve"><value>실행 이벤트의 한 줄이 크기 제한을 초과했습니다.</value></data>
+  <data name="ThemeLoadWarning" xml:space="preserve"><value>표시 설정을 불러오지 못했으며 원본 파일은 보존됐습니다. 원문 진단: {0}</value></data>
+  <data name="ThemeCleanupWarning" xml:space="preserve"><value>테마 임시 파일을 정리하지 못했습니다. 원문 진단: {0}</value></data>
+  <data name="ThemeSelectionInvalid" xml:space="preserve"><value>선택한 테마가 올바르지 않습니다.</value></data>
+  <data name="ThemeNotInitialized" xml:space="preserve"><value>테마 설정이 아직 초기화되지 않았습니다.</value></data>
+  <data name="ThemePreferencesTooLarge" xml:space="preserve"><value>표시 설정이 크기 제한을 초과했습니다.</value></data>
+  <data name="ThemePreferencesObjectRequired" xml:space="preserve"><value>표시 설정은 JSON 객체여야 합니다.</value></data>
+  <data name="UiPreferenceDirectoryUnavailable" xml:space="preserve"><value>AgentDock 화면 설정 디렉터리를 사용할 수 없습니다.</value></data>
+  <data name="DisplayPreferenceInvalid" xml:space="preserve"><value>서비스가 올바른 표시 설정을 반환하지 않았습니다.</value></data>
+  <data name="DisplayRefreshConnectionHint" xml:space="preserve"><value>이 설정은 AgentDock이 제공하는 내장 화면만 제어합니다. 이미 표시된 카드는 삭제되지 않습니다. ChatGPT 연결을 새로 고치고 새 대화에서 확인하세요.</value></data>
+  <data name="FunnelProbeDiagnostic" xml:space="preserve"><value>공개 경로 검증을 완료하지 못했습니다. 원문 진단: {0}</value></data>
+  <data name="FunnelLocalCheckingHint" xml:space="preserve"><value>로컬 구성을 확인하고 있습니다. 화면은 계속 사용할 수 있습니다.</value></data>
+  <data name="FunnelProbePreservedDiagnostic" xml:space="preserve"><value>공개 경로 검증이 완료되지 않았으며 로컬 구성은 유지됐습니다. 원문 진단: {0}</value></data>
+  <data name="TunnelDiagnostic_command_failed" xml:space="preserve"><value>Tailscale 명령이 실패했습니다. 원문 진단을 확인하세요.</value></data>
+  <data name="TunnelDiagnostic_command_timeout" xml:space="preserve"><value>Tailscale 명령의 시간이 초과됐습니다. 재시도하기 전에 상태를 확인하세요.</value></data>
+  <data name="TunnelDiagnostic_configuration_changed" xml:space="preserve"><value>작업 중 구성이 변경됐습니다. 현재 상태를 다시 읽으세요.</value></data>
+  <data name="TunnelDiagnostic_core_unhealthy" xml:space="preserve"><value>매핑은 구성됐지만 로컬 AgentDock 상태 확인에 실패했습니다.</value></data>
+  <data name="TunnelDiagnostic_device_changed" xml:space="preserve"><value>Tailscale 장치 ID가 변경됐습니다. 기존 소유권을 확인해야 합니다.</value></data>
+  <data name="TunnelDiagnostic_disabled" xml:space="preserve"><value>AgentDock Funnel이 사용 중지됐습니다.</value></data>
+  <data name="TunnelDiagnostic_funnel_permission_required" xml:space="preserve"><value>Tailscale 관리 화면에서 이 장치에 HTTPS 443 Funnel 권한을 부여한 뒤 다시 감지하세요.</value></data>
+  <data name="TunnelDiagnostic_initialize_failed" xml:space="preserve"><value>MCP 초기화에서 올바른 서버 또는 프로토콜 정보를 반환하지 않았습니다.</value></data>
+  <data name="TunnelDiagnostic_initialized_failed" xml:space="preserve"><value>MCP 초기화 완료 알림이 수락되지 않았습니다.</value></data>
+  <data name="TunnelDiagnostic_invalid_binary" xml:space="preserve"><value>Tailscale 실행 파일이 올바르지 않습니다. 검증된 공식 설치본을 사용하세요.</value></data>
+  <data name="TunnelDiagnostic_invalid_dns" xml:space="preserve"><value>장치 DNS 이름이 올바르지 않거나 현재 tailnet에 속하지 않습니다.</value></data>
+  <data name="TunnelDiagnostic_invalid_funnel_json" xml:space="preserve"><value>Serve/Funnel 구성의 구조가 올바르지 않거나 지원되지 않아 변경을 거부했습니다.</value></data>
+  <data name="TunnelDiagnostic_invalid_oauth_metadata" xml:space="preserve"><value>OAuth 메타데이터가 올바르지 않아 공개 인증을 검증하지 못했습니다.</value></data>
+  <data name="TunnelDiagnostic_invalid_ownership" xml:space="preserve"><value>Funnel 소유권 기록이 올바르지 않습니다. 기존 매핑을 임의로 인수하면 안 됩니다.</value></data>
+  <data name="TunnelDiagnostic_invalid_server_metadata" xml:space="preserve"><value>MCP 서버 설명이 올바르지 않습니다.</value></data>
+  <data name="TunnelDiagnostic_invalid_status_json" xml:space="preserve"><value>Tailscale이 호환되지 않거나 불완전한 장치 상태를 반환했습니다.</value></data>
+  <data name="TunnelDiagnostic_key_expired" xml:space="preserve"><value>Tailscale 장치 키가 만료됐습니다. 공식 클라이언트에서 다시 인증하세요.</value></data>
+  <data name="TunnelDiagnostic_key_expiring" xml:space="preserve"><value>Tailscale 장치 키가 14일 이내에 만료됩니다. 다시 인증할 준비를 하세요.</value></data>
+  <data name="TunnelDiagnostic_mapping_changed" xml:space="preserve"><value>검증 중 로컬 매핑이 변경돼 준비 상태를 확인하지 못했습니다.</value></data>
+  <data name="TunnelDiagnostic_mapping_conflict" xml:space="preserve"><value>HTTPS 443이 기존 매핑과 충돌합니다. AgentDock은 이를 덮어쓰지 않습니다.</value></data>
+  <data name="TunnelDiagnostic_mapping_missing" xml:space="preserve"><value>AgentDock Funnel 매핑이 없거나 로컬 대상이 변경됐습니다.</value></data>
+  <data name="TunnelDiagnostic_mcp_protocol_failed" xml:space="preserve"><value>MCP 프로토콜 검증에 실패했습니다. 원문 진단에서 실패한 단계를 확인하세요.</value></data>
+  <data name="TunnelDiagnostic_missing_identity" xml:space="preserve"><value>Tailscale이 장치 ID 또는 DNS 이름을 제공하지 않았습니다.</value></data>
+  <data name="TunnelDiagnostic_mode_changed" xml:space="preserve"><value>접근 모드가 변경돼 이전 검증 결과는 더 이상 유효하지 않습니다.</value></data>
+  <data name="TunnelDiagnostic_needs_login" xml:space="preserve"><value>공식 Tailscale 클라이언트에서 로그인 또는 장치 승인을 완료하세요.</value></data>
+  <data name="TunnelDiagnostic_not_installed" xml:space="preserve"><value>Tailscale이 설치되지 않았습니다. 이 선택 기능을 사용하려면 공식 클라이언트를 설치하세요.</value></data>
+  <data name="TunnelDiagnostic_not_running" xml:space="preserve"><value>Tailscale이 실행 중이 아닙니다. 공식 클라이언트를 확인하세요.</value></data>
+  <data name="TunnelDiagnostic_oauth_origin_mismatch" xml:space="preserve"><value>인증 메타데이터 또는 MCP 인증 요구가 현재 공개 origin과 일치하지 않습니다.</value></data>
+  <data name="TunnelDiagnostic_offline" xml:space="preserve"><value>이 Tailscale 장치는 오프라인입니다.</value></data>
+  <data name="TunnelDiagnostic_origin_mismatch" xml:space="preserve"><value>매핑과 AgentDock origin이 일치하지 않습니다. 적용 중인 접근 구성을 확인하세요.</value></data>
+  <data name="TunnelDiagnostic_output_limit" xml:space="preserve"><value>Tailscale 출력이 크기 제한을 초과했습니다.</value></data>
+  <data name="TunnelDiagnostic_ownership_conflict" xml:space="preserve"><value>Funnel 소유권이 다른 구성과 충돌해 인수를 거부했습니다.</value></data>
+  <data name="TunnelDiagnostic_ownership_required" xml:space="preserve"><value>이 매핑을 변경하기 전에 AgentDock 소유권을 검증해야 합니다.</value></data>
+  <data name="TunnelDiagnostic_pending_migration" xml:space="preserve"><value>이전 Funnel 매핑은 검증된 이전 절차를 거친 뒤 변경할 수 있습니다.</value></data>
+  <data name="TunnelDiagnostic_private_serve_conflict" xml:space="preserve"><value>기존 비공개 Serve 매핑이 요청한 공개 매핑과 충돌합니다.</value></data>
+  <data name="TunnelDiagnostic_public_protocol_failed" xml:space="preserve"><value>공개 엔드포인트가 예상과 다른 HTTP 결과를 반환했습니다.</value></data>
+  <data name="TunnelDiagnostic_public_unreachable" xml:space="preserve"><value>공개 DNS·TLS·HTTP 경로가 아직 준비되지 않았습니다. 재시도 전에 로컬 상태를 확인하세요.</value></data>
+  <data name="TunnelDiagnostic_response_limit" xml:space="preserve"><value>공개 프로토콜 응답이 크기 제한을 초과했습니다.</value></data>
+  <data name="TunnelDiagnostic_rollback_conflict" xml:space="preserve"><value>복구가 변경된 매핑 소유권과 충돌합니다. 추가 변경 전에 상태를 확인하세요.</value></data>
+  <data name="TunnelDiagnostic_tools_list_failed" xml:space="preserve"><value>MCP 도구 검색에서 정의가 누락됐거나 올바르지 않은 정의를 반환했습니다.</value></data>
+  <data name="TunnelDiagnostic_verification_failed" xml:space="preserve"><value>Funnel 검증에 실패했습니다. 원문 진단과 현재 상태를 확인하세요.</value></data>
+  <data name="TunnelDiagnostic_verification_pending" xml:space="preserve"><value>로컬 구성이 완료됐으며 공개 경로를 검증하고 있습니다. 매핑을 다시 만들 필요는 없습니다.</value></data>
+  <data name="TunnelDiagnostic_write_state_unknown" xml:space="preserve"><value>매핑 쓰기 결과가 확인되지 않았습니다. 재시도 전에 실제 상태를 읽으세요.</value></data>
+  <data name="TunnelDiagnostic_not_configured" xml:space="preserve"><value>AgentDock Funnel이 구성되지 않았습니다.</value></data>
+  <data name="TunnelDiagnostic_probe_failed" xml:space="preserve"><value>공개 경로 검증을 완료하지 못했습니다. 로컬 구성 완료와 공개 접근 가능 여부는 별개입니다.</value></data>
+  <data name="TunnelDiagnostic_tailscale_error" xml:space="preserve"><value>Tailscale 오류가 발생했습니다. 원문 진단을 확인하세요.</value></data>
+  <data name="TunnelOriginalDiagnostic" xml:space="preserve"><value>AgentDock 원문 진단 ({0}):
+{1}</value></data>
 </root>
