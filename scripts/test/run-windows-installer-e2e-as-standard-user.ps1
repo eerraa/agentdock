@@ -129,6 +129,7 @@ try {
     $contextArguments =
         "-NoLogo -NoProfile -NonInteractive -ExecutionPolicy Bypass -File `"$installerScript`"" +
         " -InstallChannel setup -InstallDir `"$contextInstallDir`"" +
+        " -OfflineArchive `"$copiedArchive`" -OfflineChecksumFile `"$copiedChecksum`" -OfflineCloudflaredBinary `"$copiedCloudflared`"" +
         " -ResultFile `"$contextResultPath`""
     $contextProcess = Start-Process `
         -FilePath 'powershell.exe' `
