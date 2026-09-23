@@ -119,76 +119,6 @@ jobs:
           $ErrorActionPreference = 'Stop'
           go test ./internal/desktopruntime -run TestSelectInteractiveTaskSessionID -count=1
 
-      - name: Run full install and in-place upgrade as standard user
-        shell: powershell
-        run: |
-          $ErrorActionPreference = 'Stop'
-          $releaseRoot = Join-Path $env:RUNNER_TEMP 'agentdock-current-release'
-          $distRoot = Join-Path $releaseRoot 'dist'
-          $bundleRoot = Join-Path $distRoot 'share\agentdock\core-skills'
-          New-Item -ItemType Directory -Path $distRoot -Force | Out-Null
-
-          $env:CGO_ENABLED = '0'
-          $env:GOOS = 'windows'
-          $env:GOARCH = 'amd64'
-          go build -trimpath -o (Join-Path $distRoot 'agentdock.exe') .\cmd\agentdock
-          go build -trimpath -ldflags '-s -w' -o (Join-Path $distRoot 'agentdock-arbiter.exe') .\cmd\agentdock-arbiter
-          go build -trimpath -ldflags '-s -w' -o (Join-Path $distRoot 'agentdock-shim.exe') .\cmd\agentdock-shim
-          go build -trimpath -ldflags '-s -w -H=windowsgui' -o (Join-Path $distRoot 'agentdock-tray-shim.exe') .\cmd\agentdock-shim
-          $controlPanelOutput = Join-Path $distRoot 'control-panel'
-          dotnet publish .\desktop\windows\control-panel\AgentDock.ControlPanel.csproj `
-            -c Release `
-            -r win-x64 `
-            --self-contained true `
-            -o $controlPanelOutput
-          Copy-Item (Join-Path $controlPanelOutput 'agentdock-tray.exe') (Join-Path $distRoot 'agentdock-tray.exe') -Force
-          Copy-Item .\packaging\windows\assets\agentdock.ico (Join-Path $distRoot 'agentdock.ico') -Force
-          python .\packaging\build-core-skill-bundle.py --output $bundleRoot
-          & .\packaging\windows\build-wsl-helper-payload.ps1 -OutputDirectory (Join-Path $distRoot 'wsl-helper')
-
-          $assetName = 'agentdock_windows_amd64.zip'
-          $archivePath = Join-Path $releaseRoot $assetName
-          Compress-Archive `
-            -Path (Join-Path $distRoot 'agentdock.exe'), (Join-Path $distRoot 'agentdock-tray.exe'), (Join-Path $distRoot 'agentdock-arbiter.exe'), (Join-Path $distRoot 'agentdock-shim.exe'), (Join-Path $distRoot 'agentdock-tray-shim.exe'), (Join-Path $distRoot 'agentdock.ico'), (Join-Path $distRoot 'share'), (Join-Path $distRoot 'wsl-helper') `
-            -DestinationPath $archivePath `
-            -Force
-          $hash = (Get-FileHash -LiteralPath $archivePath -Algorithm SHA256).Hash.ToLowerInvariant()
-          [IO.File]::WriteAllText(
-            "$archivePath.sha256",
-            "$hash  $assetName`n",
-            [Text.UTF8Encoding]::new($false)
-          )
-
-          $listener = [Net.Sockets.TcpListener]::new([Net.IPAddress]::Loopback, 0)
-          $listener.Start()
-          $port = ([Net.IPEndPoint] $listener.LocalEndpoint).Port
-          $listener.Stop()
-          $releaseBaseUrl = "http://127.0.0.1:$port"
-          $server = Start-Process `
-            -FilePath 'python' `
-            -ArgumentList @('-m', 'http.server', $port, '--bind', '127.0.0.1', '--directory', $releaseRoot) `
-            -WindowStyle Hidden `
-            -PassThru
-          try {
-            $deadline = [DateTime]::UtcNow.AddSeconds(15)
-            do {
-              Start-Sleep -Milliseconds 250
-              try {
-                Invoke-WebRequest -UseBasicParsing -Uri "$releaseBaseUrl/$assetName.sha256" -TimeoutSec 2 | Out-Null
-                break
-              } catch {
-                if ([DateTime]::UtcNow -ge $deadline) { throw }
-              }
-            } while ($true)
-
-            & .\scripts\test\run-windows-installer-e2e-as-standard-user.ps1 `
-              -InstallerPath .\scripts\install\install.ps1 `
-              -Version latest `
-              -ReleaseBaseUrl $releaseBaseUrl
-          } finally {
-            Stop-Process -Id $server.Id -Force -ErrorAction SilentlyContinue
-          }
-
       - name: Build current Windows binary
         shell: powershell
         run: |
@@ -245,9 +175,10 @@ jobs:
 
           python .\packaging\build-core-skill-bundle.py --output .\dist\share\agentdock\core-skills
           Copy-Item .\packaging\windows\assets\agentdock.ico .\dist\agentdock.ico -Force
+          & .\packaging\windows\prepare-bundled-rg.ps1 -Destination .\dist\tools\rg -CacheDirectory (Join-Path $env:RUNNER_TEMP 'agentdock-build-cache')
           $archivePath = Join-Path $payloadRoot 'agentdock_windows_amd64.zip'
           Compress-Archive `
-            -Path .\dist\agentdock.exe, .\dist\agentdock-tray.exe, .\dist\agentdock-arbiter.exe, .\dist\agentdock-shim.exe, .\dist\agentdock-tray-shim.exe, .\dist\agentdock.ico, .\dist\share, .\dist\wsl-helper `
+            -Path .\dist\agentdock.exe, .\dist\agentdock-tray.exe, .\dist\agentdock-arbiter.exe, .\dist\agentdock-shim.exe, .\dist\agentdock-tray-shim.exe, .\dist\agentdock.ico, .\dist\share, .\dist\wsl-helper, .\dist\tools `
             -DestinationPath $archivePath `
             -Force
           $hash = (Get-FileHash -LiteralPath $archivePath -Algorithm SHA256).Hash.ToLowerInvariant()
@@ -263,7 +194,7 @@ jobs:
           $ErrorActionPreference = 'Stop'
           $ProgressPreference = 'SilentlyContinue'
           $cloudflaredPath = Join-Path $env:RUNNER_TEMP 'cloudflared-windows-amd64.exe'
-          $cloudflaredUrl = 'https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-windows-amd64.exe'
+          $cloudflaredUrl = 'https://github.com/cloudflare/cloudflared/releases/download/2026.9.1/cloudflared-windows-amd64.exe'
           for ($attempt = 1; $attempt -le 5; $attempt++) {
             try {
               Invoke-WebRequest -UseBasicParsing -Uri $cloudflaredUrl -OutFile $cloudflaredPath
@@ -273,11 +204,26 @@ jobs:
               Start-Sleep -Seconds 2
             }
           }
+          $expectedCloudflaredHash = '2837888cc0f5d58f15b6dc478376de90b4d3ba5241c7947455d1e0a0df429712'
+          if ((Get-FileHash -LiteralPath $cloudflaredPath -Algorithm SHA256).Hash.ToLowerInvariant() -ne $expectedCloudflaredHash) {
+            throw 'Pinned official cloudflared payload checksum mismatch.'
+          }
           $cloudflaredSignature = Get-AuthenticodeSignature -LiteralPath $cloudflaredPath
           if ($cloudflaredSignature.Status -ne [Management.Automation.SignatureStatus]::Valid) {
             throw "cloudflared Authenticode signature is invalid: $($cloudflaredSignature.StatusMessage)"
           }
           "AMD64_CLOUDFLARED=$cloudflaredPath" | Out-File -FilePath $env:GITHUB_ENV -Encoding ascii -Append
+
+      - name: Run full install and in-place upgrade as standard user
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          & .\scripts\test\run-windows-installer-e2e-as-standard-user.ps1 `
+            -InstallerPath .\scripts\install\install.ps1 `
+            -Version latest `
+            -OfflineArchive $env:AMD64_ARCHIVE `
+            -OfflineChecksumFile $env:AMD64_CHECKSUM `
+            -OfflineCloudflaredBinary $env:AMD64_CLOUDFLARED
 
       - name: Test Quick Tunnel restart lifecycle
         shell: powershell

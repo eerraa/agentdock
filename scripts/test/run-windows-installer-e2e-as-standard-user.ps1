@@ -1,7 +1,10 @@
-[CmdletBinding()]
+﻿[CmdletBinding()]
 param(
     [string] $InstallerPath = '',
     [string] $Version = 'latest',
+    [string] $OfflineArchive = '',
+    [string] $OfflineChecksumFile = '',
+    [string] $OfflineCloudflaredBinary = '',
     [string] $ReleaseBaseUrl = ''
 )
 
@@ -69,11 +72,25 @@ try {
     # New-LocalUser 默认只创建普通本地账户；子进程还会再次验证自身不是管理员。
     New-Item -ItemType Directory -Path $testScriptDir -Force | Out-Null
     Copy-Item -LiteralPath $resolvedInstaller -Destination (Join-Path $testScriptDir 'install.ps1') -Force
+    $copiedArchive = Join-Path $testScriptDir 'agentdock_windows_amd64.zip'
+    $copiedChecksum = "$copiedArchive.sha256"
+    $copiedCloudflared = Join-Path $testScriptDir 'cloudflared.exe'
+    foreach ($entry in @(
+        @{ Source = $OfflineArchive; Target = $copiedArchive },
+        @{ Source = $OfflineChecksumFile; Target = $copiedChecksum },
+        @{ Source = $OfflineCloudflaredBinary; Target = $copiedCloudflared }
+    )) {
+        if ([string]::IsNullOrWhiteSpace($entry.Source) -or -not (Test-Path -LiteralPath $entry.Source -PathType Leaf)) {
+            throw 'The standard-user E2E launcher requires all three offline inputs.'
+        }
+        Copy-Item -LiteralPath $entry.Source -Destination $entry.Target
+    }
     Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'test-install-windows-e2e.ps1') -Destination $testScriptDir -Force
 
     $testScript = Join-Path $testScriptDir 'test-install-windows-e2e.ps1'
     $installerScript = Join-Path $testScriptDir 'install.ps1'
     $arguments = "-NoLogo -NoProfile -NonInteractive -ExecutionPolicy Bypass -File `"$testScript`" -InstallerPath `"$installerScript`" -Version $Version"
+    $arguments += " -OfflineArchive `"$copiedArchive`" -OfflineChecksumFile `"$copiedChecksum`" -OfflineCloudflaredBinary `"$copiedCloudflared`""
     if ($ReleaseBaseUrl) {
         $arguments += " -ReleaseBaseUrl `"$ReleaseBaseUrl`""
     }
