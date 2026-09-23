@@ -4,3 +4,6 @@ go.sum text eol=lf
 *.sh text eol=lf
 *.bash text eol=lf
 .gitattributes text eol=lf
+# Preserve the exact upstream translation and license bytes for their pins.
+packaging/windows/languages/Korean.isl -text
+packaging/windows/languages/LICENSE-InnoSetup.txt -text

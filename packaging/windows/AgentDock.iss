@@ -24,7 +24,7 @@
 AppId={{D6788C7A-4104-48D4-B5C3-F4858B5606EA}
 AppName=AgentDock
 AppVersion={#AppVersion}
-AppPublisher=AgentDock
+AppPublisher=AgentDock Eerraa
 AppPublisherURL=https://github.com/eerraa/agentdock
 AppSupportURL=https://github.com/eerraa/agentdock/issues
 AppUpdatesURL=https://github.com/eerraa/agentdock/releases
@@ -61,11 +61,13 @@ SignedUninstaller=yes
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "chinesesimplified"; MessagesFile: "compiler:Default.isl, languages\ChineseSimplified.isl"
+Name: "korean"; MessagesFile: "languages\Korean.isl"
 
 
 #include "includes\messages.iss"
 
 [Files]
+Source: "languages\LICENSE-InnoSetup.txt"; DestDir: "{app}\installer\licenses"; Flags: ignoreversion
 Source: "..\..\scripts\install\install.ps1"; Flags: dontcopy
 Source: "..\..\scripts\install\probe-protected-text.ps1"; Flags: dontcopy
 Source: "..\..\scripts\install\launch-windows-process.ps1"; Flags: dontcopy
@@ -88,7 +90,7 @@ Type: files; Name: "{userdesktop}\{code:GetLocalizedMessage|DesktopShortcutName}
 
 [Icons]
 Name: "{group}\AgentDock"; Filename: "{app}\bin\agentdock-tray.exe"; WorkingDir: "{app}"; IconFilename: "{app}\installer\agentdock.ico"; AppUserModelID: "com.uvwt.agentdock.controlpanel"
-Name: "{group}\{code:GetLocalizedMessage|DocsShortcut}"; Filename: "https://uvwt.github.io/agentdock-docs/"
+Name: "{group}\{code:GetLocalizedMessage|DocsShortcut}"; Filename: "https://github.com/eerraa/agentdock/tree/main/docs"
 Name: "{group}\{code:GetLocalizedMessage|UninstallShortcut}"; Filename: "{uninstallexe}"
 
 #include "includes\code.iss"
