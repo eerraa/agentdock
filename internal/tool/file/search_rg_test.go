@@ -61,11 +61,11 @@ func TestSearchTextRGQueryArguments(t *testing.T) {
 					if !ok || len(matches) != 1 || result["total_matches"] != 1 {
 						t.Fatalf("query %q must be a pattern, not an option: %#v", query, result)
 					}
-					wantPath, err := rt.ws.Relative(file)
+					expectedFile, err := rt.ws.ResolveExisting(file)
 					if err != nil {
 						t.Fatal(err)
 					}
-					if matches[0]["path"] != wantPath || matches[0]["line"] != 2 || matches[0]["column"] != 1 || matches[0]["match_text"] != query {
+					if matches[0]["path"] != expectedFile.Display || matches[0]["line"] != 2 || matches[0]["column"] != 1 || matches[0]["match_text"] != query {
 						t.Fatalf("wrong match identity/position: %#v", matches[0])
 					}
 				})

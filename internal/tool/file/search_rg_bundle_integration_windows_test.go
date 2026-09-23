@@ -96,8 +96,11 @@ func TestRequiredBundledRGActualSearchCases(t *testing.T) {
 					t.Fatalf("real bundled query %q: %#v %v", query, result, err)
 				}
 				matches := result["matches"].([]map[string]any)
-				expected, _ := svc.ws.Relative(file)
-				if matches[0]["path"] != expected || matches[0]["line"] != 2 || matches[0]["column"] != 1 || matches[0]["match_text"] != query {
+				expected, resolveErr := svc.ws.ResolveExisting(file)
+				if resolveErr != nil {
+					t.Fatal(resolveErr)
+				}
+				if matches[0]["path"] != expected.Display || matches[0]["line"] != 2 || matches[0]["column"] != 1 || matches[0]["match_text"] != query {
 					t.Fatalf("config/path/position corrupted: %#v", matches)
 				}
 			}
