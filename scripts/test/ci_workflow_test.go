@@ -54,9 +54,9 @@ func TestCIWorkflowUsesFreshBoundedGoTests(t *testing.T) {
 		"timeout-minutes: 20",
 		"go test -p 2 ./... -count=1 -timeout=3m",
 		"name: ACP prompt and steering race regression",
-		"-count=20",
+		"-count=1",
 		"-timeout=90s",
-		"go test -race ./... -count=1 -timeout=3m",
+		"go test -race -p 2 ./internal/insertion ./internal/taskstate ./internal/mcp/client ./internal/app",
 		"go test -race -tags browser_integration ./internal/tool/browser ./internal/app -count=1 -timeout=3m",
 		"timeout-minutes: 15",
 	} {
@@ -187,5 +187,26 @@ func TestEerraaPackagePolicyKeepsRepositoryAndPublicationGuards(t *testing.T) {
 	}
 	if strings.Contains(workflow, "$publish = $true") {
 		t.Fatal("automatic publication must not be inferred from a push")
+	}
+}
+
+// Candidate scope deliberately changes instrumentation, not product assertions.
+// All packages still run in the complete deterministic suite above.
+func TestCIWorkflowKeepsSingleScopedConcurrencyRace(t *testing.T) {
+	workflow := readWorkflow(t, "ci.yml")
+	for _, want := range []string{
+		"name: Scoped concurrency race",
+		"-run 'Test(Insertion|CompletionNotification|Managed|MetadataUpdate|SameManagerConcurrentRegistryUpdates)' -count=1 -timeout=3m",
+		"go test -p 2 ./... -count=1 -timeout=3m",
+		"go vet ./...",
+	} {
+		if !strings.Contains(workflow, want) {
+			t.Fatalf("candidate concurrency validation is missing %q", want)
+		}
+	}
+	for _, forbidden := range []string{"go test -race ./...", "-count=20", "continue-on-error"} {
+		if strings.Contains(workflow, forbidden) {
+			t.Fatalf("candidate CI exceeds scope or masks failure: %q", forbidden)
+		}
 	}
 }

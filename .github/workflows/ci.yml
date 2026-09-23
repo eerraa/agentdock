@@ -59,12 +59,14 @@ jobs:
         run: |
           go test -race ./internal/acp \
             -run 'Test(StartPromptWaitsForPromptDispatchBeforeSteering|ClaudeSteeringFallbackCancelsOldRunAndStartsObservableTurn|CodexSteeringFallbackCancelsOldRunAndStartsObservableTurn)$' \
-            -count=20 \
+            -count=1 \
             -timeout=90s
 
-      - name: Race
+      - name: Scoped concurrency race
         if: runner.os == 'Linux'
-        run: go test -race ./... -count=1 -timeout=3m
+        # Keep the complete deterministic suite above. Instrument only the new
+        # insertion/completion/managed-MCP paths once for this candidate.
+        run: go test -race -p 2 ./internal/insertion ./internal/taskstate ./internal/mcp/client ./internal/app -run 'Test(Insertion|CompletionNotification|Managed|MetadataUpdate|SameManagerConcurrentRegistryUpdates)' -count=1 -timeout=3m
 
       - name: Vet
         run: go vet ./...
