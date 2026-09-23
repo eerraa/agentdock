@@ -2,12 +2,14 @@
 package insertion
 
 import (
+	"bytes"
 	"context"
 	"crypto/rand"
 	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -115,10 +117,18 @@ func (s *Store) change(ctx context.Context, fn func(*diskState, time.Time) (bool
 		if err != nil {
 			return err
 		}
-		if err = json.Unmarshal(data, &state); err != nil {
+		// Defaults apply only to a missing file, never to null or incomplete
+		// existing state. Unknown data must remain intact for its owning version.
+		state = diskState{}
+		decoder := json.NewDecoder(bytes.NewReader(data))
+		decoder.DisallowUnknownFields()
+		if err = decoder.Decode(&state); err != nil {
 			return fmt.Errorf("read insertion store; original preserved: %w", err)
 		}
-		if state.SchemaVersion != 1 || len(state.Items) > MaxRecords {
+		if err = decoder.Decode(new(any)); !errors.Is(err, io.EOF) {
+			return errors.New("insertion store has trailing data; original preserved")
+		}
+		if state.SchemaVersion != 1 || state.Items == nil || len(state.Items) > MaxRecords {
 			return errors.New("unsupported insertion store; original preserved")
 		}
 		ids := map[string]bool{}

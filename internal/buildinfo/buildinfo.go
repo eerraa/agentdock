@@ -10,10 +10,10 @@ import (
 
 // Numeric patch = upstream patch * 1000 + downstream revision (1..999).
 // Keep three numeric components for Windows resources and the existing updater.
-const Version = "1.1.5001"
+const Version = "1.1.5002"
 const Distribution = "eerraa"
 const UpstreamVersion = "1.1.5"
-const DownstreamRevision = 1
+const DownstreamRevision = 2
 
 var (
 	Commit    string

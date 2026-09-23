@@ -1,9 +1,11 @@
 package taskstate
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"errors"
+	"io"
 	"os"
 	"path/filepath"
 	"sort"
@@ -74,8 +76,16 @@ func (s *Store) ClaimCompletionNotifications(ctx context.Context, limit int, now
 	claims := notificationClaims{SchemaVersion: 1, Claimed: map[string]time.Time{}}
 	data, err := readTaskStateFile(path)
 	if err == nil {
-		if err = json.Unmarshal(data, &claims); err != nil {
+		// Losing the distinction between missing and invalid claims would replay
+		// already shown notifications. Reject unsupported state without writing.
+		claims = notificationClaims{}
+		decoder := json.NewDecoder(bytes.NewReader(data))
+		decoder.DisallowUnknownFields()
+		if err = decoder.Decode(&claims); err != nil {
 			return nil, err
+		}
+		if err = decoder.Decode(new(any)); !errors.Is(err, io.EOF) {
+			return nil, errors.New("notification claims have trailing data; original preserved")
 		}
 		if claims.SchemaVersion != 1 || len(claims.Claimed) > 8192 || claims.Claimed == nil {
 			return nil, errors.New("invalid notification claims; original preserved")

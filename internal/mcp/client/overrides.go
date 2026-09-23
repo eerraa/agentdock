@@ -132,6 +132,8 @@ func (m *Manager) readOverrides() (overrideFile, error) {
 	if len(data) > maxRegistryFileBytes {
 		return result, errors.New("MCP override store exceeds size limit")
 	}
+	// Existing files must declare their schema and servers, not inherit defaults.
+	result = overrideFile{}
 	decoder := json.NewDecoder(bytes.NewReader(data))
 	decoder.DisallowUnknownFields()
 	if err = decoder.Decode(&result); err != nil {
@@ -140,11 +142,8 @@ func (m *Manager) readOverrides() (overrideFile, error) {
 	if err = decoder.Decode(new(any)); !errors.Is(err, io.EOF) {
 		return result, errors.New("MCP override store has trailing data")
 	}
-	if result.SchemaVersion != 1 || len(result.Servers) > 512 {
+	if result.SchemaVersion != 1 || result.Servers == nil || len(result.Servers) > 512 {
 		return result, errors.New("unsupported MCP override store; original preserved")
-	}
-	if result.Servers == nil {
-		result.Servers = map[string]ConfigPatch{}
 	}
 	for name, patch := range result.Servers {
 		if !serverNamePattern.MatchString(name) || len(patch) > 10 {
