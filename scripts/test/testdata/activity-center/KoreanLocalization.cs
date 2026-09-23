@@ -80,6 +80,7 @@ internal static partial class Program
             Require(UiText.Format("ActivityCancelConfirmation", 2).Contains("중지하지 않습니다"), "Task cancellation was confused with process stopping.");
             var asyncActivity = Task.Run(async () => { CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo("en-US"); await Task.Yield(); return ActivityText.Get("Title"); }).GetAwaiter().GetResult();
             Require(asyncActivity == "AgentDock · 작업 활동 센터", "Async activity rendering lost the explicit language.");
+            TestGeneratedCallLabels();
             Require(ExecutionJson.State("pending_approval") == "승인 대기" && ExecutionJson.State("unknown") == "결과 확인 필요", "Execution states changed meaning or missed Korean.");
             Require(ExecutionJson.State("future-status") == "future-status" && ExecutionJson.Mode("future-mode") == "future-mode", "Unknown execution protocol codes were translated.");
             var manualTitle = ExecutionObject.From(JsonSerializer.SerializeToElement(new { title = "新对话", title_source = "manual" }), "conversation");

@@ -1495,4 +1495,36 @@
   <data name="TunnelDiagnostic_tailscale_error" xml:space="preserve"><value>Tailscale 遇到错误，请查看原始诊断。</value></data>
   <data name="TunnelOriginalDiagnostic" xml:space="preserve"><value>AgentDock 原始诊断（{0}）：
 {1}</value></data>
+  <data name="ExecutionTool_agentdock_context" xml:space="preserve"><value>AgentDock 上下文</value></data>
+  <data name="ExecutionTool_read_file" xml:space="preserve"><value>读取文件</value></data>
+  <data name="ExecutionTool_list_dir" xml:space="preserve"><value>列出目录</value></data>
+  <data name="ExecutionTool_search_text" xml:space="preserve"><value>搜索文本</value></data>
+  <data name="ExecutionTool_file_edit" xml:space="preserve"><value>编辑文件</value></data>
+  <data name="ExecutionTool_exec_command" xml:space="preserve"><value>运行命令</value></data>
+  <data name="ExecutionTool_session_observe" xml:space="preserve"><value>查看命令会话</value></data>
+  <data name="ExecutionTool_session_act" xml:space="preserve"><value>控制命令会话</value></data>
+  <data name="ExecutionTool_task_manage" xml:space="preserve"><value>任务管理</value></data>
+  <data name="ExecutionTool_workspace_manage" xml:space="preserve"><value>工作区管理</value></data>
+  <data name="ExecutionTool_mcp_manage" xml:space="preserve"><value>管理动态 MCP 服务</value></data>
+  <data name="ExecutionTool_mcp_tool_search" xml:space="preserve"><value>搜索动态 MCP 工具</value></data>
+  <data name="ExecutionTool_mcp_tool_inspect" xml:space="preserve"><value>查看动态 MCP 工具</value></data>
+  <data name="ExecutionTool_mcp_tool_call" xml:space="preserve"><value>调用动态 MCP 工具</value></data>
+  <data name="ExecutionTool_plugin_manage" xml:space="preserve"><value>管理插件</value></data>
+  <data name="ExecutionTool_plugin_load" xml:space="preserve"><value>加载插件</value></data>
+  <data name="ExecutionTool_skill_package" xml:space="preserve"><value>管理 Skill 包</value></data>
+  <data name="ExecutionTool_view_image" xml:space="preserve"><value>查看图片</value></data>
+  <data name="ExecutionTool_file_publish" xml:space="preserve"><value>发布签名文件链接</value></data>
+  <data name="ExecutionTool_browser_session" xml:space="preserve"><value>浏览器会话</value></data>
+  <data name="ExecutionTool_browser_act" xml:space="preserve"><value>浏览器操作</value></data>
+  <data name="ExecutionTool_browser_snapshot" xml:space="preserve"><value>浏览器快照</value></data>
+  <data name="ExecutionTool_acp_session" xml:space="preserve"><value>管理 ACP 会话</value></data>
+  <data name="ExecutionTool_acp_prompt" xml:space="preserve"><value>运行 ACP 提示</value></data>
+  <data name="ExecutionTool_acp_interaction" xml:space="preserve"><value>处理 ACP 交互</value></data>
+  <data name="ExecutionTool_recall_search" xml:space="preserve"><value>搜索 NexusDock Recall</value></data>
+  <data name="ExecutionTool_recall_read" xml:space="preserve"><value>读取 NexusDock Recall 条目</value></data>
+  <data name="ExecutionTool_recall_write" xml:space="preserve"><value>写入 NexusDock Recall 条目</value></data>
+  <data name="ExecutionTool_recall_maintain" xml:space="preserve"><value>维护 NexusDock Recall</value></data>
+  <data name="ExecutionTool_private_note_manage" xml:space="preserve"><value>管理私密笔记</value></data>
+  <data name="ExecutionTool_workflow_template_manage" xml:space="preserve"><value>管理工作流模板</value></data>
+  <data name="ExecutionTool_evolve" xml:space="preserve"><value>改进 AgentDock 知识</value></data>
 </root>

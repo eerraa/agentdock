@@ -95,3 +95,11 @@ locales/themes, minimum-size control bounds, and 12/14/20-DIP font checks. Captu
 100/125/150/200 raster scales are not actual operating-system DPI tests and do not
 replace acceptance of the resources installed by the final Setup.exe. Passing
 these source fixtures does not establish full product-language coverage.
+
+Generated execution-row tool labels carry `activity_label_source=tool` in the
+existing activity event and call projection. This is presentation provenance,
+not an execution binding or permission field, and is never accepted as a tool
+argument. Windows renders these labels through the existing UiStrings resources
+using the canonical tool identifier. Explicit labels, external span labels and
+older history without provenance remain verbatim; an identical English label
+is not evidence that the user intended an automatically translated title.

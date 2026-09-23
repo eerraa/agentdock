@@ -1495,4 +1495,36 @@ Shortcuts: Ctrl+F searches conversations; F5 refreshes; Esc closes details; Shif
   <data name="TunnelDiagnostic_tailscale_error" xml:space="preserve"><value>Tailscale encountered an error. Inspect the original diagnostic.</value></data>
   <data name="TunnelOriginalDiagnostic" xml:space="preserve"><value>Original AgentDock diagnostic ({0}):
 {1}</value></data>
+  <data name="ExecutionTool_agentdock_context" xml:space="preserve"><value>AgentDock context</value></data>
+  <data name="ExecutionTool_read_file" xml:space="preserve"><value>Read file</value></data>
+  <data name="ExecutionTool_list_dir" xml:space="preserve"><value>List directory</value></data>
+  <data name="ExecutionTool_search_text" xml:space="preserve"><value>Search text</value></data>
+  <data name="ExecutionTool_file_edit" xml:space="preserve"><value>Edit file</value></data>
+  <data name="ExecutionTool_exec_command" xml:space="preserve"><value>Run command</value></data>
+  <data name="ExecutionTool_session_observe" xml:space="preserve"><value>Observe command sessions</value></data>
+  <data name="ExecutionTool_session_act" xml:space="preserve"><value>Act on command sessions</value></data>
+  <data name="ExecutionTool_task_manage" xml:space="preserve"><value>Manage recoverable tasks</value></data>
+  <data name="ExecutionTool_workspace_manage" xml:space="preserve"><value>Manage workspaces</value></data>
+  <data name="ExecutionTool_mcp_manage" xml:space="preserve"><value>Manage dynamic MCP servers</value></data>
+  <data name="ExecutionTool_mcp_tool_search" xml:space="preserve"><value>Search dynamic MCP tools</value></data>
+  <data name="ExecutionTool_mcp_tool_inspect" xml:space="preserve"><value>Inspect a dynamic MCP tool</value></data>
+  <data name="ExecutionTool_mcp_tool_call" xml:space="preserve"><value>Call a dynamic MCP tool</value></data>
+  <data name="ExecutionTool_plugin_manage" xml:space="preserve"><value>Manage plugins</value></data>
+  <data name="ExecutionTool_plugin_load" xml:space="preserve"><value>Load a heavy plugin</value></data>
+  <data name="ExecutionTool_skill_package" xml:space="preserve"><value>Manage Skill packages</value></data>
+  <data name="ExecutionTool_view_image" xml:space="preserve"><value>View image</value></data>
+  <data name="ExecutionTool_file_publish" xml:space="preserve"><value>Publish signed file</value></data>
+  <data name="ExecutionTool_browser_session" xml:space="preserve"><value>Browser session</value></data>
+  <data name="ExecutionTool_browser_act" xml:space="preserve"><value>Browser actions</value></data>
+  <data name="ExecutionTool_browser_snapshot" xml:space="preserve"><value>Browser snapshot</value></data>
+  <data name="ExecutionTool_acp_session" xml:space="preserve"><value>Manage ACP sessions</value></data>
+  <data name="ExecutionTool_acp_prompt" xml:space="preserve"><value>Run ACP prompts</value></data>
+  <data name="ExecutionTool_acp_interaction" xml:space="preserve"><value>Handle ACP interactions</value></data>
+  <data name="ExecutionTool_recall_search" xml:space="preserve"><value>Search NexusDock Recall</value></data>
+  <data name="ExecutionTool_recall_read" xml:space="preserve"><value>Read NexusDock Recall entry</value></data>
+  <data name="ExecutionTool_recall_write" xml:space="preserve"><value>Write NexusDock Recall entry</value></data>
+  <data name="ExecutionTool_recall_maintain" xml:space="preserve"><value>Maintain NexusDock Recall</value></data>
+  <data name="ExecutionTool_private_note_manage" xml:space="preserve"><value>Manage private notes</value></data>
+  <data name="ExecutionTool_workflow_template_manage" xml:space="preserve"><value>Manage workflow templates</value></data>
+  <data name="ExecutionTool_evolve" xml:space="preserve"><value>Evolve AgentDock knowledge</value></data>
 </root>

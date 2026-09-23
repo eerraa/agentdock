@@ -64,6 +64,9 @@ func (b ExecutionScope) Validate() error {
 
 type Event struct {
 	CallMeasurements
+	// Presentation provenance is not part of execution identity or permission scope.
+	// Only the trusted ingress marks a product-generated tool label.
+	LabelSource      string           `json:"activity_label_source,omitempty"`
 	FileEdit         *FileEditDetails `json:"file_edit,omitempty"`
 	OwnerPID         int              `json:"owner_pid,omitempty"`
 	OwnerInstance    string           `json:"owner_instance,omitempty"`

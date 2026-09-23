@@ -48,6 +48,9 @@ func (r *Runtime) callObserved(ctx context.Context, spec ToolSpec, original map[
 	initial.TaskID, initial.ThreadID, initial.StepID, initial.WorkspaceID = "", "", "", ""
 	state := executionObservation{binding: snapshot, entryBinding: snapshot, started: received, originals: map[string]string{}}
 	created := activity.Event{Binding: initial, Kind: "call.created", Status: "created", ToolName: spec.Name, Title: spec.Title}
+	if initial.Label == "" {
+		created.LabelSource = "tool"
+	}
 	if parent.CallID == "" && resolveErr == nil && !activity.IsDiagnostic(ctx) && !activity.IsLocalManagement(ctx) && initial.ConversationID != "" {
 		stamp := received.UTC()
 		created.RequestReceivedAt = &stamp
@@ -147,8 +150,10 @@ func (r *Runtime) callObserved(ctx context.Context, spec ToolSpec, original map[
 	if err != nil {
 		return fail(err)
 	}
+	labelSource := ""
 	if state.binding.Label == "" {
 		state.binding.Label = spec.Title
+		labelSource = "tool"
 	}
 	if err = r.validateSessionOwnership(ctx, spec.Name, args, state.binding); err != nil {
 		return fail(err)
@@ -158,7 +163,7 @@ func (r *Runtime) callObserved(ctx context.Context, spec ToolSpec, original map[
 	}
 	r.updateConversationName(ctx, state.binding.ConversationID, spec.Name, args)
 	description := r.describeExecution(spec.Name, args, state)
-	if err = r.appendExecution(activity.Event{Binding: state.binding, Kind: "call.bound", ToolName: spec.Name, Title: description, ParameterSummary: r.executionParameters(args), DisplayCommand: r.executionRedactor(args).Text(stringArg(args, "cmd"), 4096), Summary: description}); err != nil {
+	if err = r.appendExecution(activity.Event{Binding: state.binding, LabelSource: labelSource, Kind: "call.bound", ToolName: spec.Name, Title: description, ParameterSummary: r.executionParameters(args), DisplayCommand: r.executionRedactor(args).Text(stringArg(args, "cmd"), 4096), Summary: description}); err != nil {
 		return fail(err)
 	}
 	if spec.Name == "file_edit" {

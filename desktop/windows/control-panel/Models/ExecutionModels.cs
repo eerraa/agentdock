@@ -107,7 +107,22 @@ public sealed class ExecutionCallRow : INotifyPropertyChanged
     public string Parameters => _value.Text("parameter_summary");
     public bool ReadOnlyLegacy => _value.Flag("read_only_legacy");
     public string Summary => _value.Text("summary");
-    public string Title => _value.Text("activity_label", _value.Text("display_title", _value.Text("title", Tool))).Replace('\r', ' ').Replace('\n', ' ');
+    public string Title
+    {
+        get
+        {
+            // Never translate user text by comparing it with an old default.
+            // History without trustworthy provenance remains verbatim.
+            var title = _value.Text("activity_label", _value.Text("display_title", _value.Text("title", Tool)));
+            if (_value.Text("activity_label_source") == "tool")
+            {
+                var key = "ExecutionTool_" + Tool;
+                var localized = UiText.Get(key);
+                title = localized == key ? Tool : localized;
+            }
+            return title.Replace('\r', ' ').Replace('\n', ' ');
+        }
+    }
     public DateTimeOffset? RequestReceivedAt => _value.Date("request_received_at");
     public long? RpcElapsedMs => _value.OptionalNumber("rpc_elapsed_ms");
     public string Duration => FormatDuration(RpcElapsedMs ?? (_value.Number("elapsed_ms") > 0 ? _value.Number("elapsed_ms") : null));

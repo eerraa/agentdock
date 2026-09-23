@@ -28,6 +28,7 @@ type ExecutionCall struct {
 	OwnerPID      int    `json:"owner_pid,omitempty"`
 	OwnerInstance string `json:"owner_instance,omitempty"`
 	Binding
+	LabelSource       string       `json:"activity_label_source,omitempty"`
 	DisplayTitle      string       `json:"display_title"`
 	StartedAt         time.Time    `json:"started_at"`
 	ParameterSummary  string       `json:"parameter_summary,omitempty"`
@@ -190,6 +191,7 @@ func (p *callProjection) apply(event Event) {
 	if !exists {
 		call = &ExecutionCall{SchemaVersion: ExecutionSchemaVersion, Binding: event.Binding, ToolName: event.ToolName, Title: event.Title, Status: "created", CreatedAt: event.CreatedAt, CreatedSeq: event.Seq, Legacy: legacy}
 		call.CallID = id
+		call.LabelSource = event.LabelSource
 		call.StartedAt, call.DisplayTitle, call.ReadOnlyLegacy = event.CreatedAt, event.Title, legacy
 		if call.BindingQuality == "" {
 			call.BindingQuality = "unattributed"
@@ -234,8 +236,11 @@ func (p *callProjection) apply(event Event) {
 	if call.RetryOfCallID == "" {
 		call.RetryOfCallID = event.RetryOfCallID
 	}
-	if call.Label == "" {
+	if call.Label == "" && event.Label != "" {
 		call.Label = event.Label
+		// The label and its provenance are one presentation value. A supplied
+		// label, even one equal to the default, must clear the initial fallback.
+		call.LabelSource = event.LabelSource
 	}
 	if call.Title == "" || event.Kind == "call.bound" {
 		call.Title = event.Title

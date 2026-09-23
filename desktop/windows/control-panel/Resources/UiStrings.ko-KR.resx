@@ -1563,4 +1563,36 @@
   <data name="TunnelDiagnostic_tailscale_error" xml:space="preserve"><value>Tailscale 오류가 발생했습니다. 원문 진단을 확인하세요.</value></data>
   <data name="TunnelOriginalDiagnostic" xml:space="preserve"><value>AgentDock 원문 진단 ({0}):
 {1}</value></data>
+  <data name="ExecutionTool_agentdock_context" xml:space="preserve"><value>AgentDock 컨텍스트</value></data>
+  <data name="ExecutionTool_read_file" xml:space="preserve"><value>파일 읽기</value></data>
+  <data name="ExecutionTool_list_dir" xml:space="preserve"><value>디렉터리 목록</value></data>
+  <data name="ExecutionTool_search_text" xml:space="preserve"><value>텍스트 검색</value></data>
+  <data name="ExecutionTool_file_edit" xml:space="preserve"><value>파일 편집</value></data>
+  <data name="ExecutionTool_exec_command" xml:space="preserve"><value>명령 실행</value></data>
+  <data name="ExecutionTool_session_observe" xml:space="preserve"><value>명령 세션 확인</value></data>
+  <data name="ExecutionTool_session_act" xml:space="preserve"><value>명령 세션 제어</value></data>
+  <data name="ExecutionTool_task_manage" xml:space="preserve"><value>작업 관리</value></data>
+  <data name="ExecutionTool_workspace_manage" xml:space="preserve"><value>워크스페이스 관리</value></data>
+  <data name="ExecutionTool_mcp_manage" xml:space="preserve"><value>동적 MCP 서버 관리</value></data>
+  <data name="ExecutionTool_mcp_tool_search" xml:space="preserve"><value>동적 MCP 도구 검색</value></data>
+  <data name="ExecutionTool_mcp_tool_inspect" xml:space="preserve"><value>동적 MCP 도구 확인</value></data>
+  <data name="ExecutionTool_mcp_tool_call" xml:space="preserve"><value>동적 MCP 도구 호출</value></data>
+  <data name="ExecutionTool_plugin_manage" xml:space="preserve"><value>플러그인 관리</value></data>
+  <data name="ExecutionTool_plugin_load" xml:space="preserve"><value>플러그인 불러오기</value></data>
+  <data name="ExecutionTool_skill_package" xml:space="preserve"><value>Skill 패키지 관리</value></data>
+  <data name="ExecutionTool_view_image" xml:space="preserve"><value>이미지 보기</value></data>
+  <data name="ExecutionTool_file_publish" xml:space="preserve"><value>서명된 파일 링크 게시</value></data>
+  <data name="ExecutionTool_browser_session" xml:space="preserve"><value>브라우저 세션</value></data>
+  <data name="ExecutionTool_browser_act" xml:space="preserve"><value>브라우저 동작</value></data>
+  <data name="ExecutionTool_browser_snapshot" xml:space="preserve"><value>브라우저 화면 확인</value></data>
+  <data name="ExecutionTool_acp_session" xml:space="preserve"><value>ACP 세션 관리</value></data>
+  <data name="ExecutionTool_acp_prompt" xml:space="preserve"><value>ACP 프롬프트 실행</value></data>
+  <data name="ExecutionTool_acp_interaction" xml:space="preserve"><value>ACP 상호작용 처리</value></data>
+  <data name="ExecutionTool_recall_search" xml:space="preserve"><value>NexusDock Recall 검색</value></data>
+  <data name="ExecutionTool_recall_read" xml:space="preserve"><value>NexusDock Recall 항목 읽기</value></data>
+  <data name="ExecutionTool_recall_write" xml:space="preserve"><value>NexusDock Recall 항목 작성</value></data>
+  <data name="ExecutionTool_recall_maintain" xml:space="preserve"><value>NexusDock Recall 유지관리</value></data>
+  <data name="ExecutionTool_private_note_manage" xml:space="preserve"><value>비공개 노트 관리</value></data>
+  <data name="ExecutionTool_workflow_template_manage" xml:space="preserve"><value>워크플로 템플릿 관리</value></data>
+  <data name="ExecutionTool_evolve" xml:space="preserve"><value>AgentDock 지식 개선</value></data>
 </root>
