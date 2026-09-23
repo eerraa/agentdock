@@ -41,7 +41,7 @@ public partial class ExecutionWindow : Window
     private JsonElement _conversationSnapshot, _taskSnapshot;
     private string _currentConversationTaskId = "", _selectedTaskId = "", _branch = "", _taskFilter = "";
     private string _conversationView = "active", _callView = "active";
-    private int _objectOffset, _generation, _objectEpoch, _streamEpoch, _taskEpoch, _ticks;
+    private int _generation, _objectEpoch, _streamEpoch, _taskEpoch, _ticks;
     private ulong _before, _cursor;
     private bool _initialized, _updating, _tickRunning, _closed, _following = true, _preferencesWritable = true;
     private bool _streamConnected;
@@ -59,9 +59,11 @@ public partial class ExecutionWindow : Window
     public ExecutionWindow(RuntimeService runtime)
     {
         _runtime = runtime; _client = new ActivityClient(runtime);
-        _activityClock = new ConversationActivityClock(() => Objects);
+        _activityClock = new ConversationActivityClock(ActivityItems);
         DesktopTheme.Initialize(runtime.RuntimeRoot);
         InitializeComponent(); DataContext = this;
+        InitializeComposer();
+        _activityClock.Changed += (_, _) => UpdateStopButton();
         CollectionViewSource.GetDefaultView(Objects).GroupDescriptions.Add(new PropertyGroupDescription(nameof(ExecutionObject.WorkspaceKey)));
         _filterTimer.Tick += async (_, _) => { _filterTimer.Stop(); await GuardAsync(() => LoadObjectsAsync()); };
         _callSearchTimer.Tick += async (_, _) => { _callSearchTimer.Stop(); await GuardAsync(() => LoadCallsAsync(false)); };
@@ -73,7 +75,7 @@ public partial class ExecutionWindow : Window
         _conversationView = _preferences.LastView is "archived" or "trash" ? _preferences.LastView : "active";
         DesktopTheme.Changed += Theme_Changed;
         await GuardAsync(async () => { await LoadWorkspacesAsync(); _initialized = true; await RefreshOverviewAsync(); await LoadObjectsAsync(); });
-        _initialized = true; _pulse.Start();
+        _initialized = true; _pulse.Start(); _ready.TrySetResult();
     }
     private async Task GuardAsync(Func<Task> action)
     {
@@ -82,9 +84,10 @@ public partial class ExecutionWindow : Window
         catch (Exception ex) when (ex is HttpRequestException or IOException or JsonException or InvalidOperationException or UnauthorizedAccessException or ArgumentException)
         { if (!_closed) Warn(ex.Message); }
     }
-    private void Warn(string text)
+    private void Warn(string text, string code = "")
     {
-        _warningCode = "";
+        if (code == "activity_retention_gap" && _preferences.DismissedNotices.Contains(code)) return;
+        _warningCode = code;
         WarningText.Text = text; WarningPanel.Visibility = string.IsNullOrWhiteSpace(text) ? Visibility.Collapsed : Visibility.Visible;
     }
     private void WarnTerminatedConversation()
@@ -111,10 +114,14 @@ public partial class ExecutionWindow : Window
     {
         var value = await _client.ExecutionGetAsync("/internal/runtime/execution", _lifetime.Token);
         var activities = value.Field("conversation_activity");
-        foreach (var item in Objects)
+        foreach (var item in ActivityItems())
         {
-            var latest = activities.Field(item.Id).Date("last_tool_call_at");
+            var facts = activities.Field(item.Id);
+            var latest = facts.Date("last_tool_call_at");
             if (latest is not null && (item.LastToolCallAt is null || latest > item.LastToolCallAt)) item.LastToolCallAt = latest;
+            var changed = facts.Date("last_activity_at");
+            if (changed is not null && (item.LastActivityAt is null || changed > item.LastActivityAt)) item.LastActivityAt = changed;
+            item.PendingCount = facts.Number("pending"); item.RunningCount = facts.Number("running");
         }
         _activityClock.Synchronize(value.Date("server_now"));
         var pending = value.Field("statistics").Number("pending");
@@ -123,66 +130,16 @@ public partial class ExecutionWindow : Window
         if (_initialized && _preferences.Notifications && pending > _lastPending && _lastPending > 0 && WarningPanel.Visibility != Visibility.Visible) Warn(UiText.Format("ExecutionNewApprovals", pending - _lastPending));
         _lastPending = pending;
     }
-    private async Task LoadObjectsAsync(bool more = false)
-    {
-        var epoch = ++_objectEpoch; var query = ListQuery();
-        var value = await _client.ExecutionGetAsync("/internal/runtime/conversations?" + query + "&offset=" + (more ? _objectOffset : 0), _lifetime.Token);
-        if (_closed || epoch != _objectEpoch || query != ListQuery()) return;
-        var selection = _selected?.SelectionKey ?? _preferences.LastConversation;
-        var selectedKeys = ObjectsList.SelectedItems.Cast<ExecutionObject>().Select(item => item.SelectionKey).ToHashSet();
-        _updating = true;
-        try
-        {
-            {
-                if (!more) Objects.Clear();
-                foreach (var raw in value.Array("conversations"))
-                {
-                    var item = ExecutionObject.From(raw, "conversation");
-                    item.WorkspaceKey = new(item.WorkspaceId, _workspaceNames.GetValueOrDefault(item.WorkspaceId, item.IsUnknown ? UiText.Get("ExecutionUnattributedRecords") : UiText.Get("ExecutionHistoricalWorkspace")));
-                    if (Objects.Any(existing => existing.SelectionKey == item.SelectionKey)) continue;
-                    Objects.Add(item);
-                    if (item.Id.Length > 0) _conversationTitles[item.Id] = item.Title;
-                }
-            }
-            _objectOffset = (int)value.Number("next_offset");
-            MoreObjectsButton.Visibility = value.Flag("has_more") ? Visibility.Visible : Visibility.Collapsed;
-            SidebarEmpty.Visibility = Objects.Count == 0 ? Visibility.Visible : Visibility.Collapsed;
-            var current = Objects.FirstOrDefault(item => item.SelectionKey == selection) ?? Objects.FirstOrDefault();
-            ObjectsList.SelectedItem = current;
-            foreach (var item in Objects.Where(item => selectedKeys.Contains(item.SelectionKey))) if (!ObjectsList.SelectedItems.Contains(item)) ObjectsList.SelectedItems.Add(item);
-        }
-        finally { _updating = false; }
-        _activityClock.Synchronize(value.Date("server_now"));
-        var selected = ObjectsList.SelectedItem as ExecutionObject;
-        if (selected?.SelectionKey != _selected?.SelectionKey) await SelectObjectAsync(selected);
-        else if (selected is not null)
-        {
-            var previous = _conversationSnapshot;
-            _selected = selected; ObjectTitle.Text = selected.Title; ObjectTitle.ToolTip = selected.Title;
-            if (!selected.IsUnknown && !selected.IsOrphan)
-            {
-                _conversationSnapshot = selected.Snapshot;
-                var changedTasks = previous.Array("task_ids").Select(v => v.ToString()).SequenceEqual(_conversationSnapshot.Array("task_ids").Select(v => v.ToString())) == false;
-                var oldState = previous.Field("state"); var newState = _conversationSnapshot.Field("state");
-                if (changedTasks || oldState.Text("active_task_id") != newState.Text("active_task_id") || oldState.Text("active_task_thread_id") != newState.Text("active_task_thread_id"))
-                    await GuardAsync(() => LoadConversationTasksAsync(_generation));
-                if (previous.HasDate("terminated_at") != _conversationSnapshot.HasDate("terminated_at"))
-                {
-                    if (_conversationSnapshot.HasDate("terminated_at")) WarnTerminatedConversation();
-                    else if (_warningCode == "conversation-terminated") Warn("");
-                }
-            }
-            UpdateStopButton();
-        }
-    }
+    private Task LoadObjectsAsync(bool more = false) => LoadSidebarAsync();
     private async Task SelectObjectAsync(ExecutionObject? item)
     {
         if (_selected is not null) _scrollStates[_selected.SelectionKey] = (FindVisualChild<ScrollViewer>(CallsList)?.VerticalOffset ?? 0, _following);
+        SaveComposerDraft();
         _generation++; _taskEpoch++; _streamEpoch++;
         _selectionCancellation?.Cancel(); _selectionCancellation?.Dispose();
         _selectionCancellation = CancellationTokenSource.CreateLinkedTokenSource(_lifetime.Token);
         _streamCancellation?.Cancel();
-        _selected = item; _taskFilter = ""; _selectedTaskId = ""; _currentConversationTaskId = ""; _branch = "";
+        _selected = item; RestoreComposerDraft(); _taskFilter = ""; _selectedTaskId = ""; _currentConversationTaskId = ""; _branch = "";
         _conversationSnapshot = _taskSnapshot = default;
         CloseDetails(); Calls.Clear(); _callsById.Clear(); TaskChoiceCombo.ItemsSource = null;
         ConversationProgressCard.Visibility = Visibility.Collapsed;
@@ -227,8 +184,9 @@ public partial class ExecutionWindow : Window
             catch (HttpRequestException ex) when (ex.StatusCode is HttpStatusCode.NotFound or HttpStatusCode.Gone) { }
         }
         if (generation != _generation) return;
+        var chosen = choices.FirstOrDefault(choice => choice.Id == _selectedTaskId) ?? choices.FirstOrDefault();
         _updating = true;
-        try { TaskChoiceCombo.ItemsSource = choices; TaskChoiceCombo.SelectedValue = choices.FirstOrDefault()?.Id; }
+        try { TaskChoiceCombo.ItemsSource = choices; TaskChoiceCombo.SelectedValue = chosen?.Id; }
         finally { _updating = false; }
         ConversationProgressCard.Visibility = Visibility.Visible;
         TaskChoiceCombo.Visibility = choices.Count > 0 ? Visibility.Visible : Visibility.Collapsed;
@@ -240,7 +198,7 @@ public partial class ExecutionWindow : Window
             CurrentTaskStatus.Text = CurrentTaskNext.Text = "";
             CurrentTaskProgress.Visibility = Visibility.Collapsed;
         }
-        _selectedTaskId = choices.FirstOrDefault()?.Id ?? "";
+        _selectedTaskId = chosen?.Id ?? "";
         if (_selectedTaskId.Length > 0) await LoadTaskAsync(_selectedTaskId, "", false);
     }
     private async Task LoadTaskAsync(string id, string branch, bool details)
@@ -303,7 +261,7 @@ public partial class ExecutionWindow : Window
         foreach (var call in value.Array("calls").Reverse()) UpsertCall(call);
         _before = (ulong)value.Number("next_before");
         OlderCallsButton.IsEnabled = value.Flag("has_more");
-        if (value.Flag("gap")) Warn(UiText.Get("ExecutionHistoryRetentionGap"));
+        if (value.Flag("gap")) Warn(UiText.Get("ExecutionHistoryRetentionGap"), "activity_retention_gap");
         UpdateEmpty();
         if (!older)
         {
@@ -324,10 +282,11 @@ public partial class ExecutionWindow : Window
         var incoming = new ExecutionCallRow(value);
         if (incoming.RequestReceivedAt is { } received)
         {
-            var item = Objects.FirstOrDefault(candidate => candidate.Id == incoming.ConversationId);
-            if (item is not null && (item.LastToolCallAt is null || received > item.LastToolCallAt))
+            var item = ActivityItems().FirstOrDefault(candidate => candidate.Id == incoming.ConversationId);
+            if (item is not null)
             {
-                item.LastToolCallAt = received;
+                if (item.LastToolCallAt is null || received > item.LastToolCallAt) item.LastToolCallAt = received;
+                if (incoming.LastActivityAt is { } changed && (item.LastActivityAt is null || changed > item.LastActivityAt)) item.LastActivityAt = changed;
                 _activityClock.Refresh();
             }
         }
@@ -360,7 +319,7 @@ public partial class ExecutionWindow : Window
             _cursor = Math.Max(_cursor, message.Seq); UpsertCall(message.Value); UpdateEmpty();
             if (_following && Calls.Count > 0) CallsList.ScrollIntoView(Calls[^1]);
         }
-        else if (message.Kind is "gap" or "warning") Warn(UiText.Get("ExecutionHistoryUnavailable") + (message.Message.Length > 0 ? "\n\n" + UiText.Get("ExecutionOriginalDiagnostic") + "\n" + message.Message : ""));
+        else if (message.Kind is "gap" or "warning") Warn(UiText.Get("ExecutionHistoryUnavailable") + (message.Message.Length > 0 ? "\n\n" + UiText.Get("ExecutionOriginalDiagnostic") + "\n" + message.Message : ""), message.Kind == "gap" ? "activity_retention_gap" : "");
         else if (message.Kind == "reset") await GuardAsync(() => LoadCallsAsync(false));
     }
     private async Task LoadCallDetailAsync(ExecutionCallRow row)
@@ -400,26 +359,29 @@ public partial class ExecutionWindow : Window
             if (_ticks % 3 == 0) await GuardAsync(RefreshOverviewAsync);
             if (_detailCall is { } row && CallDetailsTabs.Visibility == Visibility.Visible && row.CanStop) await GuardAsync(() => LoadCallDetailAsync(row));
             if (_ticks % 5 == 0 && _selectedTaskId.Length > 0 && TaskDetailsPanel.Visibility != Visibility.Visible) await GuardAsync(() => LoadTaskAsync(_selectedTaskId, "", false));
-            if (_ticks % 10 == 0 && _objectOffset <= 200 && ObjectsList.SelectedItems.Count <= 1 && _frozenSelection is null) await GuardAsync(() => LoadObjectsAsync());
+            if (System.Diagnostics.Stopwatch.GetElapsedTime(_lastSidebarRefresh) >= TimeSpan.FromSeconds(60) && ObjectsList.SelectedItems.Count <= 1 && _frozenSelection is null && _openMenus == 0 && _sidebarPaging.Count == 0) await GuardAsync(() => LoadObjectsAsync());
+            if (_ticks % 3 == 0) await GuardAsync(RefreshInsertionsAsync);
             UpdateStopButton();
         }
         finally { _tickRunning = false; }
     }
-    private void UpdateStopButton()
-    {
-        var terminated = _conversationSnapshot.HasDate("terminated_at") || _selected?.Terminated == true;
-        StopConversationButton.Visibility = _selected is { IsUnknown:false, IsOrphan:false } && !terminated && (Calls.Any(row => row.CanStop) || _selected.RunningCount > 0 || _selected.PendingCount > 0) ? Visibility.Visible : Visibility.Collapsed;
-    }
+    private void UpdateStopButton() => UpdateComposerAvailability();
     private void UpdateEmpty() { EmptyPanel.Visibility = Calls.Count == 0 ? Visibility.Visible : Visibility.Collapsed; EmptyText.Text = UiText.Get("ExecutionNoMatchingCalls"); }
     private void UpdateFollowButton() { FollowButton.Content = _following ? UiText.Get("ExecutionFollow") : UiText.Get("ExecutionResumeFollowing"); FollowButton.SetResourceReference(Button.BackgroundProperty, _following ? "SelectionBackground" : "PanelBackground"); }
     private void OpenDetails(string title, FrameworkElement pane)
     {
         _infoDetailsCode = "";
-        DetailsPanel.Height = Math.Clamp(ActualHeight * 0.36, 180, 300);
+        DetailsPanel.Height = pane == InsertionPanel ? double.NaN : Math.Clamp(ActualHeight * 0.36, 180, 300);
         DetailsPanel.Visibility = Visibility.Visible; DetailsTitle.Text = title;
-        foreach (var element in new FrameworkElement[] { CallDetailsTabs, TaskDetailsPanel, InfoDetailsText, DataManagementPanel }) element.Visibility = element == pane ? Visibility.Visible : Visibility.Collapsed;
+        DetailsHeader.Visibility = pane == InsertionPanel ? Visibility.Collapsed : Visibility.Visible;
+        _bottomPane = pane;
+        foreach (var element in new FrameworkElement[] { InsertionPanel, CallDetailsTabs, TaskDetailsPanel, InfoDetailsText, DataManagementPanel }) element.Visibility = element == pane ? Visibility.Visible : Visibility.Collapsed;
     }
-    private void CloseDetails() { DetailsPanel.Visibility = Visibility.Collapsed; _detailCall = null; foreach (var pane in new FrameworkElement[] { CallDetailsTabs, TaskDetailsPanel, InfoDetailsText, DataManagementPanel }) pane.Visibility = Visibility.Collapsed; }
+    private void CloseDetails()
+    {
+        HideBottomPane();
+        UpdateComposerAvailability();
+    }
     private void ShowInfo(string title, string text) { InfoDetailsText.Text = text; OpenDetails(title, InfoDetailsText); }
     private void ShowConnectionInfo(string text)
     {
@@ -430,7 +392,7 @@ public partial class ExecutionWindow : Window
     {
         if (_updating || !_initialized) return;
         _frozenSelection = null;
-        if (ObjectsList.SelectedItem is ExecutionObject item && item.SelectionKey != _selected?.SelectionKey) await GuardAsync(() => SelectObjectAsync(item));
+        if (ObjectsList.SelectedItem is ExecutionObject { IsGroupFooter: false } item && item.SelectionKey != _selected?.SelectionKey) await GuardAsync(() => SelectObjectAsync(item));
     }
     private async void Calls_Changed(object sender, SelectionChangedEventArgs e)
     {
@@ -486,11 +448,13 @@ public partial class ExecutionWindow : Window
     private void Calls_ScrollChanged(object sender, ScrollChangedEventArgs e) { if (e.VerticalChange < 0 && e.ExtentHeightChange == 0) { _following = false; UpdateFollowButton(); } }
     private async void Refresh_Click(object sender, RoutedEventArgs e) => await GuardAsync(async () => { await LoadWorkspacesAsync(); await LoadObjectsAsync(); await LoadCallsAsync(false); await RefreshOverviewAsync(); });
     private void CloseDetails_Click(object sender, RoutedEventArgs e) => CloseDetails();
-    private void DismissWarning_Click(object sender, RoutedEventArgs e) => Warn("");
-    private void Window_SizeChanged(object sender, SizeChangedEventArgs e) { ShowTimestamps = ActualWidth >= 1050; if (DetailsPanel is not null && DetailsPanel.Visibility == Visibility.Visible) DetailsPanel.Height = Math.Clamp(ActualHeight * 0.36, 180, 300); }
-    private void WorkspaceGroup_Loaded(object sender, RoutedEventArgs e) { if (sender is Expander expander && expander.DataContext is CollectionViewGroup { Name: WorkspaceGroupKey key }) expander.IsExpanded = !_preferences.CollapsedWorkspaces.Contains(key.Id); }
-    private void WorkspaceGroup_Expanded(object sender, RoutedEventArgs e) { if (_initialized && sender is Expander { IsLoaded:true, DataContext: CollectionViewGroup { Name:WorkspaceGroupKey key } }) _preferences.CollapsedWorkspaces.Remove(key.Id); }
-    private void WorkspaceGroup_Collapsed(object sender, RoutedEventArgs e) { if (_initialized && sender is Expander { IsLoaded:true, DataContext: CollectionViewGroup { Name:WorkspaceGroupKey key } }) _preferences.CollapsedWorkspaces.Add(key.Id); }
+    private void DismissWarning_Click(object sender, RoutedEventArgs e)
+    {
+        var code = _warningCode;
+        Warn("");
+        if (code == "activity_retention_gap") { _preferences.DismissedNotices.Add(code); SavePreferences(); }
+    }
+    private void Window_SizeChanged(object sender, SizeChangedEventArgs e) { ShowTimestamps = ActualWidth >= 1050; if (DetailsPanel is not null && DetailsPanel.Visibility == Visibility.Visible && _bottomPane != InsertionPanel) DetailsPanel.Height = Math.Clamp(ActualHeight * 0.36, 180, 300); }
     private static T? FindVisualChild<T>(DependencyObject parent) where T : DependencyObject
     { for (var i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++) { var child = VisualTreeHelper.GetChild(parent, i); if (child is T match) return match; var nested = FindVisualChild<T>(child); if (nested is not null) return nested; } return null; }
     private static T? Ancestor<T>(DependencyObject? item) where T : DependencyObject { while (item is not null) { if (item is T found) return found; item = item is Visual or System.Windows.Media.Media3D.Visual3D ? VisualTreeHelper.GetParent(item) : LogicalTreeHelper.GetParent(item); } return null; }
@@ -500,9 +464,11 @@ public partial class ExecutionWindow : Window
         {
             var path = Path.Combine(_runtime.RuntimeRoot, "execution-center-settings.json"); if (!File.Exists(path)) return;
             if (new FileInfo(path).Length > 131072) throw new IOException(UiText.Get("ExecutionPreferencesTooLarge"));
-            _preferences = JsonSerializer.Deserialize<ExecutionPreferences>(File.ReadAllText(path), ActivityClient.JsonOptions) ?? new();
+            _preferences = JsonSerializer.Deserialize<ExecutionPreferences>(File.ReadAllText(path), ActivityClient.JsonOptions) ?? throw new JsonException(UiText.Get("ExecutionPreferencesInvalid"));
             _preferences.FontSize = Math.Clamp(_preferences.FontSize, 12, 20); _preferences.RetentionDays = Math.Clamp(_preferences.RetentionDays, 1, 3650);
             _preferences.CollapsedWorkspaces ??= []; _preferences.SavedFilters ??= [];
+            _preferences.DismissedNotices ??= []; _preferences.AdditionalPreferences ??= [];
+            if (_preferences.SchemaVersion is < 1 or > 3) throw new JsonException(UiText.Get("ExecutionPreferencesUnsupported"));
             if (_preferences.Theme is not ("system" or "light" or "dark")) _preferences.Theme = "system";
         }
         catch (Exception ex) when (ex is IOException or JsonException or UnauthorizedAccessException) { _preferencesWritable = false; _preferences = new(); Warn(UiText.Get("ExecutionPreferencesLoadFailedPrefix") + ex.Message); }
@@ -512,8 +478,16 @@ public partial class ExecutionWindow : Window
         if (!_preferencesWritable) return;
         _preferences.Theme = DesktopTheme.Preference;
         var path = Path.Combine(_runtime.RuntimeRoot, "execution-center-settings.json"); var temporary = path + "." + Guid.NewGuid().ToString("N") + ".tmp";
-        try { _preferences.SchemaVersion = 2; _preferences.LastView = _conversationView; _preferences.LastKind = "conversation"; Directory.CreateDirectory(_runtime.RuntimeRoot); File.WriteAllText(temporary, JsonSerializer.Serialize(_preferences, ActivityClient.JsonOptions)); File.Move(temporary, path, true); }
-        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) { if (!_closed) Warn(UiText.Get("ExecutionPreferencesSaveFailedPrefix") + ex.Message); }
+        try { if (File.Exists(path)) {
+            if (new FileInfo(path).Length > 131072) throw new IOException(UiText.Get("ExecutionPreferencesTooLarge"));
+            var current = JsonSerializer.Deserialize<ExecutionPreferences>(File.ReadAllText(path), ActivityClient.JsonOptions);
+            if (current is null || current.SchemaVersion < 1) throw new JsonException(UiText.Get("ExecutionPreferencesInvalid"));
+            if (current is { SchemaVersion: > 3 }) throw new IOException(UiText.Get("ExecutionPreferencesNewer"));
+            if (current?.DismissedNotices is { } dismissed) _preferences.DismissedNotices.UnionWith(dismissed);
+            if (current?.AdditionalPreferences is { } additional) foreach (var pair in additional) _preferences.AdditionalPreferences[pair.Key] = pair.Value;
+        }
+        _preferences.SchemaVersion = 3; _preferences.LastView = _conversationView; _preferences.LastKind = "conversation"; Directory.CreateDirectory(_runtime.RuntimeRoot); File.WriteAllText(temporary, JsonSerializer.Serialize(_preferences, ActivityClient.JsonOptions)); File.Move(temporary, path, true); }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException or JsonException) { if (!_closed) Warn(UiText.Get("ExecutionPreferencesSaveFailedPrefix") + ex.Message); }
         finally { try { if (File.Exists(temporary)) File.Delete(temporary); } catch (IOException) { } }
     }
     internal void ApplyTheme(string? selection = null)

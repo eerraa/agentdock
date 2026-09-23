@@ -44,4 +44,13 @@ Build the final Windows package with `.github/workflows/windows-package.yml` in
 `eerraa/agentdock`. Main pushes build candidates only; publication requires a separate explicit approval and a gated manual dispatch. Source, tests, package construction, installation tests
 and publication are separate delivery states. Report unexecuted checks honestly.
 
-Implementation map: `docs/implementation-1.1.4.md`.
+Implementation map: `docs/implementation-1.1.5.md`.
+
+For the 1.1.5 delivery, run static and isolated automated regression only. Loaded
+WPF control fixtures with isolated local HTTP services are allowed; do not launch
+the production tray or Setup, install/uninstall/upgrade/rollback, or change the
+production Core. Session 1 commits only the integration branch. Session 2 uses
+one automatic main-push windows-package.yml candidate with installation tests
+excluded; do not dispatch a duplicate package for that source SHA.
+Keep the 120s activity, 180s request eligibility and 300s next-call insertion
+expiry independent. Manual desktop and installation checks remain not run.

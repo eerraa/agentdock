@@ -18,6 +18,11 @@ on:
       - main
   workflow_dispatch:
     inputs:
+      installation_tests:
+        description: 'Explicitly run installer lifecycle tests and their disposable payload builds'
+        required: true
+        default: false
+        type: boolean
       test_tag:
         description: 'Optional temporary prerelease tag, for example v0.5.4-windows-test-20260802-1'
         required: false
@@ -113,6 +118,14 @@ jobs:
             -LauncherPath .\scripts\install\launch-windows-process.ps1 `
             -AgentDockBinary $runtimeTestAgentDockBinary
 
+      - name: Static installer contracts and mock ownership
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          & .\scripts\test\test-install-windows.ps1 -StaticOnly
+          go test ./internal/installer ./internal/bundledrg -count=1
+          if ($LASTEXITCODE -ne 0) { throw 'Installer/bundle unit fixtures failed.' }
+
       - name: Test Task Scheduler session selection
         shell: powershell
         run: |
@@ -120,6 +133,7 @@ jobs:
           go test ./internal/desktopruntime -run TestSelectInteractiveTaskSessionID -count=1
 
       - name: Build current Windows binary
+        if: github.event_name == 'workflow_dispatch' && inputs.installation_tests == true
         shell: powershell
         run: |
           $ErrorActionPreference = 'Stop'
@@ -140,6 +154,7 @@ jobs:
           & .\packaging\windows\build-wsl-helper-payload.ps1 -OutputDirectory .\dist\wsl-helper
 
       - name: Test configured Authenticode certificate
+        if: github.event_name == 'workflow_dispatch' && inputs.installation_tests == true
         shell: pwsh
         env:
           WINDOWS_SIGNING_CERT_BASE64: ${{ secrets.WINDOWS_SIGNING_CERT_BASE64 }}
@@ -166,6 +181,7 @@ jobs:
           .\packaging\windows\sign-windows.ps1 -Path $paths -VerifyOnly
 
       - name: Prepare offline AMD64 payload
+        if: github.event_name == 'workflow_dispatch' && inputs.installation_tests == true
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
@@ -189,6 +205,7 @@ jobs:
           "AMD64_CHECKSUM=$checksumPath" | Out-File -FilePath $env:GITHUB_ENV -Encoding ascii -Append
 
       - name: Download and verify cloudflared compatibility payload
+        if: github.event_name == 'workflow_dispatch' && inputs.installation_tests == true
         shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
@@ -215,6 +232,7 @@ jobs:
           "AMD64_CLOUDFLARED=$cloudflaredPath" | Out-File -FilePath $env:GITHUB_ENV -Encoding ascii -Append
 
       - name: Run full install and in-place upgrade as standard user
+        if: github.event_name == 'workflow_dispatch' && inputs.installation_tests == true
         shell: powershell
         run: |
           $ErrorActionPreference = 'Stop'
@@ -226,6 +244,7 @@ jobs:
             -OfflineCloudflaredBinary $env:AMD64_CLOUDFLARED
 
       - name: Test Quick Tunnel restart lifecycle
+        if: github.event_name == 'workflow_dispatch' && inputs.installation_tests == true
         shell: powershell
         run: |
           $ErrorActionPreference = 'Stop'
@@ -242,6 +261,7 @@ jobs:
             -FakeCloudflaredBinary $fakeCloudflared
 
       - name: Test Named Tunnel install update and rollback lifecycle
+        if: github.event_name == 'workflow_dispatch' && inputs.installation_tests == true
         shell: powershell
         run: |
           $ErrorActionPreference = 'Stop'
@@ -295,6 +315,7 @@ jobs:
             -FakeCloudflaredBinary $fakeCloudflared
 
       - name: Test Setup activation deferral
+        if: github.event_name == 'workflow_dispatch' && inputs.installation_tests == true
         shell: powershell
         run: |
           $ErrorActionPreference = 'Stop'
@@ -305,6 +326,7 @@ jobs:
             -CloudflaredBinary $env:AMD64_CLOUDFLARED
 
       - name: Compile offline AMD64 Setup
+        if: github.event_name == 'workflow_dispatch' && inputs.installation_tests == true
         shell: pwsh
         env:
           WINDOWS_SIGNING_CERT_BASE64: ${{ secrets.WINDOWS_SIGNING_CERT_BASE64 }}
@@ -337,6 +359,7 @@ jobs:
           & .\packaging\windows\build-windows-offline-setup.ps1 @parameters
 
       - name: Run Setup install and uninstall E2E
+        if: github.event_name == 'workflow_dispatch' && inputs.installation_tests == true
         shell: powershell
         run: |
           $ErrorActionPreference = 'Stop'
@@ -347,6 +370,7 @@ jobs:
             -AllowLegacyTaskMutation
 
       - name: Smoke test current binary as standard user
+        if: github.event_name == 'workflow_dispatch' && inputs.installation_tests == true
         shell: powershell
         run: |
           $ErrorActionPreference = 'Stop'
@@ -354,8 +378,16 @@ jobs:
             -BinaryPath .\dist\agentdock.exe
 
 
+      - name: Record installation verification scope
+        shell: pwsh
+        run: |
+          $installed = '${{ github.event_name }}' -eq 'workflow_dispatch' -and '${{ inputs.installation_tests }}' -eq 'true'
+          $scope = if ($installed) { 'passed' } else { 'not_run_user_requested' }
+          "Installation tests: $scope; static contracts and mock ownership remain required." | Add-Content $env:GITHUB_STEP_SUMMARY
+
       - name: Build and publish signed Windows test package
-        if: ${{ github.event_name == 'workflow_dispatch' && inputs.test_tag != '' }}
+        # Downstream publication belongs exclusively to windows-package.yml.
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.test_tag != '' && inputs.installation_tests == true && github.repository == 'A-m-o-r-F-a-t-i/agentdock' }}
         shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
@@ -457,6 +489,7 @@ jobs:
           CHANGES_RESULT: ${{ needs.changes.result }}
           RELEVANT: ${{ needs.changes.outputs.relevant }}
           VALIDATE_RESULT: ${{ needs.validate.result }}
+          INSTALLATION_TESTS: ${{ github.event_name == 'workflow_dispatch' && inputs.installation_tests == true }}
         run: |
           if [[ "$CHANGES_RESULT" != "success" ]]; then
             echo "Windows installer change detection failed: $CHANGES_RESULT" >&2
@@ -467,7 +500,11 @@ jobs:
               echo "Windows installer validation did not pass: $VALIDATE_RESULT" >&2
               exit 1
             fi
-            echo 'Windows installer-relevant changes passed full validation.'
+            if [[ "$INSTALLATION_TESTS" == "true" ]]; then
+              echo 'Windows installer-relevant changes passed full validation.'
+            else
+              echo 'Static contracts and fixture validation passed; installation_tests=not_run_user_requested.'
+            fi
             exit 0
           fi
           if [[ "$VALIDATE_RESULT" != "skipped" ]]; then

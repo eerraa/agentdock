@@ -60,8 +60,12 @@ internal static class DesktopTheme
     {
         if (!File.Exists(_path)) return new JsonObject();
         if (new FileInfo(_path).Length > MaximumPreferenceBytes) throw new IOException(UiText.Get("ThemePreferencesTooLarge"));
-        return JsonNode.Parse(File.ReadAllText(_path), documentOptions: new JsonDocumentOptions { MaxDepth = 48 }) as JsonObject
+        var preferences = JsonNode.Parse(File.ReadAllText(_path), documentOptions: new JsonDocumentOptions { MaxDepth = 48 }) as JsonObject
             ?? throw new JsonException(UiText.Get("ThemePreferencesObjectRequired"));
+        if (preferences.TryGetPropertyValue("schema_version", out var schema) &&
+            (schema is not JsonValue value || !value.TryGetValue<int>(out var version) || version is < 1 or > 3))
+            throw new JsonException(UiText.Get("ExecutionPreferencesUnsupported"));
+        return preferences;
     }
 
     private static string Normalize(string? selection) => selection is "light" or "dark" ? selection : "system";

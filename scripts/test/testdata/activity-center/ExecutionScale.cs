@@ -69,21 +69,28 @@ internal static partial class Program
         long firstScreen; int realizedObjects, realizedCalls;
         try
         {
-            PumpUntil(() => window.Objects.Count == 200 && window.Calls.Count == 100 && ((Button)window.FindName("MoreObjectsButton")).IsEnabled, TimeSpan.FromSeconds(15)); firstScreen = watch.ElapsedMilliseconds;
+            PumpUntil(() => window.Objects.Count(item => !item.IsGroupFooter) == 5 && window.Calls.Count == 100, TimeSpan.FromSeconds(15)); firstScreen = watch.ElapsedMilliseconds;
+            var retained = window.Objects.First(item => !item.IsGroupFooter);
+            void ExpandProject() => InvokeExecution(window, "SidebarMore_Click", new Button { DataContext = window.Objects.Single(item => item.IsGroupFooter) }, new RoutedEventArgs());
+            ExpandProject();
+            PumpUntil(() => window.Objects.Count(item => !item.IsGroupFooter) == 15, TimeSpan.FromSeconds(8));
+            ExpandProject();
+            PumpUntil(() => window.Objects.Count(item => !item.IsGroupFooter) == 200, TimeSpan.FromSeconds(8));
+            Require(ReferenceEquals(retained, window.Objects.First(item => !item.IsGroupFooter)), "Project expansion replaced existing row identities.");
             var objects = (ListBox)window.FindName("ObjectsList"); var calls = (ListBox)window.FindName("CallsList");
             objects.UpdateLayout(); calls.UpdateLayout();
             realizedObjects = Descendants(objects).OfType<ListBoxItem>().Count(); realizedCalls = Descendants(calls).OfType<ListBoxItem>().Count();
             Require(VirtualizingPanel.GetIsVirtualizing(objects) && VirtualizingPanel.GetIsVirtualizing(calls), "Large lists disabled virtualization.");
             Require(realizedObjects < 100 && realizedCalls < 100, "All loaded rows were materialized instead of virtualized.");
-            ((Button)window.FindName("MoreObjectsButton")).RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
-            PumpUntil(() => window.Objects.Count == 400, TimeSpan.FromSeconds(8));
+            ExpandProject();
+            PumpUntil(() => window.Objects.Count(item => !item.IsGroupFooter) == 400, TimeSpan.FromSeconds(8));
             var older = Descendants(window).OfType<Button>().Single(button => button.Content?.ToString() == "更早"); older.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
             PumpUntil(() => window.Calls.Count == 200, TimeSpan.FromSeconds(8));
             Require(window.Calls.Select(call => call.Id).Distinct().Count() == 200, "Call pages duplicate or lose identities.");
             ((TextBox)window.FindName("CallSearchBox")).Text = "099999";
             PumpUntil(() => window.Calls.Count == 1 && window.Calls[0].Title.Contains("099999", StringComparison.Ordinal), TimeSpan.FromSeconds(8));
             ((TextBox)window.FindName("SearchBox")).Text = "1000";
-            PumpUntil(() => window.Objects.Count == 1 && window.Objects[0].Title.Contains("1000", StringComparison.Ordinal), TimeSpan.FromSeconds(8));
+            PumpUntil(() => window.Objects.Count(item => !item.IsGroupFooter) == 1 && window.Objects[0].Title.Contains("1000", StringComparison.Ordinal), TimeSpan.FromSeconds(8));
             objects.UnselectAll(); objects.SelectedIndex = 0;
             Require(typeof(ExecutionWindow).GetField("_frozenSelection", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!.GetValue(window) is null, "Changing selection retained a stale batch-delete snapshot.");
             var managerTask = (Task)InvokeExecution(window, "OpenDataManagerAsync", false)!;
@@ -97,6 +104,6 @@ internal static partial class Program
         }
         finally { window.Close(); }
         PumpUntil(() => fixture.ActiveStreams == 0, TimeSpan.FromSeconds(6));
-        return new { passed = true, conversations = 1000, tasks = 1000, calls = 100000, conversation_page_size = 200, call_page_size = 100, loaded_task_pages = 400, loaded_call_pages = 200, first_screen_ms = firstScreen, realized_object_rows = realizedObjects, realized_call_rows = realizedCalls, scope = "Actual WPF window with paginated HTTP fixture; excludes real journal cold-query latency" };
+        return new { passed = true, conversations = 1000, tasks = 1000, calls = 100000, conversation_initial_page_size = 5, conversation_expanded_page_sizes = new[] { 15, 200, 400 }, call_page_size = 100, loaded_task_pages = 400, loaded_call_pages = 200, first_screen_ms = firstScreen, realized_object_rows = realizedObjects, realized_call_rows = realizedCalls, scope = "Actual WPF window with paginated HTTP fixture; excludes real journal cold-query latency" };
     }
 }

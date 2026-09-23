@@ -4,7 +4,8 @@ param(
     [Parameter(Mandatory = $true)][string] $TestRoot,
     [string] $Dotnet = 'dotnet',
     [ValidateSet('win-x64','win-arm64')][string] $RuntimeIdentifier = 'win-x64',
-    [string] $BuildRoot = ''
+    [string] $BuildRoot = '',
+    [ValidateSet('Full','Integration115')][string] $Profile = 'Full'
 )
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
@@ -29,6 +30,7 @@ $start.CreateNoWindow = $true
 $start.RedirectStandardOutput = $true
 $start.RedirectStandardError = $true
 $start.ArgumentList.Add($root)
+if ($Profile -ne 'Full') { $start.ArgumentList.Add($Profile) }
 $process = [Diagnostics.Process]::new()
 $process.StartInfo = $start
 try {

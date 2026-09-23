@@ -32,7 +32,12 @@ internal static partial class Program
         var tooLarge = new ExecutionSseReader(new StringReader("data: " + new string('x', ExecutionSseReader.MaximumEventCharacters + 1)));
         try { await tooLarge.ReadEventAsync(CancellationToken.None); throw new InvalidOperationException("Oversized execution event accepted."); } catch (IOException) { }
     }
-    private static object? InvokeExecution(ExecutionWindow window, string method, params object?[] args) => typeof(ExecutionWindow).GetMethod(method, BindingFlags.NonPublic | BindingFlags.Instance)!.Invoke(window, args);
+    private static object? InvokeExecution(ExecutionWindow window, string method, params object?[] args)
+    {
+        var member = typeof(ExecutionWindow).GetMethod(method, BindingFlags.NonPublic | BindingFlags.Instance)!;
+        var parameters = member.GetParameters();
+        return member.Invoke(window, args.Concat(parameters.Skip(args.Length).Select(parameter => parameter.DefaultValue)).ToArray());
+    }
     private static void TestExecutionRendering(string root)
     {
         ApplyTestUiLanguage("zh-CN");
@@ -45,7 +50,7 @@ internal static partial class Program
         window.Show();
         try
         {
-            PumpUntil(() => window.Objects.Count == 2 && window.Calls.Count == 2 && window.Calls.Any(call => call.UpdatedSeq == 4), TimeSpan.FromSeconds(15));
+            PumpUntil(() => window.Objects.Count(item => !item.IsGroupFooter) == 2 && window.Calls.Count == 2 && window.Calls.Any(call => call.UpdatedSeq == 4), TimeSpan.FromSeconds(15));
             ((DispatcherTimer)typeof(ExecutionWindow).GetField("_pulse", BindingFlags.NonPublic | BindingFlags.Instance)!.GetValue(window)!).Stop();
             Require(window.Calls.Select(call => call.Id).Distinct().Count() == 2, "Duplicate SSE updates duplicated execution rows.");
             var reading = window.Calls.Single(call => call.Id == LocalFixture.ReadCall);
@@ -108,6 +113,9 @@ internal static partial class Program
             var menuIds = (string[])typeof(ExecutionWindow).GetField("_menuSelection", BindingFlags.NonPublic | BindingFlags.Instance)!.GetValue(window)!;
             Require(menuIds.SequenceEqual([LocalFixture.ConversationB]), "Right-click targeted an unrelated previous selection.");
             if (second.ContextMenu is not null) second.ContextMenu.IsOpen = false;
+            Require(((ExecutionObject)objects.SelectedItem).Id == LocalFixture.ConversationA && window.Calls.Count == 32, "Right-click changed the central conversation or calls.");
+            // Opening is explicit in 1.1.5; pointer targeting alone never navigates.
+            objects.SelectedItem = window.Objects.Single(item => item.Id == LocalFixture.ConversationB);
             PumpUntil(() => ((FrameworkElement)window.FindName("NoTaskPanel")).Visibility == Visibility.Visible && window.Calls.Count == 0, TimeSpan.FromSeconds(5));
             Require(((FrameworkElement)window.FindName("ConversationProgressCard")).Visibility == Visibility.Visible && ((FrameworkElement)window.FindName("TaskActionsPanel")).Visibility == Visibility.Collapsed, "An unbound conversation must offer association without inventing task progress.");
             Require(fixture.ControlCount == 0, "Navigation changed execution state.");

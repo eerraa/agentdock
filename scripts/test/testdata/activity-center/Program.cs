@@ -11,11 +11,24 @@ internal static partial class Program
     [STAThread]
     private static int Main(string[] args)
     {
-        if (args.Length != 1 || Directory.Exists(args[0])) throw new ArgumentException("Provide a fresh isolated test directory.");
+        if (args.Length is < 1 or > 2 || (args.Length == 2 && args[1] != "Integration115") || Directory.Exists(args[0])) throw new ArgumentException("Provide a fresh isolated test directory.");
         Directory.CreateDirectory(args[0]);
         var started = Stopwatch.StartNew();
         try
         {
+            if (args.Length == 2)
+            {
+                TestIntegration115(args[0]);
+                File.WriteAllText(Path.Combine(args[0], "result.json"), JsonSerializer.Serialize(new
+                {
+                    passed = true, elapsed_ms = started.ElapsedMilliseconds, profile = "Integration115",
+                    locales = new[] { "ko-KR", "en", "zh-CN" },
+                    scope = "changed loaded WPF controls, isolated authenticated HTTP, shared preferences, no production app or installer",
+                    installation_tests = "not_run_user_requested", broad_dpi_matrix = "not_run_out_of_scope"
+                }, new JsonSerializerOptions { WriteIndented = true }));
+                Console.WriteLine("1.1.5 integration desktop regressions passed.");
+                return 0;
+            }
             TestTimeline();
             TestPresentation();
             TestPublicDiscoveryAsync().GetAwaiter().GetResult();

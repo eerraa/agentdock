@@ -108,8 +108,16 @@ internal sealed partial class ActivityClient(RuntimeService runtime) : IDisposab
         try
         {
             using var parsed = JsonDocument.Parse(body);
-            if (parsed.RootElement.TryGetProperty("error", out var error) && error.ValueKind == JsonValueKind.Object && error.TryGetProperty("message", out var text))
-                message += Environment.NewLine + text.GetString();
+            if (parsed.RootElement.TryGetProperty("error", out var error) && error.ValueKind == JsonValueKind.Object)
+            {
+                var code = error.Text("code");
+                var key = "ExecutionApi_" + code;
+                var guidance = UiText.Get(key);
+                if (guidance != key) message += Environment.NewLine + guidance;
+                var original = error.Text("message");
+                if (original.Length > 0)
+                    message += Environment.NewLine + UiText.Get("ExecutionOriginalDiagnostic") + " (" + code + "): " + original;
+            }
         }
         catch (JsonException) { }
         return new HttpRequestException(message, null, response.StatusCode);

@@ -1167,7 +1167,7 @@
   <data name="ExecutionConversationManagement" xml:space="preserve"><value>对话管理</value></data>
   <data name="ExecutionMoreConversations" xml:space="preserve"><value>更多对话</value></data>
   <data name="ExecutionConversation" xml:space="preserve"><value>对话</value></data>
-  <data name="ExecutionRecentToolCall" xml:space="preserve"><value>最近 30 秒有工具调用</value></data>
+  <data name="ExecutionRecentToolCall" xml:space="preserve"><value>最近 2 分钟有执行更新</value></data>
   <data name="ExecutionManageConversation" xml:space="preserve"><value>管理此对话</value></data>
   <data name="ExecutionNoConversations" xml:space="preserve"><value>暂无对话</value></data>
   <data name="ExecutionSelectConversation" xml:space="preserve"><value>选择对话</value></data>
@@ -1527,4 +1527,39 @@
   <data name="ExecutionTool_private_note_manage" xml:space="preserve"><value>管理私密笔记</value></data>
   <data name="ExecutionTool_workflow_template_manage" xml:space="preserve"><value>管理工作流模板</value></data>
   <data name="ExecutionTool_evolve" xml:space="preserve"><value>改进 AgentDock 知识</value></data>
+  <data name="ExecutionOpen" xml:space="preserve"><value>打开</value></data>
+  <data name="ExecutionExpandConversations" xml:space="preserve"><value>展开更多对话</value></data>
+  <data name="ExecutionInsert" xml:space="preserve"><value>插入</value></data>
+  <data name="ExecutionInsertSupplement" xml:space="preserve"><value>插入补充要求</value></data>
+  <data name="ExecutionWithdrawInsertion" xml:space="preserve"><value>撤回</value></data>
+  <data name="ExecutionSendInsertion" xml:space="preserve"><value>发送</value></data>
+  <data name="ExecutionInsertionHelp" xml:space="preserve"><value>发送后等待下一次新工具调用；5 分钟内没有新调用则作废。附加不代表模型已阅读。Shift+Enter 换行。</value></data>
+  <data name="ExecutionInsertionInactive" xml:space="preserve"><value>最近 3 分钟没有新工具请求，无法插入。</value></data>
+  <data name="ExecutionInsertionUnconfirmedLimit" xml:space="preserve"><value>待确认发送过多，请先核对已有插入状态。</value></data>
+  <data name="ExecutionInsertionDraftLimit" xml:space="preserve"><value>已有 128 个对话草稿，请先发送或清空已有草稿。</value></data>
+  <data name="ExecutionInsertionTextLimit" xml:space="preserve"><value>补充内容超过 8192 UTF-8 字节，请缩短后发送。</value></data>
+  <data name="ExecutionInsertionTargetChanged" xml:space="preserve"><value>目标任务已变化，请撤回后重新发送。</value></data>
+  <data name="ExecutionInsertionPending" xml:space="preserve"><value>{0} 条等待下一次新工具调用；提交 5 分钟后作废。</value></data>
+  <data name="ExecutionInsertionReserved" xml:space="preserve"><value>已由下一次新调用领取，等待返回。</value></data>
+  <data name="ExecutionInsertionAttached" xml:space="preserve"><value>已附加到工具响应；不代表模型已阅读。</value></data>
+  <data name="ExecutionInsertionExpired" xml:space="preserve"><value>5 分钟没有新工具调用，此次插入已作废。</value></data>
+  <data name="ExecutionInsertionCancelled" xml:space="preserve"><value>插入已取消。</value></data>
+  <data name="ExecutionInsertionDeliveryUnknown" xml:space="preserve"><value>投递结果未知，未自动重发。</value></data>
+  <data name="ExecutionOpenProjectFolder" xml:space="preserve"><value>打开项目目录</value></data>
+  <data name="ExecutionProjectFolderMissing" xml:space="preserve"><value>项目目录不存在或已移动。</value></data>
+  <data name="ExecutionTaskCompletedNotification" xml:space="preserve"><value>任务完成</value></data>
+  <data name="ExecutionPreferencesInvalid" xml:space="preserve"><value>显示设置不是受支持的 JSON 对象，原文件已保留。</value></data>
+  <data name="ExecutionPreferencesUnsupported" xml:space="preserve"><value>显示设置版本不受支持，原文件已保留。</value></data>
+  <data name="ExecutionPreferencesNewer" xml:space="preserve"><value>显示设置版本已更新，未覆盖。</value></data>
+  <data name="ExecutionUnattributedGroup" xml:space="preserve"><value>未归属记录</value></data>
+  <data name="ExecutionUnassignedProject" xml:space="preserve"><value>未关联项目</value></data>
+  <data name="ExecutionUnidentifiedConversation" xml:space="preserve"><value>未识别对话 · 独立调用</value></data>
+  <data name="McpStatusUnknownCount" xml:space="preserve"><value>{0} · 工具数量尚未发现</value></data>
+  <data name="ExecutionApi_INSERTION_INACTIVE" xml:space="preserve"><value>最近 3 分钟没有新工具请求，未接受插入。</value></data>
+  <data name="ExecutionApi_INSERTION_CONFLICT" xml:space="preserve"><value>此提交 ID 已对应不同的补充内容，请核对已有提交。</value></data>
+  <data name="ExecutionApi_INSERTION_LIMIT" xml:space="preserve"><value>插入队列已满，请先核对等待中的补充要求。</value></data>
+  <data name="ExecutionApi_INSERTION_FAILED" xml:space="preserve"><value>插入操作失败，请先核对状态再提交。</value></data>
+  <data name="ExecutionApi_INSERTION_UNAVAILABLE" xml:space="preserve"><value>插入队列不可用，未发送补充要求。</value></data>
+  <data name="ExecutionApi_NOTIFICATIONS_UNAVAILABLE" xml:space="preserve"><value>任务完成通知不可用。</value></data>
+  <data name="ExecutionApi_SIDEBAR_UNAVAILABLE" xml:space="preserve"><value>项目对话列表不可用。</value></data>
 </root>

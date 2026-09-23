@@ -33,7 +33,7 @@ internal static partial class Program
                 window.Show();
                 try
                 {
-                    PumpUntil(() => window.Objects.Count == 2 && window.Calls.Count == 2 && window.Calls.Any(call => call.UpdatedSeq == 4), TimeSpan.FromSeconds(12));
+                    PumpUntil(() => window.Objects.Count(item => !item.IsGroupFooter) == 2 && window.Calls.Count == 2 && window.Calls.Any(call => call.UpdatedSeq == 4), TimeSpan.FromSeconds(12));
                     ((DispatcherTimer)typeof(ExecutionWindow).GetField("_pulse", BindingFlags.NonPublic | BindingFlags.Instance)!.GetValue(window)!).Stop();
                     window.UpdateLayout();
                     Require(Descendants(window).OfType<Button>().Any(button => button.Content?.ToString() == UiText.Get("ExecutionPermissions")), "Loaded execution view missed its selected locale.");

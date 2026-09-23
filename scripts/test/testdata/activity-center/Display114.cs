@@ -11,8 +11,8 @@ internal static partial class Program
     {
         var now = new DateTimeOffset(2026, 9, 21, 14, 0, 0, TimeSpan.Zero);
         Require(ConversationActivityClock.IsRecent(now, now, false), "A current request was not active.");
-        Require(ConversationActivityClock.IsRecent(now, now.AddMilliseconds(29900), false), "Activity ended before 30 seconds.");
-        Require(!ConversationActivityClock.IsRecent(now, now.AddSeconds(30), false), "Activity included the 30-second endpoint.");
+        Require(ConversationActivityClock.IsRecent(now, now.AddMilliseconds(119999), false), "Activity ended before 120 seconds.");
+        Require(!ConversationActivityClock.IsRecent(now, now.AddSeconds(120), false), "Activity included the 120-second endpoint.");
         Require(!ConversationActivityClock.IsRecent(now, now.AddTicks(-1), false), "Future timestamps invented activity.");
         Require(!ConversationActivityClock.IsRecent(now, now, true), "Terminated conversations remained active.");
         Require(!ConversationActivityClock.IsRecent(null, now, false), "Missing timestamps became zero-age activity.");
@@ -27,7 +27,8 @@ internal static partial class Program
         }));
         Require(measured.Duration == "0.000 s" && measured.ActualTool.Contains("EDIT_FILE"), "Measured zero or canonical edit alias was lost.");
         Require(measured.TimingDetails.Contains("9.000 s") && measured.FileEditDetails.Contains("未写入") && measured.FileEditDetails.Contains("b.txt"), "Process lifetime or multi-file preview was lost.");
-        Require(Descendants((ListBox)window.FindName("ObjectsList")).OfType<TextBlock>().Count(text => text.Text == "对话") >= 2, "Conversation labels were not rendered.");
+        Require(Descendants(window).OfType<TextBlock>().Any(text => text.Text == UiText.Get("ExecutionConversation")), "Conversation sidebar heading was not rendered.");
+        Require(window.Objects.Where(item => !item.IsGroupFooter).All(item => item.WorkspaceKey.Id == "wsp_fixture"), "Conversation rows lost their project group identity.");
         Require(Descendants((FrameworkElement)window.FindName("ConversationProgressCard")).OfType<TextBlock>().Any(text => text.Text == "任务"), "Task semantic label was not rendered.");
 
         var calls = (ListBox)window.FindName("CallsList");

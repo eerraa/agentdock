@@ -1,13 +1,13 @@
 # Eerraa Windows release contract
 
-The maintained source is `eerraa/agentdock` main, based on upstream 1.1.4.
+The maintained source is `eerraa/agentdock` main, based on upstream 1.1.5.
 Development uses feature branches/worktrees. Upstream tags and releases are not
 our update channel. Public publication requires separate explicit authorization.
 
 ## Version and source identity
 
-The product version is `1.1.4001`: numeric patch `4 * 1000 + 1` represents upstream
-patch 4 and downstream revision 1. Use three numeric components; suffixes are not
+The product version is `1.1.5001`: numeric patch `5 * 1000 + 1` represents upstream
+patch 5 and downstream revision 1. Use three numeric components; suffixes are not
 revisions in the current updater. Future downstream revisions increment the final
 component (revision range 1..999). A future baseline change needs an explicit
 version-policy review, not automatic upstream synchronization.
@@ -103,3 +103,20 @@ argument. Windows renders these labels through the existing UiStrings resources
 using the canonical tool identifier. Explicit labels, external span labels and
 older history without provenance remain verbatim; an identical English label
 is not evidence that the user intended an automatically translated title.
+
+## Fixed upstream 1.1.5 integration delivery
+
+The explicitly adopted code commit is `e7ef305d1f8a231dba038af43f7f8b72fff1f33d`,
+including insertion expiry-race fix `daeeee82bc0c9ce42e0b9c36d3f583ad5947f82f`.
+Product version 1.1.5001 records upstream 1.1.5 and downstream revision 1; this is
+an approved baseline change, not permission to follow later upstream revisions.
+
+Session 1 commits the integration branch and bounded affected-owner regressions,
+desktop pure policies and Release compilation. Session 2 fast-forwards the reviewed
+source to main and uses the single automatic main-push windows-package candidate.
+Do not also dispatch a duplicate package for that source SHA. Pushes use static
+installer contracts and mock ownership fixtures, never Setup/installation E2E.
+The optional manual `installation_tests=true` path remains for separately requested
+installation verification. Publication retains all authorization gates and cannot
+use a static-only candidate. This delivery uses `publish=false`; installation and
+manual device acceptance are `not_run_user_requested`, not passing tests.

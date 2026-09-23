@@ -38,6 +38,7 @@ internal static partial class Program
         };
         private async Task<bool> RespondExecutionAsync(HttpListenerContext context)
         {
+            if (await RespondExecution115Async(context)) return true;
             if (await RespondExecutionScaleAsync(context)) return true;
             var path = context.Request.Url!.AbsolutePath;
             if (path == "/internal/runtime/execution")

@@ -85,7 +85,7 @@ jobs:
         shell: powershell
         run: |
           $ErrorActionPreference = 'Stop'
-          & .\scripts\test\test-install-windows.ps1
+          & .\scripts\test\test-install-windows.ps1 -StaticOnly
 
       - name: Test Windows PowerShell DPAPI round trip
         if: runner.os == 'Windows'
