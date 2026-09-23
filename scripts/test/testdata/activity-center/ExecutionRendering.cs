@@ -14,6 +14,7 @@ internal static partial class Program
 {
     private static async Task TestExecutionParserAsync()
     {
+        ApplyTestUiLanguage("zh-CN");
         var json = "{\"call_id\":\"call_a\",\"updated_seq\":7,\"title\":\"中文🙂\"}";
         var reader = new ExecutionSseReader(new StringReader("id: 7\nevent: call\ndata: " + json + "\n\n"));
         var parsed = await reader.ReadEventAsync(CancellationToken.None);
@@ -34,6 +35,7 @@ internal static partial class Program
     private static object? InvokeExecution(ExecutionWindow window, string method, params object?[] args) => typeof(ExecutionWindow).GetMethod(method, BindingFlags.NonPublic | BindingFlags.Instance)!.Invoke(window, args);
     private static void TestExecutionRendering(string root)
     {
+        ApplyTestUiLanguage("zh-CN");
         SynchronizationContext.SetSynchronizationContext(new DispatcherSynchronizationContext(Dispatcher.CurrentDispatcher));
         Directory.CreateDirectory(root);
         using var fixture = new LocalFixture(root) { ExecutionMode = true }; fixture.WriteRuntime(root);

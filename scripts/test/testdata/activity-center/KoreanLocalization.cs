@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Resources;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -79,6 +80,16 @@ internal static partial class Program
             Require(UiText.Format("ActivityCancelConfirmation", 2).Contains("중지하지 않습니다"), "Task cancellation was confused with process stopping.");
             var asyncActivity = Task.Run(async () => { CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo("en-US"); await Task.Yield(); return ActivityText.Get("Title"); }).GetAwaiter().GetResult();
             Require(asyncActivity == "AgentDock · 작업 활동 센터", "Async activity rendering lost the explicit language.");
+            Require(ExecutionJson.State("pending_approval") == "승인 대기" && ExecutionJson.State("unknown") == "결과 확인 필요", "Execution states changed meaning or missed Korean.");
+            Require(ExecutionJson.State("future-status") == "future-status" && ExecutionJson.Mode("future-mode") == "future-mode", "Unknown execution protocol codes were translated.");
+            var manualTitle = ExecutionObject.From(JsonSerializer.SerializeToElement(new { title = "新对话", title_source = "manual" }), "conversation");
+            Require(manualTitle.Title == "新对话", "A user title matching a historical label was rewritten.");
+            var defaultTitle = ExecutionObject.From(JsonSerializer.SerializeToElement(new { title = "legacy default", title_source = "fallback" }), "conversation");
+            Require(defaultTitle.Title == "대화 · 이전 기록", "The stable default-title source did not select localized guidance.");
+            var missingTiming = new ExecutionCallRow(JsonSerializer.SerializeToElement(new { call_id = "ko-fixture", tool_name = "file_edit", status = "unknown" }));
+            Require(missingTiming.Duration == "기록 없음" && !missingTiming.CanRetry && missingTiming.Technical.Contains("file_edit"), "Missing timing, retry safety, or technical identity was changed.");
+            var preview = new ExecutionCallRow(JsonSerializer.SerializeToElement(new { call_id = "ko-preview", file_edit = new { action = "patch", dry_run = true, executed = true, changed = false, path = @"D:\한글 경로\source.txt" } }));
+            Require(preview.FileEditDetails.Contains("파일에 쓰지 않음") && preview.FileEditDetails.Contains("실제 변경됨: 아니요") && preview.FileEditDetails.Contains("영향을 받은 파일 수: 기록 없음"), "Korean preview guidance fabricated a write or result count.");
             Require(UiText.Get("MissingLocalizationTestKey") == "MissingLocalizationTestKey", "Missing-key fallback changed.");
             Require(UiText.Format("LastRefresh", new DateTime(2026, 9, 22, 13, 2, 3)).Contains("13:02:03"), "Date placeholder formatting changed.");
             var resumed = Task.Run(async () =>

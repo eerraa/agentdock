@@ -46,6 +46,8 @@ public partial class ExecutionWindow : Window
     private bool _initialized, _updating, _tickRunning, _closed, _following = true, _preferencesWritable = true;
     private bool _streamConnected;
     private long _lastPending;
+    private string _warningCode = "";
+    private string _infoDetailsCode = "";
     private string[] _menuSelection = [];
     private string[]? _frozenSelection;
     public ObservableCollection<ExecutionObject> Objects { get; } = [];
@@ -82,7 +84,13 @@ public partial class ExecutionWindow : Window
     }
     private void Warn(string text)
     {
+        _warningCode = "";
         WarningText.Text = text; WarningPanel.Visibility = string.IsNullOrWhiteSpace(text) ? Visibility.Collapsed : Visibility.Visible;
+    }
+    private void WarnTerminatedConversation()
+    {
+        Warn(UiText.Get("ExecutionConversationTerminated"));
+        _warningCode = "conversation-terminated";
     }
     private static string Escape(string value) => Uri.EscapeDataString(value);
     private static string ComboValue(ComboBox combo) => (combo.SelectedItem as ComboBoxItem)?.Tag?.ToString() ?? "";
@@ -111,8 +119,8 @@ public partial class ExecutionWindow : Window
         _activityClock.Synchronize(value.Date("server_now"));
         var pending = value.Field("statistics").Number("pending");
         AttentionButton.Visibility = pending > 0 ? Visibility.Visible : Visibility.Collapsed;
-        AttentionButton.Content = "待处理 " + pending;
-        if (_initialized && _preferences.Notifications && pending > _lastPending && _lastPending > 0 && WarningPanel.Visibility != Visibility.Visible) Warn($"新增 {pending - _lastPending} 项待审批请求。");
+        AttentionButton.Content = UiText.Format("ExecutionAttentionCount", pending);
+        if (_initialized && _preferences.Notifications && pending > _lastPending && _lastPending > 0 && WarningPanel.Visibility != Visibility.Visible) Warn(UiText.Format("ExecutionNewApprovals", pending - _lastPending));
         _lastPending = pending;
     }
     private async Task LoadObjectsAsync(bool more = false)
@@ -130,7 +138,7 @@ public partial class ExecutionWindow : Window
                 foreach (var raw in value.Array("conversations"))
                 {
                     var item = ExecutionObject.From(raw, "conversation");
-                    item.WorkspaceKey = new(item.WorkspaceId, _workspaceNames.GetValueOrDefault(item.WorkspaceId, item.IsUnknown ? "未归属记录" : "历史工作区"));
+                    item.WorkspaceKey = new(item.WorkspaceId, _workspaceNames.GetValueOrDefault(item.WorkspaceId, item.IsUnknown ? UiText.Get("ExecutionUnattributedRecords") : UiText.Get("ExecutionHistoricalWorkspace")));
                     if (Objects.Any(existing => existing.SelectionKey == item.SelectionKey)) continue;
                     Objects.Add(item);
                     if (item.Id.Length > 0) _conversationTitles[item.Id] = item.Title;
@@ -160,8 +168,8 @@ public partial class ExecutionWindow : Window
                     await GuardAsync(() => LoadConversationTasksAsync(_generation));
                 if (previous.HasDate("terminated_at") != _conversationSnapshot.HasDate("terminated_at"))
                 {
-                    if (_conversationSnapshot.HasDate("terminated_at")) Warn("此对话已终止，后续执行已被拦截。历史记录仍可查看和管理。");
-                    else if (WarningText.Text.StartsWith("此对话已终止", StringComparison.Ordinal)) Warn("");
+                    if (_conversationSnapshot.HasDate("terminated_at")) WarnTerminatedConversation();
+                    else if (_warningCode == "conversation-terminated") Warn("");
                 }
             }
             UpdateStopButton();
@@ -178,9 +186,9 @@ public partial class ExecutionWindow : Window
         _conversationSnapshot = _taskSnapshot = default;
         CloseDetails(); Calls.Clear(); _callsById.Clear(); TaskChoiceCombo.ItemsSource = null;
         ConversationProgressCard.Visibility = Visibility.Collapsed;
-        FilterTaskButton.Content = "筛选此任务"; Warn("");
-        ObjectTitle.Text = item?.Title ?? "选择对话"; ObjectTitle.ToolTip = item?.Title;
-        EmptyPanel.Visibility = Visibility.Visible; EmptyText.Text = item is null ? "暂无对话记录" : "正在读取执行记录";
+        FilterTaskButton.Content = UiText.Get("ExecutionFilterTask"); Warn("");
+        ObjectTitle.Text = item?.Title ?? UiText.Get("ExecutionSelectConversation"); ObjectTitle.ToolTip = item?.Title;
+        EmptyPanel.Visibility = Visibility.Visible; EmptyText.Text = item is null ? UiText.Get("ExecutionNoConversationRecords") : UiText.Get("ExecutionLoadingCalls");
         UpdateStopButton();
         if (item is null) return;
         _preferences.LastConversation = item.SelectionKey;
@@ -192,7 +200,7 @@ public partial class ExecutionWindow : Window
             var value = await _client.ExecutionGetAsync("/internal/runtime/conversations/" + Escape(item.Id), SelectionToken);
             if (generation != _generation) return;
             _conversationSnapshot = value.Field("conversation");
-            if (_conversationSnapshot.HasDate("terminated_at")) Warn("此对话已终止，后续执行已被拦截。历史记录仍可查看和管理。");
+            if (_conversationSnapshot.HasDate("terminated_at")) WarnTerminatedConversation();
             await GuardAsync(() => LoadConversationTasksAsync(generation));
         }
         await LoadCallsAsync(false);
@@ -214,7 +222,7 @@ public partial class ExecutionWindow : Window
             {
                 var result = await _client.ExecutionGetAsync("/internal/runtime/tasks/" + Escape(id), SelectionToken);
                 var task = result.Field("task"); if (task.ValueKind == JsonValueKind.Undefined) task = result;
-                choices.Add(new(id, task.Text("title", "历史任务")));
+                choices.Add(new(id, task.Text("title", UiText.Get("ExecutionHistoricalTasks"))));
             }
             catch (HttpRequestException ex) when (ex.StatusCode is HttpStatusCode.NotFound or HttpStatusCode.Gone) { }
         }
@@ -258,7 +266,7 @@ public partial class ExecutionWindow : Window
         var current = steps.FirstOrDefault(step => step.Text("id") == currentId).Text("title");
         if (!details)
         {
-            CurrentTaskStatus.Text = steps.Length == 0 ? "进度未记录" : $"{done}/{steps.Length}";
+            CurrentTaskStatus.Text = steps.Length == 0 ? UiText.Get("ExecutionProgressNotRecorded") : $"{done}/{steps.Length}";
             CurrentTaskProgress.Visibility = steps.Length == 0 ? Visibility.Collapsed : Visibility.Visible;
             CurrentTaskProgress.Value = steps.Length == 0 ? 0 : done * 100.0 / steps.Length;
             CurrentTaskNext.Text = current; CurrentTaskNext.ToolTip = current;
@@ -274,10 +282,10 @@ public partial class ExecutionWindow : Window
             }
             finally { _updating = false; }
             var next = thread.Text("next_action", task.Text("next_action"));
-            TaskGoalText.Text = task.Text("goal") + (next.Length > 0 ? "\n下一动作：" + next : "");
-            TaskStepsText.Text = steps.Length == 0 ? "进度未记录" : string.Join("\n", steps.Select(step => ExecutionJson.State(step.Text("status")) + "  " + step.Text("title")));
+            TaskGoalText.Text = task.Text("goal") + (next.Length > 0 ? UiText.Get("ExecutionNextActionPrefix") + next : "");
+            TaskStepsText.Text = steps.Length == 0 ? UiText.Get("ExecutionProgressNotRecorded") : string.Join("\n", steps.Select(step => ExecutionJson.State(step.Text("status")) + "  " + step.Text("title")));
             var conditions = task.Array("conditions"); if (conditions.Length == 0) conditions = task.Array("completion_conditions");
-            TaskAcceptanceText.Text = "验收条件\n" + (conditions.Length == 0 ? "未记录" : string.Join("\n", conditions.Select(condition => condition.ValueKind == JsonValueKind.String ? condition.GetString() : condition.Text("text", condition.Pretty()))));
+            TaskAcceptanceText.Text = UiText.Get("ExecutionAcceptanceHeading") + (conditions.Length == 0 ? UiText.Get("ExecutionNotRecorded") : string.Join("\n", conditions.Select(condition => condition.ValueKind == JsonValueKind.String ? condition.GetString() : condition.Text("text", condition.Pretty()))));
             var milestones = await _client.ExecutionGetAsync("/internal/runtime/tasks/" + Escape(id) + "/activity?milestones=true&limit=100&after=0", SelectionToken);
             if (generation != _generation || epoch != _taskEpoch) return;
             MilestonesText.Text = string.Join("\n", milestones.Array("events").Select(value => value.Text("summary")));
@@ -295,7 +303,7 @@ public partial class ExecutionWindow : Window
         foreach (var call in value.Array("calls").Reverse()) UpsertCall(call);
         _before = (ulong)value.Number("next_before");
         OlderCallsButton.IsEnabled = value.Flag("has_more");
-        if (value.Flag("gap")) Warn("部分历史记录已过保留期限，当前显示现有记录。");
+        if (value.Flag("gap")) Warn(UiText.Get("ExecutionHistoryRetentionGap"));
         UpdateEmpty();
         if (!older)
         {
@@ -345,14 +353,14 @@ public partial class ExecutionWindow : Window
     private async Task ApplyStreamAsync(ExecutionStreamMessage message, int generation, int epoch)
     {
         if (_closed || generation != _generation || epoch != _streamEpoch) return;
-        if (message.Kind == "connected") { _streamConnected = true; ConnectionButton.ToolTip = "本地执行流已连接"; }
-        else if (message.Kind == "disconnected") { _streamConnected = false; ConnectionButton.ToolTip = "本地执行流重连中：" + message.Message; }
+        if (message.Kind == "connected") { _streamConnected = true; ConnectionButton.ToolTip = UiText.Get("ExecutionStreamConnected"); }
+        else if (message.Kind == "disconnected") { _streamConnected = false; ConnectionButton.ToolTip = UiText.Get("ExecutionStreamReconnectingPrefix") + message.Message; }
         else if (message.Kind == "call")
         {
             _cursor = Math.Max(_cursor, message.Seq); UpsertCall(message.Value); UpdateEmpty();
             if (_following && Calls.Count > 0) CallsList.ScrollIntoView(Calls[^1]);
         }
-        else if (message.Kind is "gap" or "warning") Warn(message.Message.Length > 0 ? message.Message : "部分历史记录已不可用。");
+        else if (message.Kind is "gap" or "warning") Warn(UiText.Get("ExecutionHistoryUnavailable") + (message.Message.Length > 0 ? "\n\n" + UiText.Get("ExecutionOriginalDiagnostic") + "\n" + message.Message : ""));
         else if (message.Kind == "reset") await GuardAsync(() => LoadCallsAsync(false));
     }
     private async Task LoadCallDetailAsync(ExecutionCallRow row)
@@ -367,20 +375,20 @@ public partial class ExecutionWindow : Window
     }
     private async Task LoadSourceAsync(ExecutionCallRow row)
     {
-        if (row.ConversationId.Length == 0) { row.SetSource("", "unavailable"); SourceDetailsText.Text = "未归属：记录没有可验证的来源对话。调用 ID 可用于导出、隔离、归档与删除。"; return; }
+        if (row.ConversationId.Length == 0) { row.SetSource("", "unavailable"); SourceDetailsText.Text = UiText.Get("ExecutionNoVerifiableSource"); return; }
         row.SetSource("", "loading");
         try
         {
             var value = await _client.ExecutionGetAsync("/internal/runtime/conversations/" + Escape(row.ConversationId), SelectionToken);
-            row.SetSource(value.Field("conversation").Text("title"), "resolved");
+            row.SetSource(ExecutionObject.From(value.Field("conversation"), "conversation").Title, "resolved");
         }
         catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.Gone) { row.SetSource("", "deleted"); }
         catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.NotFound) { row.SetSource("", "unavailable"); }
         catch (OperationCanceledException) { row.SetSource("", "unavailable"); }
         catch (Exception ex) when (ex is HttpRequestException or IOException or JsonException) { row.SetSource("", "error"); }
         if (_detailCall?.Id != row.Id) return;
-        var source = row.SourceState == "resolved" && row.ConversationId == _selected?.Id ? "来源已解析" : row.Origin;
-        SourceDetailsText.Text = source + (row.Workdir.Length > 0 ? "\n工作目录：" + row.Workdir : "") + (row.Rule.Length > 0 ? "\n权限：" + row.Rule : "") + (row.HasChanges ? "\n\n文件变更\n" + row.Changes : "") + (row.HistoryWarning.Length > 0 ? "\n" + row.HistoryWarning : "");
+        var source = row.SourceState == "resolved" && row.ConversationId == _selected?.Id ? UiText.Get("ExecutionSourceResolved") : row.Origin;
+        SourceDetailsText.Text = source + (row.Workdir.Length > 0 ? UiText.Get("ExecutionWorkdirPrefix") + row.Workdir : "") + (row.Rule.Length > 0 ? UiText.Get("ExecutionPermissionsPrefix") + row.Rule : "") + (row.HasChanges ? UiText.Get("ExecutionFileChangesHeading") + row.Changes : "") + (row.HistoryWarning.Length > 0 ? "\n" + row.HistoryWarning : "");
     }
     private async Task TickAsync()
     {
@@ -402,16 +410,22 @@ public partial class ExecutionWindow : Window
         var terminated = _conversationSnapshot.HasDate("terminated_at") || _selected?.Terminated == true;
         StopConversationButton.Visibility = _selected is { IsUnknown:false, IsOrphan:false } && !terminated && (Calls.Any(row => row.CanStop) || _selected.RunningCount > 0 || _selected.PendingCount > 0) ? Visibility.Visible : Visibility.Collapsed;
     }
-    private void UpdateEmpty() { EmptyPanel.Visibility = Calls.Count == 0 ? Visibility.Visible : Visibility.Collapsed; EmptyText.Text = "暂无符合条件的执行记录"; }
-    private void UpdateFollowButton() { FollowButton.Content = _following ? "跟随" : "继续跟随"; FollowButton.SetResourceReference(Button.BackgroundProperty, _following ? "SelectionBackground" : "PanelBackground"); }
+    private void UpdateEmpty() { EmptyPanel.Visibility = Calls.Count == 0 ? Visibility.Visible : Visibility.Collapsed; EmptyText.Text = UiText.Get("ExecutionNoMatchingCalls"); }
+    private void UpdateFollowButton() { FollowButton.Content = _following ? UiText.Get("ExecutionFollow") : UiText.Get("ExecutionResumeFollowing"); FollowButton.SetResourceReference(Button.BackgroundProperty, _following ? "SelectionBackground" : "PanelBackground"); }
     private void OpenDetails(string title, FrameworkElement pane)
     {
+        _infoDetailsCode = "";
         DetailsPanel.Height = Math.Clamp(ActualHeight * 0.36, 180, 300);
         DetailsPanel.Visibility = Visibility.Visible; DetailsTitle.Text = title;
         foreach (var element in new FrameworkElement[] { CallDetailsTabs, TaskDetailsPanel, InfoDetailsText, DataManagementPanel }) element.Visibility = element == pane ? Visibility.Visible : Visibility.Collapsed;
     }
     private void CloseDetails() { DetailsPanel.Visibility = Visibility.Collapsed; _detailCall = null; foreach (var pane in new FrameworkElement[] { CallDetailsTabs, TaskDetailsPanel, InfoDetailsText, DataManagementPanel }) pane.Visibility = Visibility.Collapsed; }
     private void ShowInfo(string title, string text) { InfoDetailsText.Text = text; OpenDetails(title, InfoDetailsText); }
+    private void ShowConnectionInfo(string text)
+    {
+        ShowInfo(UiText.Get("ExecutionConnection"), text);
+        _infoDetailsCode = "connection";
+    }
     private async void Objects_Changed(object sender, SelectionChangedEventArgs e)
     {
         if (_updating || !_initialized) return;
@@ -438,8 +452,8 @@ public partial class ExecutionWindow : Window
     }
     private async void TaskChoice_Changed(object sender, SelectionChangedEventArgs e) { if (_updating || !_initialized || TaskChoiceCombo.SelectedItem is not ExecutionChoice choice) return; _selectedTaskId = choice.Id; await GuardAsync(() => LoadTaskAsync(choice.Id, "", false)); }
     private async void Branch_Changed(object sender, SelectionChangedEventArgs e) { if (!_updating && _initialized && BranchCombo.SelectedItem is ExecutionChoice branch && _selectedTaskId.Length > 0) await GuardAsync(() => LoadTaskAsync(_selectedTaskId, branch.Id, true)); }
-    private async void TaskDetails_Click(object sender, RoutedEventArgs e) { if (_selectedTaskId.Length == 0) return; OpenDetails((TaskChoiceCombo.SelectedItem as ExecutionChoice)?.Title ?? "任务详情", TaskDetailsPanel); await GuardAsync(() => LoadTaskAsync(_selectedTaskId, "", true)); }
-    private async void FilterTask_Click(object sender, RoutedEventArgs e) { _taskFilter = _taskFilter == _selectedTaskId ? "" : _selectedTaskId; FilterTaskButton.Content = _taskFilter.Length == 0 ? "筛选此任务" : "显示全部"; await GuardAsync(() => LoadCallsAsync(false)); }
+    private async void TaskDetails_Click(object sender, RoutedEventArgs e) { if (_selectedTaskId.Length == 0) return; OpenDetails((TaskChoiceCombo.SelectedItem as ExecutionChoice)?.Title ?? UiText.Get("ExecutionTaskDetails"), TaskDetailsPanel); await GuardAsync(() => LoadTaskAsync(_selectedTaskId, "", true)); }
+    private async void FilterTask_Click(object sender, RoutedEventArgs e) { _taskFilter = _taskFilter == _selectedTaskId ? "" : _selectedTaskId; FilterTaskButton.Content = _taskFilter.Length == 0 ? UiText.Get("ExecutionFilterTask") : UiText.Get("ExecutionShowAll"); await GuardAsync(() => LoadCallsAsync(false)); }
     private void Search_Changed(object sender, TextChangedEventArgs e) { if (!_initialized) return; _filterTimer.Stop(); _filterTimer.Start(); }
     private void CallSearch_Changed(object sender, TextChangedEventArgs e) { if (!_initialized) return; _callSearchTimer.Stop(); _callSearchTimer.Start(); }
     private async void CallFilter_Changed(object sender, SelectionChangedEventArgs e) { if (_initialized) await GuardAsync(() => LoadCallsAsync(false)); }
@@ -485,13 +499,13 @@ public partial class ExecutionWindow : Window
         try
         {
             var path = Path.Combine(_runtime.RuntimeRoot, "execution-center-settings.json"); if (!File.Exists(path)) return;
-            if (new FileInfo(path).Length > 131072) throw new IOException("显示设置超过大小限制，原文件已保留。");
+            if (new FileInfo(path).Length > 131072) throw new IOException(UiText.Get("ExecutionPreferencesTooLarge"));
             _preferences = JsonSerializer.Deserialize<ExecutionPreferences>(File.ReadAllText(path), ActivityClient.JsonOptions) ?? new();
             _preferences.FontSize = Math.Clamp(_preferences.FontSize, 12, 20); _preferences.RetentionDays = Math.Clamp(_preferences.RetentionDays, 1, 3650);
             _preferences.CollapsedWorkspaces ??= []; _preferences.SavedFilters ??= [];
             if (_preferences.Theme is not ("system" or "light" or "dark")) _preferences.Theme = "system";
         }
-        catch (Exception ex) when (ex is IOException or JsonException or UnauthorizedAccessException) { _preferencesWritable = false; _preferences = new(); Warn("显示设置未加载，原文件已保留：" + ex.Message); }
+        catch (Exception ex) when (ex is IOException or JsonException or UnauthorizedAccessException) { _preferencesWritable = false; _preferences = new(); Warn(UiText.Get("ExecutionPreferencesLoadFailedPrefix") + ex.Message); }
     }
     private void SavePreferences()
     {
@@ -499,7 +513,7 @@ public partial class ExecutionWindow : Window
         _preferences.Theme = DesktopTheme.Preference;
         var path = Path.Combine(_runtime.RuntimeRoot, "execution-center-settings.json"); var temporary = path + "." + Guid.NewGuid().ToString("N") + ".tmp";
         try { _preferences.SchemaVersion = 2; _preferences.LastView = _conversationView; _preferences.LastKind = "conversation"; Directory.CreateDirectory(_runtime.RuntimeRoot); File.WriteAllText(temporary, JsonSerializer.Serialize(_preferences, ActivityClient.JsonOptions)); File.Move(temporary, path, true); }
-        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) { if (!_closed) Warn("显示设置未保存：" + ex.Message); }
+        catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) { if (!_closed) Warn(UiText.Get("ExecutionPreferencesSaveFailedPrefix") + ex.Message); }
         finally { try { if (File.Exists(temporary)) File.Delete(temporary); } catch (IOException) { } }
     }
     internal void ApplyTheme(string? selection = null)

@@ -74,3 +74,24 @@ never skip. The package workflow prepares it before these tests. Its PATH fixtur
 is confined to that disposable CI job for older PATH-specific regressions; tests
 of bundle selection explicitly remove PATH. Unit generation/journal fixtures are
 not evidence of an installed package; actual final Setup acceptance is separate.
+
+## Windows presentation resources
+
+ActivityText and the execution center use the existing UiStrings ResourceManager
+and explicit UiText resource culture. State/action/tool identifiers and user text
+remain data. The server's `title_source=fallback` identifies a generated default
+conversation title; a user title equal to a historical Chinese label is not a
+translation key. Ephemeral warning/detail view codes, not translated captions,
+select which asynchronous presentation update may replace an existing message.
+
+Approval dialogs preserve the immutable request and the original approve/reject,
+permission scope and revision contracts. Task cancellation guidance distinguishes
+changing task state from stopping command processes. The execution filter bar
+wraps within an auto-sized row so longer captions do not cover other controls.
+
+`scripts/test/test-windows-activity-center.ps1` includes loaded local-fixture views,
+real modal button behavior, user-data preservation, resource/format parity, three
+locales/themes, minimum-size control bounds, and 12/14/20-DIP font checks. Captured
+100/125/150/200 raster scales are not actual operating-system DPI tests and do not
+replace acceptance of the resources installed by the final Setup.exe. Passing
+these source fixtures does not establish full product-language coverage.
