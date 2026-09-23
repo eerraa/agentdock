@@ -91,9 +91,15 @@ def main(phase, container_id):
                 'fixture policy changed unexpectedly; do not overwrite it')
         original = receipt['original']
         restored = request('/internal/runtime/permissions', {
-            'scope': 'global', 'expected_revision': policy['revision'], 'rules': original['rules']})['policy']
+            'scope': 'global', 'expected_revision': policy['revision'],
+            'rules': [] if original['rules'] is None else original['rules']})['policy']
+        # Go serializes a restored empty rule slice as null rather than [].
+        # Accept only those two equivalent empty representations; non-empty
+        # policies must still match exactly before testing non-dispatch again.
+        same_rules = restored['rules'] == original['rules'] or (
+            restored['rules'] in (None, []) and original['rules'] in (None, []))
         require(restored['global_mode'] == original['global_mode'] and restored['scopes'] == original['scopes']
-                and restored['rules'] == original['rules'], 'original fixture policy was not restored')
+                and same_rules, 'original fixture policy was not restored')
         check_default_reject()
         print('Original rules restored; browser start again requires approval and rejection prevents dispatch.')
 

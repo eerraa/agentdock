@@ -46,13 +46,14 @@ class PermissionFixtureTests(unittest.TestCase):
         elif path == '/internal/runtime/permissions':
             self.assertEqual(set(body), {'scope', 'expected_revision', 'rules'})
             self.assertEqual(body['expected_revision'], self.policy['revision'])
+            self.assertIsInstance(body['rules'], list)
             self.writes.append(copy.deepcopy(body))
-            self.policy['rules'] = body['rules']
+            self.policy['rules'] = body['rules'] or None
             self.policy['revision'] += 1
             value = {'policy': copy.deepcopy(self.policy)}
         elif path == '/mcp':
             self.assertEqual(body['params'], {'name': 'browser_session', 'arguments': self.module.START})
-            self.assertEqual(self.policy['rules'], [])
+            self.assertIn(self.policy['rules'], (None, []))
             self.counter += 1
             value = {'result': {'structuredContent': {'status': 'pending_approval',
                      'executed': self.dispatch, 'permission': {'mode': 'rules'},
@@ -76,11 +77,19 @@ class PermissionFixtureTests(unittest.TestCase):
         self.assertEqual({r['action'] for r in self.policy['rules']}, {'start', 'close'})
         self.assertTrue(all(r['tool'] == 'browser_session' for r in self.policy['rules']))
         self.module.main('restore', CONTAINER)
-        self.assertEqual(self.policy['rules'], [])
+        self.assertIsNone(self.policy['rules'])
         self.assertEqual(self.policy['global_mode'], 'rules')
         self.assertEqual(self.counter, 2)
         self.assertEqual(len(self.writes), 2)
         self.assertFalse(any('/approve' in path for path in self.reads))
+
+    def test_nil_original_rules_restore_via_explicit_empty_change(self):
+        self.policy['rules'] = None
+        self.module.main('prepare', CONTAINER)
+        self.module.main('restore', CONTAINER)
+        self.assertIsNone(self.policy['rules'])
+        self.assertEqual(self.writes[-1]['rules'], [])
+        self.assertEqual(self.counter, 2)
 
     def test_wrong_container_does_not_contact_runtime(self):
         with self.assertRaises(RuntimeError):
