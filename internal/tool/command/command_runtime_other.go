@@ -2,7 +2,12 @@
 
 package command
 
-import "strings"
+import (
+	"runtime"
+	"strings"
+
+	"github.com/uvwt/agentdock/internal/tool/command/session"
+)
 
 func (svc *Service) prepareCommandInvocation(request ExecRequest) (commandInvocation, error) {
 	if runtimeName := strings.TrimSpace(request.Runtime); runtimeName != "" {
@@ -11,7 +16,12 @@ func (svc *Service) prepareCommandInvocation(request ExecRequest) (commandInvoca
 	if distribution := strings.TrimSpace(request.WSLDistribution); distribution != "" {
 		return commandInvocation{}, toolError("INVALID_ARGUMENT", "wsl_distribution is only supported by AgentDock on Windows", "validation")
 	}
-	return svc.newHostCommandInvocation(request)
+	invocation, err := svc.newHostCommandInvocation(request)
+	if err != nil {
+		return commandInvocation{}, err
+	}
+	invocation.execution = session.ExecutionContext{Runtime: runtime.GOOS, Workdir: invocation.workdir}
+	return invocation, nil
 }
 
 func AddRuntimeProperties(_ map[string]any) {}
