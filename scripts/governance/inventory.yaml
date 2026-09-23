@@ -155,6 +155,20 @@ scripts:
     public_contract: false
     deletable: false
 
+  - path: scripts/test/docker-smoke-permissions.py
+    class: test
+    owner: ci
+    public_contract: false
+    deletable: false
+    notes: Verifies default browser approval and rejection in the exact unmounted image-test container, grants only start/close for the smoke phase, and restores the original policy without changing modes.
+
+  - path: scripts/test/test-docker-smoke-permissions.py
+    class: test
+    owner: ci
+    public_contract: false
+    deletable: false
+    notes: Mock-transport tests for container identity, unchanged policy revisions, fixed requests, non-dispatch before approval, and policy restoration; no live runtime access.
+
   - path: scripts/test/test-docker-images.sh
     class: test
     owner: ci

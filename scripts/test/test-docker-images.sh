@@ -32,6 +32,8 @@ cleanup() {
 }
 trap cleanup EXIT
 
+python3 ./scripts/test/test-docker-smoke-permissions.py
+
 wait_for_healthy() {
   local container="$1"
   local label="$2"
@@ -210,12 +212,18 @@ docker run --rm "$browser_image" sh -c '
 browser_token="browser-smoke-${RANDOM}-${RANDOM}"
 browser_container="$(docker run -d --rm --shm-size=1g -p 127.0.0.1::8765 -e AGENTDOCK_AUTH_TOKEN="$browser_token" "$browser_image")"
 wait_for_healthy "$browser_container" browser
+# This is a new, unmounted test container, not a user's running installation.
+# Preserve the real default ask/reject gate and configure only the two browser
+# actions exercised below; the generic smoke client never modifies permissions.
+test "$(docker inspect --format '{{len .Mounts}}' "$browser_container")" = "0"
+docker exec -i "$browser_container" python3 - prepare "$browser_container" < ./scripts/test/docker-smoke-permissions.py
 browser_port="$(docker port "$browser_container" 8765/tcp | awk -F: 'NR == 1 {print $NF}')"
 AGENTDOCK_SMOKE_URL="http://127.0.0.1:$browser_port" \
 AGENTDOCK_AUTH_TOKEN="$browser_token" \
 AGENTDOCK_SMOKE_BROWSER=true \
 AGENTDOCK_SMOKE_TIMEOUT_SECONDS=30 \
   ./packaging/docker/smoke-docker.sh
+docker exec -i "$browser_container" python3 - restore "$browser_container" < ./scripts/test/docker-smoke-permissions.py
 
 docker rm -f "$browser_container" >/dev/null
 browser_container=""
