@@ -8,7 +8,6 @@ import (
 
 	mcpsdk "github.com/modelcontextprotocol/go-sdk/mcp"
 	protocol "github.com/uvwt/agentdock-protocol"
-	"github.com/uvwt/agentdock-protocol/mcpapps"
 )
 
 type appResourceDefinition struct {
@@ -29,35 +28,35 @@ func (s *Server) appResourceDefinitions() []appResourceDefinition {
 			Name:        "agentdock-context",
 			Title:       "AgentDock context",
 			Description: "Compact read-only AgentDock capability summary with expandable bootstrap context.",
-			HTML:        mcpapps.HTML("agentdock_context", "AgentDock context"),
+			HTML:        localizedAppHTML("agentdock_context", "AgentDock context"),
 		},
 		{
 			URI:         protocol.TaskProgressUIResourceURI,
 			Name:        "agentdock-task-progress",
 			Title:       "AgentDock task",
 			Description: "Compact read-only task lifecycle view for task_manage results and task snapshots.",
-			HTML:        mcpapps.HTML("task_progress", "Task"),
+			HTML:        localizedAppHTML("task_progress", "Task"),
 		},
 		{
 			URI:         protocol.FileChangeUIResourceURI,
 			Name:        "agentdock-file-change",
 			Title:       "AgentDock file change",
 			Description: "Read-only view of the file_edit result, including diff preview and file operation summary.",
-			HTML:        mcpapps.HTML("file_change", "File change"),
+			HTML:        localizedAppHTML("file_change", "File change"),
 		},
 		{
 			URI:         protocol.DynamicMCPUIResourceURI,
 			Name:        "agentdock-dynamic-mcp",
 			Title:       "AgentDock dynamic MCP",
 			Description: "Compact external MCP tool invocation view.",
-			HTML:        mcpapps.HTML("dynamic_mcp", "Dynamic MCP"),
+			HTML:        localizedAppHTML("dynamic_mcp", "Dynamic MCP"),
 		},
 		{
 			URI:         protocol.ArtifactUIResourceURI,
 			Name:        "agentdock-artifact",
 			Title:       "AgentDock artifact",
 			Description: "Compact published Artifact summary with expandable file metadata and signed URL information.",
-			HTML:        mcpapps.HTML("artifact", "Artifact"),
+			HTML:        localizedAppHTML("artifact", "Artifact"),
 		},
 	}
 	if s.cfg.NexusEndpoint != "" {
@@ -67,14 +66,14 @@ func (s *Server) appResourceDefinitions() []appResourceDefinition {
 				Name:        "agentdock-recall",
 				Title:       "AgentDock Recall",
 				Description: "Compact NexusDock Recall write results.",
-				HTML:        mcpapps.HTML("recall", "Recall"),
+				HTML:        localizedAppHTML("recall", "Recall"),
 			},
 			appResourceDefinition{
 				URI:         protocol.WorkflowUIResourceURI,
 				Name:        "agentdock-workflow",
 				Title:       "AgentDock workflow",
 				Description: "Compact workflow template match recommendation view.",
-				HTML:        mcpapps.HTML("workflow", "Workflow"),
+				HTML:        localizedAppHTML("workflow", "Workflow"),
 			},
 		)
 	}
@@ -84,7 +83,7 @@ func (s *Server) appResourceDefinitions() []appResourceDefinition {
 			Name:        "agentdock-acp-status",
 			Title:       "AgentDock ACP status",
 			Description: "Read-only ACP session and runtime status view.",
-			HTML:        mcpapps.HTML("acp_status", "ACP status"),
+			HTML:        localizedAppHTML("acp_status", "ACP status"),
 		})
 	}
 	return definitions
