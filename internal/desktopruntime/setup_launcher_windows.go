@@ -107,6 +107,22 @@ func writeSetupJSON(path string, value any) error {
 	return atomicfile.Write(path, append(data, '\n'), 0o600)
 }
 
+// A worker can be publishing its receipt while the broker polls it. Windows
+// sharing and byte-range locks are pending reads, not child failures. The
+// broker retains its existing deadline and launch-nonce check; all other I/O
+// errors and malformed receipts still fail immediately.
+func readSetupLaunchResult(path string) (result setupLaunchResult, ready bool, err error) {
+	data, err := os.ReadFile(path)
+	if errors.Is(err, os.ErrNotExist) || errors.Is(err, windows.ERROR_SHARING_VIOLATION) || errors.Is(err, windows.ERROR_LOCK_VIOLATION) {
+		return result, false, nil
+	}
+	if err != nil {
+		return result, false, err
+	}
+	err = json.Unmarshal(data, &result)
+	return result, err == nil, err
+}
+
 func runSetupLaunchBroker(path string, request SetupLaunchRequest) error {
 	root := filepath.Dir(path)
 	if err := securepath.EnsurePrivate(root); err != nil {
@@ -142,12 +158,11 @@ func runSetupLaunchBroker(path string, request SetupLaunchRequest) error {
 	ticker := time.NewTicker(50 * time.Millisecond)
 	defer ticker.Stop()
 	for {
-		data, err := os.ReadFile(filepath.Join(root, "result.json"))
-		if err == nil {
-			var result setupLaunchResult
-			if err := json.Unmarshal(data, &result); err != nil {
-				return err
-			}
+		result, ready, err := readSetupLaunchResult(filepath.Join(root, "result.json"))
+		if err != nil {
+			return err
+		}
+		if ready {
 			// A manually retried request path can still contain the previous
 			// worker's receipt. Only this launch's nonce may acknowledge success.
 			if result.TaskName != request.TaskName {
@@ -171,9 +186,6 @@ func runSetupLaunchBroker(path string, request SetupLaunchRequest) error {
 				return nil
 			}
 			_, err = io.WriteString(os.Stdout, stdout)
-			return err
-		}
-		if !errors.Is(err, os.ErrNotExist) {
 			return err
 		}
 		select {
