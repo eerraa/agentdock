@@ -40,8 +40,8 @@ func TestStatusPageRendersConnectionAndResourceLinks(t *testing.T) {
 	for _, expected := range []string{
 		"AgentDock",
 		"https://agentdock.example.com/mcp",
-		"github.com/uvwt/agentdock",
-		"uvwt.github.io/agentdock-docs",
+		"github.com/eerraa/agentdock",
+		"github.com/eerraa/agentdock/tree/main/docs",
 		"1081337019",
 		`class="state-enabled"`,
 		`class="state-auth"`,
@@ -73,7 +73,7 @@ func TestStatusPageUsesChineseForChineseBrowserLanguage(t *testing.T) {
 		`data-copied="已复制"`,
 		"GitHub 仓库",
 		"安装、配置与使用指南。",
-		`href="https://uvwt.github.io/agentdock-docs/zh-CN/"`,
+		`href="https://github.com/eerraa/agentdock/tree/main/docs"`,
 	} {
 		if !strings.Contains(body, expected) {
 			t.Fatalf("Chinese status page missing %q", expected)

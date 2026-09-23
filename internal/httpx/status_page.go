@@ -4,6 +4,7 @@ import (
 	_ "embed"
 	"html/template"
 	"log/slog"
+	"math"
 	"net/http"
 	"strconv"
 	"strings"
@@ -14,8 +15,8 @@ import (
 )
 
 const (
-	agentDockRepositoryURL = "https://github.com/uvwt/agentdock"
-	agentDockDocsURL       = "https://uvwt.github.io/agentdock-docs/"
+	agentDockRepositoryURL = "https://github.com/eerraa/agentdock"
+	agentDockDocsURL       = "https://github.com/eerraa/agentdock/tree/main/docs"
 	agentDockQQGroup       = "1081337019"
 	agentDockQQGroupURL    = "https://qun.qq.com/universal-share/share?ac=1&authKey=Rp86bSzI7vqm87KoYlKawgsPZ440Ubhyezw6Qkgcn3JISwX3zXxsXkbS5598RrY5&busi_data=eyJncm91cENvZGUiOiIxMDgxMzM3MDE5IiwidG9rZW4iOiJ0Mlg1bUU1ZWtuZzF3SHJDT3pSaGsrOURIMlNYaXBlYllOUjNLZ1BUb1hzM2lJSTZjeVNldzU0ajl0SjRVZkx2IiwidWluIjoiMzIwMjA4ODAzMiJ9&data=W28mWvuqaLf_Fwnf0CgAJXuDs6l3A78V7AoWZnizPboCpKoQMzHzZ-UlluYo47U3tmIBHK2xIgWEVEJbTiGsPQ&svctype=4&tempid=h5_group_info"
 	statusPageCSP          = "default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; base-uri 'none'; frame-ancestors 'none'"
@@ -88,11 +89,11 @@ var statusPageEnglish = statusPageText{
 	EndpointHint:      "Use this endpoint to connect AgentDock with an MCP client.",
 	Resources:         "Resources",
 	Repository:        "GitHub Repository",
-	RepositoryDesc:    "Source code, releases and issue tracking.",
+	RepositoryDesc:    "Eerraa downstream source and issue tracking. Updates use verified offline installers.",
 	Documentation:     "Documentation",
 	DocumentationDesc: "Installation, configuration and usage guides.",
-	QQGroup:           "QQ Group",
-	QQGroupDesc:       "Community discussion, support and feedback.",
+	QQGroup:           "Upstream QQ community",
+	QQGroupDesc:       "Upstream community in Chinese; Eerraa builds are maintained separately.",
 	OpenSource:        "AgentDock · Open Source",
 	License:           "MIT License",
 	DocumentationURL:  agentDockDocsURL,
@@ -123,14 +124,29 @@ var statusPageChinese = statusPageText{
 	EndpointHint:      "使用此端点将 AgentDock 连接到 MCP 客户端。",
 	Resources:         "资源",
 	Repository:        "GitHub 仓库",
-	RepositoryDesc:    "源代码、版本发布与问题反馈。",
+	RepositoryDesc:    "Eerraa 下游源代码与问题反馈。更新使用经验证的离线安装程序。",
 	Documentation:     "文档",
 	DocumentationDesc: "安装、配置与使用指南。",
-	QQGroup:           "QQ 群",
-	QQGroupDesc:       "社区交流、使用支持与反馈。",
+	QQGroup:           "上游 QQ 社区",
+	QQGroupDesc:       "上游中文社区；Eerraa 构建由下游独立维护。",
 	OpenSource:        "AgentDock · 开源",
 	License:           "MIT 许可证",
-	DocumentationURL:  agentDockDocsURL + "zh-CN/",
+	DocumentationURL:  agentDockDocsURL,
+}
+
+var statusPageKorean = statusPageText{
+	Lang: "ko-KR", Subtitle: "AI 에이전트 장치 런타임", Online: "온라인",
+	ReadyTitle:       "AI 에이전트에 기능을 제공할 준비가 됐습니다.",
+	ReadyDescription: "이 AgentDock 인스턴스는 온라인이며 MCP를 통해 로컬 기능을 제공합니다.",
+	Version:          "버전", System: "시스템", Capabilities: "기능", Tools: "도구", MCPReady: "준비됨",
+	Browser: "브라우저", Auth: "인증", Enabled: "사용", Disabled: "사용 안 함", None: "없음", Token: "접근 토큰", OAuthAndToken: "OAuth + 접근 토큰",
+	MCPEndpoint: "MCP 엔드포인트", Copy: "복사", Copied: "복사됨", CopyFailed: "복사 실패",
+	EndpointHint: "이 엔드포인트로 MCP 클라이언트를 AgentDock에 연결하세요.",
+	Resources:    "참고 자료", Repository: "GitHub 저장소",
+	RepositoryDesc: "Eerraa 독자 배포 소스와 문제 추적. 업데이트에는 검증된 오프라인 설치파일을 사용합니다.",
+	Documentation:  "문서", DocumentationDesc: "설치·구성·사용 안내.",
+	QQGroup: "업스트림 QQ 커뮤니티", QQGroupDesc: "중국어 업스트림 커뮤니티입니다. Eerraa 빌드는 별도로 유지보수됩니다.",
+	OpenSource: "AgentDock Eerraa · 오픈 소스", License: "MIT 라이선스", DocumentationURL: agentDockDocsURL,
 }
 
 type statusPageData struct {
@@ -191,6 +207,7 @@ func statusPageHandler(server *mcp.Server, cfg config.Config) http.HandlerFunc {
 
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		w.Header().Set("Vary", "Accept-Language")
+		w.Header().Set("Content-Language", text.Lang)
 		w.Header().Set("Cache-Control", "no-store")
 		w.Header().Set("Referrer-Policy", "no-referrer")
 		w.Header().Set("X-Content-Type-Options", "nosniff")
@@ -214,7 +231,7 @@ func preferredStatusPageText(header string) statusPageText {
 	for _, raw := range strings.Split(header, ",") {
 		parts := strings.Split(strings.TrimSpace(raw), ";")
 		language := strings.ToLower(strings.TrimSpace(parts[0]))
-		if language != "en" && !strings.HasPrefix(language, "en-") && language != "zh" && !strings.HasPrefix(language, "zh-") {
+		if language != "en" && !strings.HasPrefix(language, "en-") && language != "zh" && !strings.HasPrefix(language, "zh-") && language != "ko" && !strings.HasPrefix(language, "ko-") {
 			continue
 		}
 
@@ -225,7 +242,7 @@ func preferredStatusPageText(header string) statusPageText {
 				continue
 			}
 			parsed, err := strconv.ParseFloat(strings.TrimSpace(value), 64)
-			if err != nil {
+			if err != nil || math.IsNaN(parsed) || parsed < 0 || parsed > 1 {
 				quality = 0
 			} else {
 				quality = parsed
@@ -239,6 +256,8 @@ func preferredStatusPageText(header string) statusPageText {
 		bestQuality = quality
 		if language == "zh" || strings.HasPrefix(language, "zh-") {
 			bestLanguage = "zh"
+		} else if language == "ko" || strings.HasPrefix(language, "ko-") {
+			bestLanguage = "ko"
 		} else {
 			bestLanguage = "en"
 		}
@@ -246,6 +265,9 @@ func preferredStatusPageText(header string) statusPageText {
 
 	if bestLanguage == "zh" {
 		return statusPageChinese
+	}
+	if bestLanguage == "ko" {
+		return statusPageKorean
 	}
 	return statusPageEnglish
 }
