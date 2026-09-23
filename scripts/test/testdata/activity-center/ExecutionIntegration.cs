@@ -90,13 +90,16 @@ internal static partial class Program
             app.Resources = (ResourceDictionary)XamlReader.Parse(dictionary.ToString(), new ParserContext { BaseUri = new Uri("pack://application:,,,/agentdock-tray;component/") });
         }
         var manager = new ResourceManager("AgentDock.ControlPanel.Resources.UiStrings", typeof(UiText).Assembly);
-        var english = manager.GetResourceSet(CultureInfo.GetCultureInfo("en"), true, false)!.Cast<DictionaryEntry>().ToDictionary(item => (string)item.Key, item => (string)item.Value!);
+        var english = manager.GetResourceSet(CultureInfo.InvariantCulture, true, false)!.Cast<DictionaryEntry>().ToDictionary(item => (string)item.Key, item => (string)item.Value!);
         foreach (var locale in new[] { "ko-KR", "en", "zh-CN" })
         {
             ApplyTestUiLanguage(locale);
+            var resourcesForLocale = locale == "en" ? english : manager.GetResourceSet(CultureInfo.GetCultureInfo(locale), true, false)!
+                .Cast<DictionaryEntry>().ToDictionary(item => (string)item.Key, item => (string)item.Value!);
+            Require(resourcesForLocale.Count == english.Count, "Satellite resource count differs: " + locale);
             foreach (var (key, value) in english)
             {
-                var localized = manager.GetString(key, CultureInfo.GetCultureInfo(locale));
+                var localized = resourcesForLocale.GetValueOrDefault(key);
                 Require(!string.IsNullOrWhiteSpace(localized), "Missing localized key " + locale + "/" + key);
                 // JSON examples are literal text rather than composite-format strings.
                 if (System.Text.RegularExpressions.Regex.IsMatch(value, @"\{[0-9]+[^{}]*\}"))

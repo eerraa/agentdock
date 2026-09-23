@@ -243,3 +243,30 @@ func TestInsertionArrivalBeforeDeadlineSurvivesConcurrentExpirySweep(t *testing.
 		})
 	}
 }
+
+func TestInsertionTextByteLimitHasStableErrorAndNoWrite(t *testing.T) {
+	s, _, target := fixture(t)
+	ctx := context.Background()
+	// The limit is UTF-8 bytes, not characters. Accept the exact bound.
+	exact := strings.Repeat("한", 2730) + "ab"
+	if len(exact) != MaxTextBytes {
+		t.Fatal("invalid boundary fixture")
+	}
+	if _, err := s.Add(ctx, target, "exact", exact); err != nil {
+		t.Fatal(err)
+	}
+	path := filepath.Join(s.root, "queue.json")
+	before, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, text := range []string{strings.Repeat("a", MaxTextBytes+1), strings.Repeat("한", 2731)} {
+		if _, err := s.Add(ctx, target, "oversized", text); !errors.Is(err, ErrLimit) {
+			t.Fatalf("oversized error=%v", err)
+		}
+	}
+	after, err := os.ReadFile(path)
+	if err != nil || string(before) != string(after) {
+		t.Fatal("oversized text changed the queue")
+	}
+}

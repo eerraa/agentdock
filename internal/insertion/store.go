@@ -162,8 +162,11 @@ func expire(state *diskState, now time.Time) bool {
 
 func (s *Store) Add(ctx context.Context, target Target, submissionID, text string) (Item, error) {
 	var result Item
-	if !validID.MatchString(target.Conversation) || target.Owner == "" || !validID.MatchString(submissionID) || strings.TrimSpace(text) == "" || !utf8.ValidString(text) || len(text) > MaxTextBytes {
+	if !validID.MatchString(target.Conversation) || target.Owner == "" || !validID.MatchString(submissionID) || strings.TrimSpace(text) == "" || !utf8.ValidString(text) {
 		return result, errors.New("insertion requires a valid target, submission id and 1–8192 UTF-8 bytes")
+	}
+	if len(text) > MaxTextBytes {
+		return result, fmt.Errorf("%w: text exceeds %d UTF-8 bytes", ErrLimit, MaxTextBytes)
 	}
 	err := s.change(ctx, func(state *diskState, now time.Time) (bool, error) {
 		dirty := expire(state, now)
